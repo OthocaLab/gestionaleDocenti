@@ -1,0 +1,107 @@
+.registerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .registerCard {
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .registerLogo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .registerTitle {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-size: 1.25rem;
+  }
+  
+  .formGroup {
+    margin-bottom: 1.5rem;
+  }
+  
+  .formRow {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .formRow .formGroup {
+    flex: 1;
+  }
+  
+  .formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .formGroup input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .errorMessage {
+    color: #e53e3e;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .registerButton {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #FD025C;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .registerButton:hover {
+    background-color: #770932;
+  }
+  
+  .registerButton:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+  }
+  
+  .registerFooter {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.875rem;
+  }
+  
+  .registerFooter a {
+    color: #3182ce;
+    text-decoration: none;
+  }
+  
+  .successMessage {
+    color: #38a169;
+    background-color: #f0fff4;
+    border: 1px solid #c6f6d5;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1rem;
+  }
