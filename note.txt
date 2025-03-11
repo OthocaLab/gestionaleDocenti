@@ -1,0 +1,2 @@
+git config --global user.name ".Andrea"
+git config --global user.email "garau.andrea.10158@itisothoca.edu.it"
