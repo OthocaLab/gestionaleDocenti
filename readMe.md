@@ -55,7 +55,9 @@ npm o yarn
 
 ## **Installazione**
 
-### **Clonare il Repository** git clone [https://github.com/tuorepository/othoca-labs.git](https://github.com/tuorepository/othoca-labs.git) cd othoca-labs
+### **Clonare il Repository** 
+git clone [https://github.com/OthocaLab/othoca-labs.git](https://github.com/tuorepository/othoca-labs.git) 
+cd othoca-labs
 
 ### **Configurazione del Backend**
 
