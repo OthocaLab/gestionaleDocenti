@@ -136,42 +136,46 @@ exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
+    // Trova l'utente
     const user = await User.findOne({ email });
+
+    // Non rivelare se l'utente esiste o meno per sicurezza
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'Non esiste un utente con questa email'
+      return res.status(200).json({
+        success: true,
+        message: 'Se l\'email è registrata, riceverai le istruzioni per reimpostare la password'
       });
     }
 
     // Genera token di reset
     const resetToken = crypto.randomBytes(20).toString('hex');
 
-    // Hash del token e salvataggio nel database
+    // Salva il token hasciato nel database
     user.resetPasswordToken = crypto
       .createHash('sha256')
       .update(resetToken)
       .digest('hex');
     
-    // Imposta la scadenza del token (10 minuti)
-    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+    // Token valido per 30 minuti
+    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
 
     await user.save();
 
     // Crea URL di reset
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/auth/reset-password/${resetToken}`;
+    const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
 
-    // Messaggio email
+    // Contenuto email
     const message = `
       Hai richiesto il reset della password. 
-      Clicca sul seguente link per reimpostare la tua password: ${resetUrl}
+      Clicca sul seguente link per reimpostare la password: ${resetUrl}
+      Il link sarà valido per 30 minuti.
       Se non hai richiesto il reset della password, ignora questa email.
     `;
 
     try {
       await sendEmail({
         email: user.email,
-        subject: 'Reset della password',
+        subject: 'Reset Password - Othoca Labs',
         message
       });
 

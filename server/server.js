@@ -7,7 +7,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 
 // Carica le variabili d'ambiente
-dotenv.config();
+require('dotenv').config();
 
 // Importa le route
 const authRoutes = require('./routes/authRoutes');
@@ -15,7 +15,9 @@ const userRoutes = require('./routes/userRoutes');
 
 // Inizializza l'app Express
 const app = express();
-const PORT = process.env.PORT || 5000;
+
+// Use PORT from .env, fallback to 5000 if not specified
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
@@ -61,8 +63,8 @@ mongoose
   .then(() => {
     console.log('Connessione al database MongoDB stabilita con successo');
     // Avvia il server
-    app.listen(PORT, () => {
-      console.log(`Server in esecuzione sulla porta ${PORT}`);
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
     });
   })
   .catch((err) => {
