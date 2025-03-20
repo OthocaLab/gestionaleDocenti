@@ -12,6 +12,7 @@ require('dotenv').config();
 // Importa le route
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const orarioRoutes = require('./routes/orarioRoutes');
 
 // Inizializza l'app Express
 const app = express();
@@ -40,7 +41,9 @@ app.use('/api/auth', limiter);
 
 // Route
 app.use('/api/auth', authRoutes);
+// Mount routers
 app.use('/api/users', userRoutes);
+app.use('/api/orario', orarioRoutes);
 
 // Route di base
 app.get('/', (req, res) => {

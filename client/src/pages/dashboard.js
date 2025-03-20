@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import GestioneOrario from '../components/GestioneOrario';
+import ImportaOrario from '../components/ImportaOrario';
 import styles from '../styles/Dashboard.module.css';
 
 const Dashboard = () => {
@@ -60,6 +62,12 @@ const Dashboard = () => {
               Gestione Docenti
             </li>
             <li 
+              className={activeTab === 'orario' ? styles.active : ''}
+              onClick={() => setActiveTab('orario')}
+            >
+              Orario Scolastico
+            </li>
+            <li 
               className={activeTab === 'importa' ? styles.active : ''}
               onClick={() => setActiveTab('importa')}
             >
@@ -91,11 +99,19 @@ const Dashboard = () => {
             </div>
           )}
 
+          {activeTab === 'orario' && (
+            <div>
+              <h2>Orario Scolastico</h2>
+              <p>Visualizza e gestisci l'orario scolastico per classi e docenti.</p>
+              <GestioneOrario />
+            </div>
+          )}
+
           {activeTab === 'importa' && (
             <div>
               <h2>Importa Dati</h2>
               <p>Qui potrai importare l'orario dei docenti e le assenze.</p>
-              {/* Contenuto della sezione importa */}
+              <ImportaOrario />
             </div>
           )}
 

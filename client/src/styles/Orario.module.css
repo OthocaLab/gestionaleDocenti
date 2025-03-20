@@ -1,0 +1,313 @@
+.orarioContainer {
+  margin: 20px 0;
+}
+
+.error, .errorMessage {
+  color: #e74c3c;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #fadbd8;
+  border-radius: 4px;
+}
+
+.successMessage {
+  color: #27ae60;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #d4efdf;
+  border-radius: 4px;
+}
+
+.loading {
+  margin: 20px 0;
+  font-style: italic;
+  color: #7f8c8d;
+}
+
+.selectContainer {
+  margin: 15px 0;
+}
+
+.select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  margin-left: 10px;
+  min-width: 250px;
+}
+
+.orarioTable {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.orarioTable table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+}
+
+.orarioTable th, .orarioTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.orarioTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.lezione {
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.materia {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.docente {
+  font-size: 0.9em;
+}
+
+.gestioneOrarioContainer {
+  width: 100%;
+}
+
+.viewToggle {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.viewToggle button {
+  padding: 10px 15px;
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.viewToggle button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.viewToggle button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.activeButton {
+  background-color: #3498db !important;
+  color: white;
+}
+
+.importContainer {
+  margin: 20px 0;
+}
+
+.importForm {
+  margin: 15px 0;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.fileInput {
+  margin-bottom: 15px;
+}
+
+.fileInput label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.importButton {
+  padding: 10px 15px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.importButton:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.instructions {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.instructions pre {
+  background-color: #eee;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.addButton {
+  padding: 10px 15px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.formSection {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.orarioFormContainer {
+  width: 100%;
+}
+
+.orarioForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.formRow {
+  display: flex;
+  gap: 20px;
+}
+
+.formRow .formGroup {
+  flex: 1;
+}
+
+.timeInput {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.submitButton {
+  padding: 10px 15px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.submitButton:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* Add these styles to the existing Orario.module.css */
+
+.tabsContainer {
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+}
+
+.tabs button {
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.activeTab {
+  border-bottom: 2px solid #3498db !important;
+  font-weight: bold;
+}
+
+.tabContent {
+  padding: 20px 0;
+}
+
+.textInput {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  width: 100%;
+}
+
+.colorInput {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.colorSample {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+.headerSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.materieList table, .classiList table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.materieList th, .materieList td,
+.classiList th, .classiList td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.materieList th, .classiList th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.noData {
+  text-align: center;
+  font-style: italic;
+  color: #7f8c8d;
+}
+
+.importSection {
+  margin-top: 20px;
+}
