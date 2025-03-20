@@ -9,7 +9,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: #3182ce;
+    background-color: #971645;
     color: white;
   }
   
@@ -67,7 +67,7 @@
   
   .sidebar li.active {
     background-color: #e2e8f0;
-    border-left: 4px solid #3182ce;
+    border-left: 4px solid #971645;
     font-weight: 500;
   }
   
