@@ -9,9 +9,9 @@ const GestioneMaterie = () => {
   const [success, setSuccess] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    codiceMateria: '',
+    codice: '',
     descrizione: '',
-    coloreMateria: '#3498db'
+    coloreMateria: '#971645'
   });
 
   useEffect(() => {
@@ -25,12 +25,12 @@ const GestioneMaterie = () => {
       setMaterie(response.data);
       setLoading(false);
     } catch (err) {
-      setError('Errore nel caricamento delle materie: ' + (err.message || 'Errore sconosciuto'));
+      setError('Errore nel caricamento delle materie');
       setLoading(false);
     }
   };
 
-  const handleChange = (e) => {
+  const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -38,11 +38,11 @@ const GestioneMaterie = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.codiceMateria || !formData.descrizione) {
-      setError('Codice e descrizione della materia sono obbligatori');
+    if (!formData.codice || !formData.descrizione) {
+      setError('Codice e descrizione sono obbligatori');
       return;
     }
     
@@ -52,13 +52,12 @@ const GestioneMaterie = () => {
       
       setSuccess('Materia creata con successo!');
       setFormData({
-        codiceMateria: '',
+        codice: '',
         descrizione: '',
-        coloreMateria: '#3498db'
+        coloreMateria: '#971645'
       });
       
-      // Ricarica l'elenco delle materie
-      fetchMaterie();
+      await fetchMaterie();
       
       setShowForm(false);
       setLoading(false);
@@ -69,14 +68,14 @@ const GestioneMaterie = () => {
   };
 
   return (
-    <div className={styles.gestioneMaterieContainer}>
-      <div className={styles.headerSection}>
+    <div className={styles.materieContainer}>
+      <div className={styles.materieHeader}>
         <h3>Gestione Materie</h3>
-        <button
+        <button 
           className={styles.addButton}
           onClick={() => setShowForm(!showForm)}
         >
-          {showForm ? 'Chiudi Form' : 'Aggiungi Materia'}
+          {showForm ? 'Annulla' : 'Nuova Materia'}
         </button>
       </div>
       
@@ -85,29 +84,32 @@ const GestioneMaterie = () => {
       
       {showForm && (
         <div className={styles.formSection}>
-          <form onSubmit={handleSubmit} className={styles.materiaForm}>
-            <div className={styles.formGroup}>
-              <label htmlFor="codiceMateria">Codice Materia:</label>
-              <input
-                type="text"
-                id="codiceMateria"
-                name="codiceMateria"
-                value={formData.codiceMateria}
-                onChange={handleChange}
-                className={styles.textInput}
-              />
-            </div>
-            
-            <div className={styles.formGroup}>
-              <label htmlFor="descrizione">Descrizione:</label>
-              <input
-                type="text"
-                id="descrizione"
-                name="descrizione"
-                value={formData.descrizione}
-                onChange={handleChange}
-                className={styles.textInput}
-              />
+          <h4>Crea Nuova Materia</h4>
+          <form onSubmit={handleFormSubmit} className={styles.materiaForm}>
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="codice">Codice:</label>
+                <input
+                  type="text"
+                  id="codice"
+                  name="codice"
+                  value={formData.codice}
+                  onChange={handleFormChange}
+                  className={styles.textInput}
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="descrizione">Descrizione:</label>
+                <input
+                  type="text"
+                  id="descrizione"
+                  name="descrizione"
+                  value={formData.descrizione}
+                  onChange={handleFormChange}
+                  className={styles.textInput}
+                />
+              </div>
             </div>
             
             <div className={styles.formGroup}>
@@ -117,7 +119,7 @@ const GestioneMaterie = () => {
                 id="coloreMateria"
                 name="coloreMateria"
                 value={formData.coloreMateria}
-                onChange={handleChange}
+                onChange={handleFormChange}
                 className={styles.colorInput}
               />
             </div>
@@ -133,22 +135,23 @@ const GestioneMaterie = () => {
         </div>
       )}
       
-      {loading && !materie.length ? (
-        <div className={styles.loading}>Caricamento materie in corso...</div>
+      {loading ? (
+        <div className={styles.loading}>Caricamento in corso...</div>
       ) : (
         <div className={styles.materieList}>
-          <table>
+          <table className={styles.dataTable}>
             <thead>
               <tr>
                 <th>Codice</th>
                 <th>Descrizione</th>
                 <th>Colore</th>
+                <th>Azioni</th>
               </tr>
             </thead>
             <tbody>
               {materie.map((materia) => (
                 <tr key={materia._id}>
-                  <td>{materia.codiceMateria}</td>
+                  <td>{materia.codice}</td>
                   <td>{materia.descrizione}</td>
                   <td>
                     <div 
@@ -156,13 +159,12 @@ const GestioneMaterie = () => {
                       style={{ backgroundColor: materia.coloreMateria }}
                     ></div>
                   </td>
+                  <td>
+                    <button className={styles.actionButton}>Modifica</button>
+                    <button className={styles.actionButton}>Elimina</button>
+                  </td>
                 </tr>
               ))}
-              {materie.length === 0 && (
-                <tr>
-                  <td colSpan="3" className={styles.noData}>Nessuna materia disponibile</td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
