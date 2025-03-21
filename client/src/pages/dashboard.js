@@ -9,7 +9,7 @@ import styles from '../styles/Dashboard.module.css';
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('sostituzioni');
+  const [activeTab, setActiveTab] = useState('orario');
 
   // Protezione della rotta
   useEffect(() => {
@@ -36,48 +36,70 @@ const Dashboard = () => {
     <div className={styles.dashboardContainer}>
       <header className={styles.header}>
         <div className={styles.logo}>
+          <div className={styles.logoIcon}>OL</div>
           <h1>Othoca Lab</h1>
         </div>
+        <div className={styles.pageTitle}>
+          {activeTab === 'orario' && "Orari Classi"}
+          {activeTab === 'sostituzioni' && "Gestione Sostituzioni"}
+          {activeTab === 'docenti' && "Gestione Docenti"}
+          {activeTab === 'importa' && "Importa Dati"}
+          {activeTab === 'report' && "Report"}
+        </div>
         <div className={styles.userInfo}>
-          <span>Benvenuto, {user?.nome || 'Utente'}</span>
-          <button onClick={handleLogout} className={styles.logoutButton}>
-            Logout
-          </button>
+          <div className={styles.notifications}>
+            <span className={styles.notificationIcon}>🔔</span>
+          </div>
+          <div className={styles.userAvatar}>
+            <div className={styles.avatarCircle}>{user?.nome?.charAt(0) || 'U'}</div>
+          </div>
         </div>
       </header>
 
       <div className={styles.content}>
         <nav className={styles.sidebar}>
           <ul>
-            <li 
-              className={activeTab === 'sostituzioni' ? styles.active : ''}
-              onClick={() => setActiveTab('sostituzioni')}
-            >
-              Sostituzioni
+            <li>
+              <a href="#" className={activeTab === 'dashboard' ? styles.active : ''} onClick={() => setActiveTab('dashboard')}>
+                <span className={styles.icon}>🏠</span>
+                <span className={styles.label}>Dashboard</span>
+              </a>
             </li>
-            <li 
-              className={activeTab === 'docenti' ? styles.active : ''}
-              onClick={() => setActiveTab('docenti')}
-            >
-              Gestione Docenti
+            <li>
+              <a href="#" className={activeTab === 'docenti' ? styles.active : ''} onClick={() => setActiveTab('docenti')}>
+                <span className={styles.icon}>👨‍🏫</span>
+                <span className={styles.label}>Elenco Docenti</span>
+              </a>
             </li>
-            <li 
-              className={activeTab === 'orario' ? styles.active : ''}
-              onClick={() => setActiveTab('orario')}
-            >
-              Orario Scolastico
+            <li>
+              <a href="#" className={activeTab === 'sostituzioni' ? styles.active : ''} onClick={() => setActiveTab('sostituzioni')}>
+                <span className={styles.icon}>🔄</span>
+                <span className={styles.label}>Sostituzioni</span>
+              </a>
             </li>
-            <li 
-              className={activeTab === 'importa' ? styles.active : ''}
-              onClick={() => setActiveTab('importa')}
-            >
-              Importa Dati
+            <li>
+              <a href="#" className={activeTab === 'orario' ? styles.active : ''} onClick={() => setActiveTab('orario')}>
+                <span className={styles.icon}>🕒</span>
+                <span className={styles.label}>Orari Scolastici</span>
+              </a>
             </li>
-            <li 
-              className={activeTab === 'report' ? styles.active : ''}
-              onClick={() => setActiveTab('report')}
-            >
-              Report
+            <li>
+              <a href="#" className={activeTab === 'importa' ? styles.active : ''} onClick={() => setActiveTab('importa')}>
+                <span className={styles.icon}>📥</span>
+                <span className={styles.label}>Importa Dati</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" className={activeTab === 'report' ? styles.active : ''} onClick={() => setActiveTab('report')}>
+                <span className={styles.icon}>📊</span>
+                <span className={styles.label}>Report</span>
+              </a>
+            </li>
+            <li className={styles.logoutItem}>
+              <a href="#" onClick={handleLogout}>
+                <span className={styles.icon}>🚪</span>
+                <span className={styles.label}>Logout</span>
+              </a>
             </li>
           </ul>
         </nav>
@@ -101,8 +123,6 @@ const Dashboard = () => {
 
           {activeTab === 'orario' && (
             <div>
-              <h2>Orario Scolastico</h2>
-              <p>Visualizza e gestisci l'orario scolastico per classi e docenti.</p>
               <GestioneOrario />
             </div>
           )}
