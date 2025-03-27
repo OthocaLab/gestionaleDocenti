@@ -5,6 +5,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import GestioneOrario from '../components/GestioneOrario';
 import ImportaOrario from '../components/ImportaOrario';
 import styles from '../styles/Dashboard.module.css';
+import GestioneDocenti from '../components/GestioneDocenti';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
@@ -115,9 +116,7 @@ const Dashboard = () => {
 
           {activeTab === 'docenti' && (
             <div>
-              <h2>Gestione Docenti</h2>
-              <p>Qui potrai gestire i docenti e le loro ore da recuperare.</p>
-              {/* Contenuto della sezione docenti */}
+              <GestioneDocenti />
             </div>
           )}
 

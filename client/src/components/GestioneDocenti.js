@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllDocenti, createDocente } from '../services/orarioService';
+import { getAllDocenti, createDocente } from '../services/docenteService';
 import styles from '../styles/Orario.module.css';
 
 const GestioneDocenti = () => {

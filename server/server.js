@@ -15,6 +15,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orarioRoutes = require('./routes/orarioRoutes');
+const docenteRoutes = require('./routes/docenteRoutes');
 
 // Inizializza l'app Express
 const app = express();
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
+
 
 // Rate limiting
 const limiter = rateLimit({
@@ -48,6 +50,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/orario', orarioRoutes);
 app.use('/api/materie', materiaRoutes);
 app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
+app.use('/api/docenti', docenteRoutes);
 
 // Route di base
 app.get('/', (req, res) => {
