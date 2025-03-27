@@ -5,6 +5,8 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const materiaRoutes = require('./routes/materiaRoutes');
+const classeInsegnamentoRoutes = require('./routes/classeInsegnamentoRoutes');
 
 // Carica le variabili d'ambiente
 require('dotenv').config();
@@ -44,6 +46,8 @@ app.use('/api/auth', authRoutes);
 // Mount routers
 app.use('/api/users', userRoutes);
 app.use('/api/orario', orarioRoutes);
+app.use('/api/materie', materiaRoutes);
+app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
 
 // Route di base
 app.get('/', (req, res) => {

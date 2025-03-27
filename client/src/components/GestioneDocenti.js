@@ -13,9 +13,8 @@ const GestioneDocenti = () => {
     cognome: '',
     email: '',
     telefono: '',
-    materie: [],
-    oreSettimanali: 18,
-    disponibilita: []
+    codiceFiscale: '',
+    stato: 'attivo'
   });
 
   useEffect(() => {
@@ -45,8 +44,8 @@ const GestioneDocenti = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.nome || !formData.cognome || !formData.email) {
-      setError('Nome, cognome ed email sono obbligatori');
+    if (!formData.nome || !formData.cognome || !formData.email || !formData.codiceFiscale) {
+      setError('Nome, cognome, email e codice fiscale sono obbligatori');
       return;
     }
     
@@ -60,13 +59,11 @@ const GestioneDocenti = () => {
         cognome: '',
         email: '',
         telefono: '',
-        materie: [],
-        oreSettimanali: 18,
-        disponibilita: []
+        codiceFiscale: '',
+        stato: 'attivo'
       });
       
       await fetchDocenti();
-      
       setShowForm(false);
       setLoading(false);
     } catch (err) {
@@ -189,6 +186,34 @@ const GestioneDocenti = () => {
                     onChange={handleFormChange}
                     className={styles.textInput}
                   />
+                </div>
+              </div>
+              
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="codiceFiscale">Codice Fiscale:</label>
+                  <input
+                    type="text"
+                    id="codiceFiscale"
+                    name="codiceFiscale"
+                    value={formData.codiceFiscale}
+                    onChange={handleFormChange}
+                    className={styles.textInput}
+                  />
+                </div>
+                
+                <div className={styles.formGroup}>
+                  <label htmlFor="stato">Stato:</label>
+                  <select
+                    id="stato"
+                    name="stato"
+                    value={formData.stato}
+                    onChange={handleFormChange}
+                    className={styles.select}
+                  >
+                    <option value="attivo">Attivo</option>
+                    <option value="inattivo">Inattivo</option>
+                  </select>
                 </div>
               </div>
               
