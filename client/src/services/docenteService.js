@@ -37,3 +37,7 @@ export const deleteDocente = async (id) => {
     throw error;
   }
 };
+
+export const getAllClassiInsegnamento = () => {
+  return axios.get('/api/classi-insegnamento');
+};
