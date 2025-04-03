@@ -4,13 +4,14 @@ import { AuthContext } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import GestioneOrario from '../components/GestioneOrario';
 import ImportaOrario from '../components/ImportaOrario';
+import DashboardHome from '../components/DashboardHome';
 import styles from '../styles/Dashboard.module.css';
 import GestioneDocenti from '../components/GestioneDocenti';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('orario');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   // Protezione della rotta
   useEffect(() => {
@@ -41,6 +42,7 @@ const Dashboard = () => {
           <h1>Othoca Lab</h1>
         </div>
         <div className={styles.pageTitle}>
+          {activeTab === 'dashboard' && "Dashboard"}
           {activeTab === 'orario' && "Orari Classi"}
           {activeTab === 'sostituzioni' && "Gestione Sostituzioni"}
           {activeTab === 'docenti' && "Gestione Docenti"}
@@ -106,6 +108,10 @@ const Dashboard = () => {
         </nav>
 
         <main className={styles.mainContent}>
+          {activeTab === 'dashboard' && (
+            <DashboardHome />
+          )}
+
           {activeTab === 'sostituzioni' && (
             <div>
               <h2>Gestione Sostituzioni</h2>
