@@ -82,12 +82,7 @@ const DashboardHome = () => {
             >
               Materia
             </button>
-            <button 
-              className={`${styles.tabButton} ${activeTab === 'assenti' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('assenti')}
-            >
-              Assenti
-            </button>
+            
           </div>
 
           <div className={styles.tableContainer}>
