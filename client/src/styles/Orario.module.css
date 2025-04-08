@@ -312,22 +312,32 @@
 
 .searchBox {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border-radius: 8px;
+  padding: 4px 12px;
 }
 
 .searchIcon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
   color: #666;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .searchInput {
-  padding: 8px 12px 8px 36px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: none;
+  outline: none;
+  padding: 4px;
   font-size: 14px;
-  width: 250px;
+  width: 220px;
+  background: transparent;
+}
+
+.searchInput::placeholder {
+  color: #999;
 }
 
 .addButton {
@@ -405,15 +415,22 @@
 .actionButtons {
   display: flex;
   gap: 8px;
+  justify-content: center;
+  width: 100%;
 }
 
 .actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 6px 12px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
   transition: background 0.2s;
+  width: 100px;
+  justify-content: center;
 }
 
 .editButton {

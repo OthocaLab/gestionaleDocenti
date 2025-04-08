@@ -146,7 +146,7 @@ const GestioneDocenti = () => {
           <h2 className={styles.panelTitle}>Gestione Docenti</h2>
           <div className={styles.headerActions}>
             <div className={styles.searchBox}>
-              <i className={styles.searchIcon}>🔍</i>
+              <span className={styles.searchIcon}>🔍</span>
               <input 
                 type="text" 
                 placeholder="Cerca docente..." 
@@ -324,7 +324,7 @@ const GestioneDocenti = () => {
                   <th>Telefono</th>
                   <th>Ore Settimanali</th>
                   <th>Classi Insegnamento</th>
-                  <th>Azioni</th>
+                  <th style={{ textAlign: 'center', minWidth: '300px' }}>Azioni</th>
                 </tr>
               </thead>
               <tbody>
@@ -343,16 +343,18 @@ const GestioneDocenti = () => {
                         : '-'
                       }
                     </td>
-                    <td className={styles.actionButtons}>
-                      <button className={`${styles.actionButton} ${styles.editButton}`}>
-                        ✏️ Modifica
-                      </button>
-                      <button className={`${styles.actionButton} ${styles.deleteButton}`}>
-                        🗑️ Elimina
-                      </button>
-                      <button className={`${styles.actionButton} ${styles.scheduleButton}`}>
-                        📅 Orario
-                      </button>
+                    <td>
+                      <div className={styles.actionButtons}>
+                        <button className={`${styles.actionButton} ${styles.editButton}`}>
+                          ✏️ Modifica
+                        </button>
+                        <button className={`${styles.actionButton} ${styles.deleteButton}`}>
+                          🗑️ Elimina
+                        </button>
+                        <button className={`${styles.actionButton} ${styles.scheduleButton}`}>
+                          📅 Orario
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
