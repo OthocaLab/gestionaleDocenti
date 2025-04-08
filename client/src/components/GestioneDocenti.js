@@ -14,11 +14,15 @@ const GestioneDocenti = () => {
     email: '',
     telefono: '',
     codiceFiscale: '',
-    stato: 'attivo'
+    stato: 'attivo',
+    oreSettimanali: '',
+    classiInsegnamento: []
   });
-
+  const [classiDisponibili, setClassiDisponibili] = useState([]);
+  
   useEffect(() => {
     fetchDocenti();
+    fetchClassiInsegnamento();
   }, []);
 
   const fetchDocenti = async () => {
@@ -30,6 +34,16 @@ const GestioneDocenti = () => {
     } catch (err) {
       setError('Errore nel caricamento dei docenti');
       setLoading(false);
+    }
+  };
+
+  const fetchClassiInsegnamento = async () => {
+    try {
+      // You'll need to create this service function
+      const response = await getAllClassiInsegnamento();
+      setClassiDisponibili(response.data);
+    } catch (err) {
+      setError('Errore nel caricamento delle classi di insegnamento');
     }
   };
 
@@ -70,6 +84,14 @@ const GestioneDocenti = () => {
       setError('Errore nella creazione del docente: ' + (err.message || 'Errore sconosciuto'));
       setLoading(false);
     }
+  };
+
+  const handleClassiChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setFormData({
+      ...formData,
+      classiInsegnamento: selectedOptions
+    });
   };
 
   return (
@@ -231,6 +253,25 @@ const GestioneDocenti = () => {
                     max="40"
                   />
                 </div>
+                
+                <div className={styles.formGroup}>
+                  <label htmlFor="classiInsegnamento">Classi di Insegnamento:</label>
+                  <select
+                    id="classiInsegnamento"
+                    name="classiInsegnamento"
+                    multiple
+                    value={formData.classiInsegnamento}
+                    onChange={handleClassiChange}
+                    className={styles.select}
+                  >
+                    {classiDisponibili.map(classe => (
+                      <option key={classe._id} value={classe._id}>
+                        {classe.nome || classe.descrizione}
+                      </option>
+                    ))}
+                  </select>
+                  <small>Tieni premuto Ctrl (o Cmd) per selezionare più classi</small>
+                </div>
               </div>
               
               <button 
@@ -256,6 +297,7 @@ const GestioneDocenti = () => {
                   <th>Email</th>
                   <th>Telefono</th>
                   <th>Ore Settimanali</th>
+                  <th>Classi Insegnamento</th>
                   <th>Azioni</th>
                 </tr>
               </thead>
@@ -267,6 +309,14 @@ const GestioneDocenti = () => {
                     <td>{docente.email}</td>
                     <td>{docente.telefono || '-'}</td>
                     <td>{docente.oreSettimanali || 18}</td>
+                    <td>
+                      {docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
+                        ? docente.classiInsegnamento.map(classe => 
+                            typeof classe === 'object' ? classe.nome || classe.descrizione : 'Classe ID: ' + classe
+                          ).join(', ')
+                        : '-'
+                      }
+                    </td>
                     <td>
                       <button className={styles.actionButton}>Modifica</button>
                       <button className={styles.actionButton}>Elimina</button>
