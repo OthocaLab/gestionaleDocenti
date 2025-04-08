@@ -239,7 +239,14 @@
   margin-bottom: 30px;
 }
 
+.statsRow {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
 .statCard {
+  flex: 1;
   background: white;
   border-radius: 12px;
   padding: 20px;
@@ -247,6 +254,29 @@
   align-items: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   transition: transform 0.2s;
+}
+
+.statIcon {
+  font-size: 24px;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statLabel {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1a1a1a;
 }
 
 .statCard:hover {
