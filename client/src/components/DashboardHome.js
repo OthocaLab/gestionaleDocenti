@@ -114,7 +114,7 @@ const DashboardHome = () => {
                       <tr key={docente._id || index}>
                         <td>{docente.nome || 'Mario'}</td>
                         <td>{docente.cognome || 'Rossi'}</td>
-                        <td>{docente.classeInsegnamento || '4h'}</td>
+                        <td>{docente.classeInsegnamento || 'nessuna classe assegnata'}</td>
                         <td>{docente.materia || 'informatica'}</td>
                         <td>{docente.email || 'mariorossi@gmail.com'}</td>
                         <td>
