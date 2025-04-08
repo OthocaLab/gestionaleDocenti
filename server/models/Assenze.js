@@ -19,24 +19,45 @@ const OraAssenzaSchema = new mongoose.Schema({
   }
 }, { _id: false });
 
-const PresenzaSchema = new mongoose.Schema({
+const AssenzaSchema = new mongoose.Schema({
   docente: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Docente',
     required: true
   },
+  classe: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Classe',
+    default: null
+  },
+  materia: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Materia',
+    default: null
+  },
   data: {
     type: Date,
     required: true
+  },
+  orario: {
+    type: Number,
+    min: 1,
+    max: 10,
+    default: null // Se specificato, indica l'ora specifica dell'assenza
   },
   // Indica se il docente è assente per l'intera giornata
   assenteGiornataIntera: {
     type: Boolean,
     default: false
   },
-  motivoGiornataIntera: {
+  motivazione: {
     type: String,
     default: null
+  },
+  tipo: {
+    type: String,
+    enum: ['Malattia', 'Permesso', 'Altro'],
+    default: 'Altro'
   },
   // Array di ore specifiche in cui il docente è assente
   oreAssenza: [OraAssenzaSchema],
@@ -47,6 +68,6 @@ const PresenzaSchema = new mongoose.Schema({
 });
 
 // Indice composto per evitare duplicati (docente + data)
-PresenzaSchema.index({ docente: 1, data: 1 }, { unique: true });
+AssenzaSchema.index({ docente: 1, data: 1 }, { unique: true });
 
-module.exports = mongoose.model('Presenza', PresenzaSchema);
+module.exports = mongoose.model('Assenza', AssenzaSchema);

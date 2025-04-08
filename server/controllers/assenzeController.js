@@ -1,7 +1,7 @@
 const Docente = require('../models/Docente');
-const Presenza = require('../models/Presenza');
+const Assenza = require('../models/Assenze');
 
-// Ottieni statistiche presenze/assenze
+// Ottieni statistiche assenze
 exports.getStatistiche = async (req, res) => {
   try {
     let data = new Date();
@@ -18,13 +18,13 @@ exports.getStatistiche = async (req, res) => {
     const totaleDocenti = await Docente.countDocuments();
     
     // Conta docenti assenti per l'intera giornata
-    const assentiGiornataIntera = await Presenza.countDocuments({ 
+    const assentiGiornataIntera = await Assenza.countDocuments({ 
       data: { $gte: dataInizio, $lte: dataFine },
       assenteGiornataIntera: true 
     });
     
     // Conta docenti con assenze parziali (solo alcune ore)
-    const assentiParziali = await Presenza.countDocuments({ 
+    const assentiParziali = await Assenza.countDocuments({ 
       data: { $gte: dataInizio, $lte: dataFine },
       assenteGiornataIntera: false,
       oreAssenza: { $exists: true, $ne: [] }
@@ -53,8 +53,8 @@ exports.getStatistiche = async (req, res) => {
   }
 };
 
-// Ottieni elenco docenti presenti/assenti per data
-exports.getPresenze = async (req, res) => {
+// Ottieni elenco docenti assenti per data
+exports.getAssenze = async (req, res) => {
   try {
     const data = req.query.data ? new Date(req.query.data) : new Date();
     const dataInizio = new Date(data);
@@ -73,83 +73,99 @@ exports.getPresenze = async (req, res) => {
     if (ora !== null) {
       query.$or = [
         { assenteGiornataIntera: true },
-        { 'oreAssenza.ora': ora }
+        { 'oreAssenza.ora': ora },
+        { orario: ora }
       ];
     }
     
-    const presenze = await Presenza.find(query).populate({
-      path: 'docente',
-      populate: {
-        path: 'classiInsegnamento',
-        populate: {
-          path: 'materia'
-        }
-      }
-    }).populate('oreAssenza.sostituto');
+    const assenze = await Assenza.find(query)
+      .populate('docente')
+      .populate('classe')
+      .populate('materia')
+      .populate('oreAssenza.sostituto');
     
     res.status(200).json({
       success: true,
-      count: presenze.length,
-      data: presenze
+      count: assenze.length,
+      data: assenze
     });
   } catch (error) {
     res.status(500).json({ 
       success: false, 
-      message: 'Errore nel recupero delle presenze', 
+      message: 'Errore nel recupero delle assenze', 
       error: error.message 
     });
   }
 };
 
-// Registra presenza/assenza
-exports.registraPresenza = async (req, res) => {
+// Registra assenza
+exports.registraAssenza = async (req, res) => {
   try {
-    const { docenteId, data, assenteGiornataIntera, motivoGiornataIntera, oreAssenza } = req.body;
+    const { 
+      docenteId, 
+      classeId, 
+      materiaId, 
+      data, 
+      orario, 
+      assenteGiornataIntera, 
+      motivazione, 
+      tipo, 
+      oreAssenza 
+    } = req.body;
     
     // Verifica se esiste già una registrazione per questa data e docente
-    let presenza = await Presenza.findOne({
+    let assenza = await Assenza.findOne({
       docente: docenteId,
       data: new Date(data)
     });
     
-    if (presenza) {
+    if (assenza) {
       // Aggiorna la registrazione esistente
-      presenza.assenteGiornataIntera = assenteGiornataIntera || false;
+      assenza.classe = classeId || assenza.classe;
+      assenza.materia = materiaId || assenza.materia;
+      assenza.orario = orario || assenza.orario;
+      assenza.assenteGiornataIntera = assenteGiornataIntera || false;
+      
+      if (motivazione) assenza.motivazione = motivazione;
+      if (tipo) assenza.tipo = tipo;
       
       if (assenteGiornataIntera) {
-        presenza.motivoGiornataIntera = motivoGiornataIntera;
-        presenza.oreAssenza = []; // Se assente tutto il giorno, rimuovi le ore specifiche
+        assenza.oreAssenza = []; // Se assente tutto il giorno, rimuovi le ore specifiche
       } else if (oreAssenza && oreAssenza.length > 0) {
-        presenza.oreAssenza = oreAssenza;
+        assenza.oreAssenza = oreAssenza;
       }
       
-      await presenza.save();
+      await assenza.save();
       
       return res.status(200).json({
         success: true,
-        message: 'Presenza aggiornata con successo',
-        data: presenza
+        message: 'Assenza aggiornata con successo',
+        data: assenza
       });
     }
     
     // Crea una nuova registrazione
-    presenza = await Presenza.create({
+    assenza = await Assenza.create({
       docente: docenteId,
+      classe: classeId || null,
+      materia: materiaId || null,
       data: new Date(data),
+      orario: orario || null,
       assenteGiornataIntera: assenteGiornataIntera || false,
-      motivoGiornataIntera: assenteGiornataIntera ? motivoGiornataIntera : null,
+      motivazione: motivazione || null,
+      tipo: tipo || 'Altro',
       oreAssenza: !assenteGiornataIntera && oreAssenza ? oreAssenza : []
     });
     
     res.status(201).json({
       success: true,
-      message: 'Presenza registrata con successo',
-      data: presenza
+      message: 'Assenza registrata con successo',
+      data: assenza
     });
   } catch (error) {
     res.status(500).json({ 
       success: false, 
-      message: 'Errore nella registrazione della presenza', 
+      message: 'Errore nella registrazione dell\'assenza', 
       error: error.message 
     });
   }
@@ -158,43 +174,46 @@ exports.registraPresenza = async (req, res) => {
 // Registra sostituzione per un'assenza
 exports.registraSostituzione = async (req, res) => {
   try {
-    const { presenzaId, sostitutoId, ora } = req.body;
+    const { assenzaId, sostitutoId, ora } = req.body;
     
-    const presenza = await Presenza.findById(presenzaId);
+    const assenza = await Assenza.findById(assenzaId);
     
-    if (!presenza) {
+    if (!assenza) {
       return res.status(404).json({
         success: false,
-        message: 'Registrazione di presenza non trovata'
+        message: 'Assenza non trovata'
       });
     }
     
-    // Se è assente per l'intera giornata
-    if (presenza.assenteGiornataIntera) {
-      return res.status(400).json({
-        success: false,
-        message: 'Per le assenze giornaliere, utilizzare il sistema di sostituzioni completo'
-      });
+    // Se è specificata un'ora e l'assenza è per ore specifiche
+    if (ora && !assenza.assenteGiornataIntera) {
+      // Trova l'ora specifica di assenza
+      const oraAssenza = assenza.oreAssenza.find(o => o.ora === ora);
+      
+      if (oraAssenza) {
+        // Aggiorna il sostituto per quell'ora specifica
+        oraAssenza.sostituto = sostitutoId;
+      } else {
+        // Aggiungi una nuova ora di assenza con sostituto
+        assenza.oreAssenza.push({
+          ora,
+          motivo: assenza.motivazione,
+          sostituto: sostitutoId
+        });
+      }
+    } else {
+      // Per assenze giornaliere o se l'ora non è specificata
+      // Qui potremmo gestire la sostituzione in modo diverso
+      // Per ora, impostiamo solo un campo sostituto generale
+      assenza.sostituto = sostitutoId;
     }
     
-    // Trova l'ora specifica di assenza
-    const oraAssenza = presenza.oreAssenza.find(o => o.ora === ora);
-    
-    if (!oraAssenza) {
-      return res.status(404).json({
-        success: false,
-        message: 'Ora di assenza non trovata'
-      });
-    }
-    
-    // Aggiorna il sostituto
-    oraAssenza.sostituto = sostitutoId;
-    await presenza.save();
+    await assenza.save();
     
     res.status(200).json({
       success: true,
       message: 'Sostituzione registrata con successo',
-      data: presenza
+      data: assenza
     });
   } catch (error) {
     res.status(500).json({ 
