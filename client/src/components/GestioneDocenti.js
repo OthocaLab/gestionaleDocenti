@@ -96,47 +96,57 @@ const GestioneDocenti = () => {
 
   return (
     <div className={styles.docentiContainer}>
-      <div className={styles.statsRow}>
+      {/* Stats Cards con nuovo stile */}
+      <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>👨‍🏫</div>
+          <div className={styles.statIconWrapper}>
+            <span className={styles.statIcon}>👨‍🏫</span>
+          </div>
           <div className={styles.statContent}>
-            <div className={styles.statLabel}>Docenti Totali</div>
-            <div className={styles.statValue}>{docenti.length || 0}</div>
+            <h3 className={styles.statValue}>{docenti.length || 0}</h3>
+            <p className={styles.statLabel}>Docenti Totali</p>
           </div>
         </div>
         
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📚</div>
+          <div className={styles.statIconWrapper}>
+            <span className={styles.statIcon}>📚</span>
+          </div>
           <div className={styles.statContent}>
-            <div className={styles.statLabel}>Ore Settimanali</div>
-            <div className={styles.statValue}>
+            <h3 className={styles.statValue}>
               {docenti.reduce((total, docente) => total + (docente.oreSettimanali || 0), 0)}
-            </div>
+            </h3>
+            <p className={styles.statLabel}>Ore Settimanali</p>
           </div>
         </div>
         
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📋</div>
+          <div className={styles.statIconWrapper}>
+            <span className={styles.statIcon}>📋</span>
+          </div>
           <div className={styles.statContent}>
-            <div className={styles.statLabel}>Docenti Attivi</div>
-            <div className={styles.statValue}>{docenti.filter(d => d.attivo).length || 0}</div>
+            <h3 className={styles.statValue}>{docenti.filter(d => d.attivo).length || 0}</h3>
+            <p className={styles.statLabel}>Docenti Attivi</p>
           </div>
         </div>
         
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>👥</div>
+          <div className={styles.statIconWrapper}>
+            <span className={styles.statIcon}>👥</span>
+          </div>
           <div className={styles.statContent}>
-            <div className={styles.statLabel}>Docenti Disponibili</div>
-            <div className={styles.statValue}>{docenti.filter(d => d.disponibile).length || 0}</div>
+            <h3 className={styles.statValue}>{docenti.filter(d => d.disponibile).length || 0}</h3>
+            <p className={styles.statLabel}>Docenti Disponibili</p>
           </div>
         </div>
       </div>
 
       <div className={styles.docentiPanel}>
         <div className={styles.docentiHeader}>
-          <h3>Elenco Docenti</h3>
-          <div className={styles.searchFilters}>
+          <h2 className={styles.panelTitle}>Gestione Docenti</h2>
+          <div className={styles.headerActions}>
             <div className={styles.searchBox}>
+              <i className={styles.searchIcon}>🔍</i>
               <input 
                 type="text" 
                 placeholder="Cerca docente..." 
@@ -144,20 +154,32 @@ const GestioneDocenti = () => {
               />
             </div>
             <button 
-              className={styles.addButton}
+              className={`${styles.addButton} ${showForm ? styles.active : ''}`}
               onClick={() => setShowForm(!showForm)}
             >
-              {showForm ? 'Annulla' : 'Nuovo Docente'}
+              {showForm ? '✕ Annulla' : '+ Nuovo Docente'}
             </button>
           </div>
         </div>
-        
-        {error && <div className={styles.errorMessage}>{error}</div>}
-        {success && <div className={styles.successMessage}>{success}</div>}
-        
+
+        {/* Messaggi di feedback migliorati */}
+        {error && (
+          <div className={`${styles.message} ${styles.errorMessage}`}>
+            <span className={styles.messageIcon}>⚠️</span>
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className={`${styles.message} ${styles.successMessage}`}>
+            <span className={styles.messageIcon}>✅</span>
+            {success}
+          </div>
+        )}
+
+        {/* Form in un card con ombra */}
         {showForm && (
-          <div className={styles.formSection}>
-            <h4>Crea Nuovo Docente</h4>
+          <div className={styles.formCard}>
+            <h3 className={styles.formTitle}>Inserisci Nuovo Docente</h3>
             <form onSubmit={handleFormSubmit} className={styles.docenteForm}>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
@@ -284,11 +306,15 @@ const GestioneDocenti = () => {
             </form>
           </div>
         )}
-        
+
+        {/* Tabella con nuovo stile */}
         {loading ? (
-          <div className={styles.loading}>Caricamento in corso...</div>
+          <div className={styles.loadingContainer}>
+            <div className={styles.spinner}></div>
+            <p>Caricamento in corso...</p>
+          </div>
         ) : (
-          <div className={styles.docentiList}>
+          <div className={styles.tableContainer}>
             <table className={styles.dataTable}>
               <thead>
                 <tr>
@@ -317,10 +343,16 @@ const GestioneDocenti = () => {
                         : '-'
                       }
                     </td>
-                    <td>
-                      <button className={styles.actionButton}>Modifica</button>
-                      <button className={styles.actionButton}>Elimina</button>
-                      <button className={styles.actionButton}>Orario</button>
+                    <td className={styles.actionButtons}>
+                      <button className={`${styles.actionButton} ${styles.editButton}`}>
+                        ✏️ Modifica
+                      </button>
+                      <button className={`${styles.actionButton} ${styles.deleteButton}`}>
+                        🗑️ Elimina
+                      </button>
+                      <button className={`${styles.actionButton} ${styles.scheduleButton}`}>
+                        📅 Orario
+                      </button>
                     </td>
                   </tr>
                 ))}
