@@ -50,6 +50,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orario', orarioRoutes);
 app.use('/api/materie', materiaRoutes);
+// Make sure this line is added to your server.js file
 app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
 app.use('/api/docenti', docenteRoutes);
 // Make sure the assenze routes are properly included
