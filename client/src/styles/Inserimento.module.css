@@ -1,0 +1,702 @@
+
+/* Add these new styles to your existing CSS file */
+
+.componentContainer {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #FD025C;
+  padding-bottom: 0.5rem;
+}
+
+.messageBox {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.successMessage {
+  background-color: #e6f7ee;
+  color: #0d8050;
+  border-left: 4px solid #0d8050;
+}
+
+.errorMessage {
+  background-color: #ffebee;
+  color: #d32f2f;
+  border-left: 4px solid #d32f2f;
+}
+
+.messageIcon {
+  font-size: 1.2rem;
+  margin-right: 0.75rem;
+}
+
+.cardContainer {
+  width: 100%;
+}
+
+.formCard {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.formCard:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.formSection {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.sectionIcon {
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formRow {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+}
+
+.labelIcon {
+  margin-right: 0.5rem;
+}
+
+.searchContainer {
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  border-color: #FD025C;
+  box-shadow: 0 0 0 3px rgba(253, 2, 92, 0.1);
+  outline: none;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.searchingIndicator {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  color: #666;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(253, 2, 92, 0.3);
+  border-radius: 50%;
+  border-top-color: #FD025C;
+  animation: spin 0.8s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.searchResults {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.searchResultItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.searchResultItem:last-child {
+  border-bottom: none;
+}
+
+.searchResultItem:hover {
+  background-color: #f9f9f9;
+}
+
+.docenteAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #FD025C;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 1rem;
+  font-size: 0.9rem;
+}
+
+.docenteInfo {
+  flex: 1;
+}
+
+.docenteName {
+  font-weight: 500;
+  color: #333;
+}
+
+.docenteEmail {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.selectedDocenteCard {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #FD025C;
+}
+
+.docenteAvatarLarge {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #FD025C;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 1rem;
+  font-size: 1.1rem;
+}
+
+.selectedDocenteInfo h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.selectedDocenteInfo p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.input, .select, .textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  border-color: #FD025C;
+  box-shadow: 0 0 0 3px rgba(253, 2, 92, 0.1);
+  outline: none;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.75rem;
+  accent-color: #FD025C;
+}
+
+.checkboxLabel {
+  font-size: 1rem;
+  color: #555;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.submitButton, .cancelButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.submitButton {
+  background-color: #FD025C;
+  color: white;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #d10149;
+}
+
+.submitButton:disabled {
+  background-color: #f5a5c0;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background-color: #f5f5f5;
+  color: #555;
+}
+
+.cancelButton:hover {
+  background-color: #e5e5e5;
+}
+
+.buttonIcon {
+  margin-right: 0.5rem;
+}
+.submitButton {
+  background-color: #FD025C;  /* Changed from #4a90e2 to match your app's theme */
+  color: white;
+}
+
+.submitButton:hover {
+  background-color: #d10149;  /* Darker shade for hover */
+}
+
+.cancelButton {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.cancelButton:hover {
+  background-color: #e5e5e5;
+}
+
+/* Styles for the absence list page */
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.actionButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #FD025C;  /* Changed to match your app's theme */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actionButton:hover {
+  background-color: #d10149;  /* Darker shade for hover */
+}
+
+.actionButtonSmall {
+  padding: 0.5rem 0.75rem;
+  background-color: #FD025C;  /* Changed to match your app's theme */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actionButtonSmall:hover {
+  background-color: #d10149;  /* Darker shade for hover */
+}
+
+.tableContainer {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.errorMessage {
+  color: #e53e3e;
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  color: #38a169;
+  margin-bottom: 1rem;
+}
+
+/* Add these new styles for the DettaglioAssenza component */
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: #666;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detailLabel {
+  font-weight: 500;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.detailValue {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.badgeSuccess {
+  background-color: #e6f7ee;
+  color: #0d8050;
+  border: 1px solid #0d8050;
+}
+
+.badgeWarning {
+  background-color: #fff3e0;
+  color: #e65100;
+  border: 1px solid #e65100;
+}
+
+.badgeMalattia {
+  background-color: #e8eaf6;
+  color: #3f51b5;
+  border: 1px solid #3f51b5;
+}
+
+.badgePermesso {
+  background-color: #e0f7fa;
+  color: #00838f;
+  border: 1px solid #00838f;
+}
+
+.badgeFerie {
+  background-color: #f1f8e9;
+  color: #558b2f;
+  border: 1px solid #558b2f;
+}
+
+.badgeAltro {
+  background-color: #f5f5f5;
+  color: #616161;
+  border: 1px solid #616161;
+}
+
+.dateValue {
+  display: flex;
+  align-items: center;
+}
+
+.dateValue::before {
+  content: "📅";
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+.documentazioneContainer, .noteContainer {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.subsectionTitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.subsectionIcon {
+  margin-right: 0.5rem;
+}
+
+.documentLink {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.documentLink:hover {
+  background-color: #e0e0e0;
+  color: #FD025C;
+}
+
+.documentIcon {
+  margin-right: 0.5rem;
+}
+
+.noteContent {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1rem;
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+.codiceFiscale {
+  font-family: monospace;
+  background-color: #f5f5f5;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.warningButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background-color: #ff9800;
+  color: white;
+}
+
+.warningButton:hover {
+  background-color: #f57c00;
+}
+
+.dangerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background-color: #f44336;
+  color: white;
+}
+
+.dangerButton:hover {
+  background-color: #d32f2f;
+}
+
+/* Add these new styles for the back button */
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 1.2rem;
+  background-color: white;
+  color: #555;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+}
+
+.backButton:hover {
+  background-color: #f9f9f9;
+  color: #FD025C;
+  border-color: #FD025C;
+  box-shadow: 0 3px 6px rgba(253, 2, 92, 0.1);
+  transform: translateY(-1px);
+}
+
+.backButton:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.backIcon {
+  margin-right: 0.6rem;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.backButton:hover .backIcon {
+  transform: translateX(-3px);
+}
+
+/* Adjust the title to accommodate the back button */
+.headerActions .title {
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 0.5rem;
+}

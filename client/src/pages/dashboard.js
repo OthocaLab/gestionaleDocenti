@@ -7,6 +7,7 @@ import ImportaOrario from '../components/ImportaOrario';
 import DashboardHome from '../components/DashboardHome';
 import styles from '../styles/Dashboard.module.css';
 import GestioneDocenti from '../components/GestioneDocenti';
+import GestioneAssenze from '../components/GestioneAssenze';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
@@ -20,9 +21,34 @@ const Dashboard = () => {
     }
   }, [isLoading, isAuthenticated, router]);
 
+  // Set active tab based on query parameter
+  useEffect(() => {
+    if (router.query.tab) {
+      if (router.query.tab === 'inserisciAssenze' || router.query.tab === 'dettaglioAssenza') {
+        setActiveTab('assenze');
+      } else {
+        setActiveTab(router.query.tab);
+      }
+    }
+  }, [router.query]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    router.push({
+      pathname: '/dashboard',
+      query: { tab }
+    }, undefined, { shallow: true });
+  };
+
   const handleLogout = () => {
     logout();
     router.push('/login');
+  };
+
+  // Verifica se l'utente ha i permessi per accedere alla gestione assenze
+  const canManageAssenze = () => {
+    if (!user) return false;
+    return ['admin', 'vicepresidenza', 'ufficioPersonale'].includes(user.ruolo);
   };
 
   if (isLoading) {
@@ -48,6 +74,7 @@ const Dashboard = () => {
           {activeTab === 'docenti' && "Gestione Docenti"}
           {activeTab === 'importa' && "Importa Dati"}
           {activeTab === 'report' && "Report"}
+          {activeTab === 'assenze' && "Gestione Assenze"}
         </div>
         <div className={styles.userInfo}>
           <div className={styles.notifications}>
@@ -63,19 +90,31 @@ const Dashboard = () => {
         <nav className={styles.sidebar}>
           <ul>
             <li>
-              <a href="#" className={activeTab === 'dashboard' ? styles.active : ''} onClick={() => setActiveTab('dashboard')}>
+              <a 
+                href="#" 
+                className={activeTab === 'dashboard' ? styles.active : ''} 
+                onClick={() => handleTabChange('dashboard')}
+              >
                 <span className={styles.icon}>🏠</span>
                 <span className={styles.label}>Dashboard</span>
               </a>
             </li>
             <li>
-              <a href="#" className={activeTab === 'docenti' ? styles.active : ''} onClick={() => setActiveTab('docenti')}>
+              <a 
+                href="#" 
+                className={activeTab === 'docenti' ? styles.active : ''} 
+                onClick={() => handleTabChange('docenti')}
+              >
                 <span className={styles.icon}>👨‍🏫</span>
                 <span className={styles.label}>Elenco Docenti</span>
               </a>
             </li>
             <li>
-              <a href="#" className={activeTab === 'sostituzioni' ? styles.active : ''} onClick={() => setActiveTab('sostituzioni')}>
+              <a 
+                href="#" 
+                className={activeTab === 'sostituzioni' ? styles.active : ''} 
+                onClick={() => setActiveTab('sostituzioni')}
+              >
                 <span className={styles.icon}>🔄</span>
                 <span className={styles.label}>Sostituzioni</span>
               </a>
@@ -86,6 +125,14 @@ const Dashboard = () => {
                 <span className={styles.label}>Orari Scolastici</span>
               </a>
             </li>
+            {canManageAssenze() && (
+              <li>
+                <a href="#" className={activeTab === 'assenze' ? styles.active : ''} onClick={() => setActiveTab('assenze')}>
+                  <span className={styles.icon}>📅</span>
+                  <span className={styles.label}>Gestione Assenze</span>
+                </a>
+              </li>
+            )}
             <li>
               <a href="#" className={activeTab === 'importa' ? styles.active : ''} onClick={() => setActiveTab('importa')}>
                 <span className={styles.icon}>📥</span>
@@ -130,6 +177,10 @@ const Dashboard = () => {
             <div>
               <GestioneOrario />
             </div>
+          )}
+          
+          {activeTab === 'assenze' && (
+            <GestioneAssenze />
           )}
 
           {activeTab === 'importa' && (
