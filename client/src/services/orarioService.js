@@ -78,11 +78,22 @@ export const createOrarioLezione = async (orarioData) => {
   }
 };
 
-export const importOrario = async (orarioData) => {
+export const importOrario = async (file) => {
   try {
-    const response = await axios.post(`${API_URL}/orario/orario/import`, { orarioData }, getAuthConfig());
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // Important: Do NOT set Content-Type header when using FormData
+    // The browser will automatically set the correct boundary
+    const config = getAuthConfig();
+    
+    // Add debugging
+    console.log('FormData contents:', file.name, file.type, file.size);
+    
+    const response = await axios.post(`${API_URL}/orario/import`, formData, config);
     return response.data;
   } catch (error) {
+    console.error('Error details:', error);
     throw error.response?.data || { message: 'Errore nell\'importazione dell\'orario' };
   }
 };

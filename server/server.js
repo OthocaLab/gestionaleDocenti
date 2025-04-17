@@ -16,6 +16,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orarioRoutes = require('./routes/orarioRoutes');
 const docenteRoutes = require('./routes/docenteRoutes');
+const assenzaRoutes = require('./routes/assenzaRoutes'); // Nuova route per le assenze
 
 // Inizializza l'app Express
 const app = express();
@@ -51,6 +52,8 @@ app.use('/api/orario', orarioRoutes);
 app.use('/api/materie', materiaRoutes);
 app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
 app.use('/api/docenti', docenteRoutes);
+// Make sure the assenze routes are properly included
+app.use('/api/assenze', assenzaRoutes);
 
 // Route di base
 app.get('/', (req, res) => {
