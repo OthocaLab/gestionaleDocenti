@@ -1,0 +1,109 @@
+
+.submitButton {
+  background-color: #FD025C;  /* Changed from #4a90e2 to match your app's theme */
+  color: white;
+}
+
+.submitButton:hover {
+  background-color: #d10149;  /* Darker shade for hover */
+}
+
+.cancelButton {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.cancelButton:hover {
+  background-color: #e5e5e5;
+}
+
+/* Styles for the absence list page */
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.actionButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #FD025C;  /* Changed to match your app's theme */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actionButton:hover {
+  background-color: #d10149;  /* Darker shade for hover */
+}
+
+.actionButtonSmall {
+  padding: 0.5rem 0.75rem;
+  background-color: #FD025C;  /* Changed to match your app's theme */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actionButtonSmall:hover {
+  background-color: #d10149;  /* Darker shade for hover */
+}
+
+.tableContainer {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.errorMessage {
+  color: #e53e3e;
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  color: #38a169;
+  margin-bottom: 1rem;
+}
