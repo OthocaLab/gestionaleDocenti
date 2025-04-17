@@ -95,128 +95,159 @@ const DettaglioAssenza = ({ assenzaId }) => {
   
   return (
     <div className={styles.componentContainer}>
-      <h1 className={styles.title}>Dettaglio Assenza</h1>
+      <div className={styles.headerActions}>
+        <button 
+          className={styles.backButton}
+          onClick={() => router.push('/dashboard?tab=assenze')}
+        >
+          <span className={styles.backIcon}>←</span> Torna all'elenco
+        </button>
+        <h1 className={styles.title}>Dettaglio Assenza</h1>
+      </div>
       
       {message.text && (
-        <div className={message.type === 'success' ? styles.successMessage : styles.errorMessage}>
+        <div className={`${styles.messageBox} ${message.type === 'success' ? styles.successMessage : styles.errorMessage}`}>
+          <span className={styles.messageIcon}>
+            {message.type === 'success' ? '✓' : '⚠'}
+          </span>
           {message.text}
         </div>
       )}
       
-      <div className={styles.actionButtons}>
-        <button 
-          className={styles.actionButton}
-          onClick={() => router.push('/dashboard?tab=assenze')}
-        >
-          Torna all'Elenco
-        </button>
-      </div>
-      
       {loading ? (
-        <p>Caricamento dettagli in corso...</p>
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner}></div>
+          <p>Caricamento dettagli in corso...</p>
+        </div>
       ) : error ? (
-        <p className={styles.errorMessage}>{error}</p>
+        <div className={`${styles.messageBox} ${styles.errorMessage}`}>
+          <span className={styles.messageIcon}>⚠</span>
+          {error}
+        </div>
       ) : !assenza ? (
-        <p>Assenza non trovata.</p>
+        <div className={`${styles.messageBox} ${styles.errorMessage}`}>
+          <span className={styles.messageIcon}>⚠</span>
+          Assenza non trovata.
+        </div>
       ) : (
-        <div className={styles.form}>
-          <div className={styles.formSection}>
-            <h2 className={styles.sectionTitle}>Informazioni Docente</h2>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Nome</label>
-                <p>{assenza.docente.nome}</p>
-              </div>
+        <div className={styles.cardContainer}>
+          <div className={styles.formCard}>
+            <div className={styles.formSection}>
+              <h2 className={styles.sectionTitle}>
+                <span className={styles.sectionIcon}>👤</span>
+                Informazioni Docente
+              </h2>
               
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Cognome</label>
-                <p>{assenza.docente.cognome}</p>
+              <div className={styles.selectedDocenteCard}>
+                <div className={styles.docenteAvatarLarge}>
+                  {assenza.docente.nome.charAt(0)}{assenza.docente.cognome.charAt(0)}
+                </div>
+                <div className={styles.selectedDocenteInfo}>
+                  <h3>{assenza.docente.nome} {assenza.docente.cognome}</h3>
+                  <p>{assenza.docente.email}</p>
+                  {assenza.docente.codiceFiscale && <p className={styles.codiceFiscale}>CF: {assenza.docente.codiceFiscale}</p>}
+                </div>
               </div>
             </div>
             
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Email</label>
-                <p>{assenza.docente.email}</p>
+            <div className={styles.formSection}>
+              <h2 className={styles.sectionTitle}>
+                <span className={styles.sectionIcon}>📅</span>
+                Dettagli Assenza
+              </h2>
+              
+              <div className={styles.detailsGrid}>
+                <div className={styles.detailItem}>
+                  <div className={styles.detailLabel}>Tipo Assenza</div>
+                  <div className={styles.detailValue}>
+                    <span className={`${styles.badge} ${styles[`badge${assenza.tipoAssenza.charAt(0).toUpperCase() + assenza.tipoAssenza.slice(1)}`]}`}>
+                      {assenza.tipoAssenza.charAt(0).toUpperCase() + assenza.tipoAssenza.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className={styles.detailItem}>
+                  <div className={styles.detailLabel}>Stato</div>
+                  <div className={styles.detailValue}>
+                    <span className={`${styles.badge} ${assenza.giustificata ? styles.badgeSuccess : styles.badgeWarning}`}>
+                      {assenza.giustificata ? 'Giustificata' : 'Non giustificata'}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className={styles.detailItem}>
+                  <div className={styles.detailLabel}>Data Inizio</div>
+                  <div className={styles.detailValue}>
+                    <span className={styles.dateValue}>{formatDate(assenza.dataInizio)}</span>
+                  </div>
+                </div>
+                
+                <div className={styles.detailItem}>
+                  <div className={styles.detailLabel}>Data Fine</div>
+                  <div className={styles.detailValue}>
+                    <span className={styles.dateValue}>{formatDate(assenza.dataFine)}</span>
+                  </div>
+                </div>
               </div>
               
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Codice Fiscale</label>
-                <p>{assenza.docente.codiceFiscale}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.formSection}>
-            <h2 className={styles.sectionTitle}>Dettagli Assenza</h2>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Tipo Assenza</label>
-                <p>{assenza.tipoAssenza.charAt(0).toUpperCase() + assenza.tipoAssenza.slice(1)}</p>
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Stato</label>
-                <p>{assenza.giustificata ? 'Giustificata' : 'Non giustificata'}</p>
-              </div>
-            </div>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Data Inizio</label>
-                <p>{formatDate(assenza.dataInizio)}</p>
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Data Fine</label>
-                <p>{formatDate(assenza.dataFine)}</p>
-              </div>
-            </div>
-            
-            {assenza.documentazione && (
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Documentazione</label>
-                <p>
-                  <a href={assenza.documentazione} target="_blank" rel="noopener noreferrer">
+              {assenza.documentazione && (
+                <div className={styles.documentazioneContainer}>
+                  <h3 className={styles.subsectionTitle}>
+                    <span className={styles.subsectionIcon}>📎</span>
+                    Documentazione
+                  </h3>
+                  <a 
+                    href={assenza.documentazione} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={styles.documentLink}
+                  >
+                    <span className={styles.documentIcon}>📄</span>
                     Visualizza documentazione
                   </a>
-                </p>
-              </div>
-            )}
+                </div>
+              )}
+              
+              {assenza.note && (
+                <div className={styles.noteContainer}>
+                  <h3 className={styles.subsectionTitle}>
+                    <span className={styles.subsectionIcon}>📝</span>
+                    Note
+                  </h3>
+                  <div className={styles.noteContent}>
+                    {assenza.note}
+                  </div>
+                </div>
+              )}
+            </div>
             
-            {assenza.note && (
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Note</label>
-                <p>{assenza.note}</p>
-              </div>
-            )}
-          </div>
-          
-          <div className={styles.formActions}>
-            {!assenza.giustificata ? (
+            <div className={styles.formActions}>
+              {!assenza.giustificata ? (
+                <button 
+                  className={styles.submitButton}
+                  onClick={() => handleUpdateGiustificazione(true)}
+                >
+                  <span className={styles.buttonIcon}>✓</span>
+                  Segna come Giustificata
+                </button>
+              ) : (
+                <button 
+                  className={styles.warningButton}
+                  onClick={() => handleUpdateGiustificazione(false)}
+                >
+                  <span className={styles.buttonIcon}>⚠</span>
+                  Segna come Non Giustificata
+                </button>
+              )}
+              
               <button 
-                className={styles.actionButton}
-                onClick={() => handleUpdateGiustificazione(true)}
+                className={styles.dangerButton}
+                onClick={handleDelete}
               >
-                Segna come Giustificata
+                <span className={styles.buttonIcon}>🗑️</span>
+                Elimina Assenza
               </button>
-            ) : (
-              <button 
-                className={styles.actionButton}
-                onClick={() => handleUpdateGiustificazione(false)}
-              >
-                Segna come Non Giustificata
-              </button>
-            )}
-            
-            <button 
-              className={styles.cancelButton}
-              onClick={handleDelete}
-            >
-              Elimina Assenza
-            </button>
+            </div>
           </div>
         </div>
       )}

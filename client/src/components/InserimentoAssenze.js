@@ -88,7 +88,8 @@ const InserimentoAssenze = () => {
         tipoAssenza,
         note,
         giustificata,
-        documentazione
+        documentazione,
+        registrataDa: user._id // Aggiungiamo l'utente che registra l'assenza
       };
       
       const response = await axios.post('/api/assenze', assenzaData, {
@@ -125,169 +126,214 @@ const InserimentoAssenze = () => {
   
   return (
     <div className={styles.componentContainer}>
-      <h1 className={styles.title}>Registrazione Assenze</h1>
+      <div className={styles.headerActions}>
+        <button 
+          className={styles.backButton}
+          onClick={() => router.push('/dashboard?tab=assenze')}
+        >
+          <span className={styles.backIcon}>←</span> Torna all'elenco
+        </button>
+        <h1 className={styles.title}>Registrazione Assenze</h1>
+      </div>
       
       {message.text && (
-        <div className={`${styles.message} ${message.type === 'success' ? styles.success : styles.error}`}>
+        <div className={`${styles.messageBox} ${message.type === 'success' ? styles.successMessage : styles.errorMessage}`}>
+          <span className={styles.messageIcon}>
+            {message.type === 'success' ? '✓' : '⚠'}
+          </span>
           {message.text}
         </div>
       )}
       
-      <div className={styles.form}>
-        <div className={styles.formSection}>
-          <h2 className={styles.sectionTitle}>Ricerca Docente</h2>
-          
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Cerca docente (nome, cognome, email o codice fiscale)</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="text"
-                className={styles.input}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Inizia a digitare (minimo 3 caratteri)..."
-              />
-              
-              {isSearching && (
-                <div style={{ position: 'absolute', right: '10px', top: '10px' }}>
-                  Ricerca in corso...
-                </div>
-              )}
-              
-              {searchResults.length > 0 && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  right: 0,
-                  zIndex: 10,
-                  backgroundColor: 'white',
-                  border: '1px solid #ddd',
-                  borderRadius: '0 0 4px 4px',
-                  maxHeight: '200px',
-                  overflowY: 'auto'
-                }}>
-                  {searchResults.map((docente) => (
-                    <div
-                      key={docente._id}
-                      style={{
-                        padding: '10px',
-                        borderBottom: '1px solid #eee',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => handleSelectDocente(docente)}
-                    >
-                      {docente.nome} {docente.cognome} - {docente.email}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        {selectedDocente && (
-          <form onSubmit={handleSubmit}>
-            <div className={styles.formSection}>
-              <h2 className={styles.sectionTitle}>Dati Assenza</h2>
-              
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Data Inizio</label>
-                  <input
-                    type="date"
-                    className={styles.input}
-                    value={dataInizio}
-                    onChange={(e) => setDataInizio(e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Data Fine</label>
-                  <input
-                    type="date"
-                    className={styles.input}
-                    value={dataFine}
-                    onChange={(e) => setDataFine(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Tipo Assenza</label>
-                  <select
-                    className={styles.select}
-                    value={tipoAssenza}
-                    onChange={(e) => setTipoAssenza(e.target.value)}
-                    required
-                  >
-                    <option value="">Seleziona tipo...</option>
-                    <option value="malattia">Malattia</option>
-                    <option value="permesso">Permesso</option>
-                    <option value="ferie">Ferie</option>
-                    <option value="altro">Altro</option>
-                  </select>
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Giustificata</label>
-                  <div style={{ marginTop: '10px' }}>
-                    <input
-                      type="checkbox"
-                      id="giustificata"
-                      checked={giustificata}
-                      onChange={(e) => setGiustificata(e.target.checked)}
-                      style={{ marginRight: '8px' }}
-                    />
-                    <label htmlFor="giustificata">L'assenza è giustificata</label>
-                  </div>
-                </div>
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Documentazione (URL)</label>
+      <div className={styles.cardContainer}>
+        <div className={styles.formCard}>
+          <div className={styles.formSection}>
+            <h2 className={styles.sectionTitle}>
+              <span className={styles.sectionIcon}>🔍</span>
+              Ricerca Docente
+            </h2>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Cerca docente (nome, cognome, email o codice fiscale)</label>
+              <div className={styles.searchContainer}>
                 <input
                   type="text"
-                  className={styles.input}
-                  value={documentazione}
-                  onChange={(e) => setDocumentazione(e.target.value)}
-                  placeholder="URL del documento o certificato..."
+                  className={styles.searchInput}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Inizia a digitare (minimo 3 caratteri)..."
                 />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Note</label>
-                <textarea
-                  className={styles.textarea}
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="Inserisci eventuali note..."
-                />
+                <span className={styles.searchIcon}>🔍</span>
+                
+                {isSearching && (
+                  <div className={styles.searchingIndicator}>
+                    <div className={styles.spinner}></div>
+                    <span>Ricerca...</span>
+                  </div>
+                )}
+                
+                {searchResults.length > 0 && (
+                  <div className={styles.searchResults}>
+                    {searchResults.map((docente) => (
+                      <div
+                        key={docente._id}
+                        className={styles.searchResultItem}
+                        onClick={() => handleSelectDocente(docente)}
+                      >
+                        <div className={styles.docenteAvatar}>
+                          {docente.nome.charAt(0)}{docente.cognome.charAt(0)}
+                        </div>
+                        <div className={styles.docenteInfo}>
+                          <div className={styles.docenteName}>{docente.nome} {docente.cognome}</div>
+                          <div className={styles.docenteEmail}>{docente.email}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-            
-            <div className={styles.formActions}>
-              <button
-                type="button"
-                className={styles.cancelButton}
-                onClick={() => router.push('/dashboard?tab=assenze')}
-              >
-                Annulla
-              </button>
+          </div>
+          
+          {selectedDocente && (
+            <form onSubmit={handleSubmit}>
+              <div className={styles.formSection}>
+                <h2 className={styles.sectionTitle}>
+                  <span className={styles.sectionIcon}>📝</span>
+                  Dati Assenza
+                </h2>
+                
+                <div className={styles.selectedDocenteCard}>
+                  <div className={styles.docenteAvatarLarge}>
+                    {selectedDocente.nome.charAt(0)}{selectedDocente.cognome.charAt(0)}
+                  </div>
+                  <div className={styles.selectedDocenteInfo}>
+                    <h3>{selectedDocente.nome} {selectedDocente.cognome}</h3>
+                    <p>{selectedDocente.email}</p>
+                  </div>
+                </div>
+                
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                      <span className={styles.labelIcon}>📅</span>
+                      Data Inizio
+                    </label>
+                    <input
+                      type="date"
+                      className={styles.input}
+                      value={dataInizio}
+                      onChange={(e) => setDataInizio(e.target.value)}
+                      required
+                    />
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                      <span className={styles.labelIcon}>📅</span>
+                      Data Fine
+                    </label>
+                    <input
+                      type="date"
+                      className={styles.input}
+                      value={dataFine}
+                      onChange={(e) => setDataFine(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                      <span className={styles.labelIcon}>🏷️</span>
+                      Tipo Assenza
+                    </label>
+                    <select
+                      className={styles.select}
+                      value={tipoAssenza}
+                      onChange={(e) => setTipoAssenza(e.target.value)}
+                      required
+                    >
+                      <option value="">Seleziona tipo...</option>
+                      <option value="malattia">Malattia</option>
+                      <option value="permesso">Permesso</option>
+                      <option value="ferie">Ferie</option>
+                      <option value="altro">Altro</option>
+                    </select>
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                      <span className={styles.labelIcon}>✓</span>
+                      Giustificata
+                    </label>
+                    <div className={styles.checkboxContainer}>
+                      <input
+                        type="checkbox"
+                        id="giustificata"
+                        className={styles.checkbox}
+                        checked={giustificata}
+                        onChange={(e) => setGiustificata(e.target.checked)}
+                      />
+                      <label htmlFor="giustificata" className={styles.checkboxLabel}>
+                        L'assenza è giustificata
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <span className={styles.labelIcon}>📎</span>
+                    Documentazione (URL)
+                  </label>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={documentazione}
+                    onChange={(e) => setDocumentazione(e.target.value)}
+                    placeholder="URL del documento o certificato..."
+                  />
+                </div>
+                
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <span className={styles.labelIcon}>📝</span>
+                    Note
+                  </label>
+                  <textarea
+                    className={styles.textarea}
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="Inserisci eventuali note..."
+                    rows={4}
+                  />
+                </div>
+              </div>
               
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Registrazione in corso...' : 'Registra Assenza'}
-              </button>
-            </div>
-          </form>
-        )}
+              <div className={styles.formActions}>
+                <button
+                  type="button"
+                  className={styles.cancelButton}
+                  onClick={() => router.push('/dashboard?tab=assenze')}
+                >
+                  <span className={styles.buttonIcon}>✕</span>
+                  Annulla
+                </button>
+                
+                <button
+                  type="submit"
+                  className={styles.submitButton}
+                  disabled={isSubmitting}
+                >
+                  <span className={styles.buttonIcon}>{isSubmitting ? '⏳' : '✓'}</span>
+                  {isSubmitting ? 'Registrazione in corso...' : 'Registra Assenza'}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );
