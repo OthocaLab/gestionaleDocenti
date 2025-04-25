@@ -5,7 +5,7 @@ const path = require('path');
 
 exports.getAllClassiInsegnamento = async (req, res) => {
   try {
-    const classi = await ClasseInsegnamento.find().populate('materia');
+    const classi = await ClasseInsegnamento.find().populate('materie');
     res.status(200).json(classi);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -14,9 +14,28 @@ exports.getAllClassiInsegnamento = async (req, res) => {
 
 exports.createClasseInsegnamento = async (req, res) => {
   try {
-    const classe = new ClasseInsegnamento(req.body);
+    const { codiceClasse, descrizione, materie } = req.body;
+    
+    // Create the classe insegnamento
+    const classe = new ClasseInsegnamento({
+      codiceClasse,
+      descrizione,
+      materie: materie || []
+    });
+    
     const nuovaClasse = await classe.save();
-    res.status(201).json(nuovaClasse);
+    
+    // Update each materia with the reference to this classe
+    if (materie && materie.length > 0) {
+      await Materia.updateMany(
+        { _id: { $in: materie } },
+        { $addToSet: { classiInsegnamento: nuovaClasse._id } }
+      );
+    }
+    
+    // Return the populated classe
+    const populatedClasse = await ClasseInsegnamento.findById(nuovaClasse._id).populate('materie');
+    res.status(201).json(populatedClasse);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -24,8 +43,46 @@ exports.createClasseInsegnamento = async (req, res) => {
 
 exports.updateClasseInsegnamento = async (req, res) => {
   try {
-    const classe = await ClasseInsegnamento.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.status(200).json(classe);
+    const { materie } = req.body;
+    const classeId = req.params.id;
+    
+    // Get the current classe to check for removed materie
+    const currentClasse = await ClasseInsegnamento.findById(classeId);
+    if (!currentClasse) {
+      return res.status(404).json({ message: 'Classe di insegnamento non trovata' });
+    }
+    
+    // Update the classe
+    const updatedClasse = await ClasseInsegnamento.findByIdAndUpdate(
+      classeId,
+      req.body,
+      { new: true }
+    );
+    
+    // If materie are being updated
+    if (materie) {
+      // Remove this classe from materie that are no longer associated
+      const removedMaterie = currentClasse.materie.filter(
+        m => !materie.includes(m.toString())
+      );
+      
+      if (removedMaterie.length > 0) {
+        await Materia.updateMany(
+          { _id: { $in: removedMaterie } },
+          { $pull: { classiInsegnamento: classeId } }
+        );
+      }
+      
+      // Add this classe to newly associated materie
+      await Materia.updateMany(
+        { _id: { $in: materie } },
+        { $addToSet: { classiInsegnamento: classeId } }
+      );
+    }
+    
+    // Return the populated classe
+    const populatedClasse = await ClasseInsegnamento.findById(classeId).populate('materie');
+    res.status(200).json(populatedClasse);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -33,7 +90,22 @@ exports.updateClasseInsegnamento = async (req, res) => {
 
 exports.deleteClasseInsegnamento = async (req, res) => {
   try {
-    await ClasseInsegnamento.findByIdAndDelete(req.params.id);
+    const classeId = req.params.id;
+    const classe = await ClasseInsegnamento.findById(classeId);
+    
+    if (!classe) {
+      return res.status(404).json({ message: 'Classe di insegnamento non trovata' });
+    }
+    
+    // Remove references from all associated materie
+    await Materia.updateMany(
+      { classiInsegnamento: classeId },
+      { $pull: { classiInsegnamento: classeId } }
+    );
+    
+    // Delete the classe
+    await ClasseInsegnamento.findByIdAndDelete(classeId);
+    
     res.status(200).json({ message: 'Classe di insegnamento eliminata con successo' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -60,6 +132,9 @@ exports.importClassiInsegnamento = async (req, res) => {
     // Processa ogni elemento del JSON
     for (const item of jsonData) {
       try {
+        // Array per memorizzare gli ID delle materie
+        const materieIds = [];
+        
         // Per ogni materia nell'array materie
         for (const materiaName of item.materie) {
           // Cerca o crea la materia
@@ -76,25 +151,39 @@ exports.importClassiInsegnamento = async (req, res) => {
             });
           }
           
-          // Cerca se esiste già una classe di insegnamento con lo stesso codice
-          const existingClasse = await ClasseInsegnamento.findOne({ codiceClasse: item.codice });
+          materieIds.push(materia._id);
+        }
+        
+        // Cerca se esiste già una classe di insegnamento con lo stesso codice
+        let classeInsegnamento = await ClasseInsegnamento.findOne({ codiceClasse: item.codice });
+        
+        if (!classeInsegnamento) {
+          // Crea la classe di insegnamento con tutte le materie
+          classeInsegnamento = await ClasseInsegnamento.create({
+            codiceClasse: item.codice,
+            descrizione: item.denominazione,
+            materie: materieIds
+          });
           
-          if (!existingClasse) {
-            // Crea la classe di insegnamento
-            await ClasseInsegnamento.create({
-              codiceClasse: item.codice,
-              descrizione: item.denominazione,
-              materia: materia._id
-            });
-            
-            // Aggiorna il riferimento nella materia
-            await Materia.findByIdAndUpdate(
-              materia._id,
-              { $addToSet: { classeInsegnamento: materia._id } }
-            );
-            
-            importedCount++;
-          }
+          // Aggiorna il riferimento in ogni materia
+          await Materia.updateMany(
+            { _id: { $in: materieIds } },
+            { $addToSet: { classiInsegnamento: classeInsegnamento._id } }
+          );
+          
+          importedCount++;
+        } else {
+          // Aggiorna la classe esistente aggiungendo le nuove materie
+          await ClasseInsegnamento.findByIdAndUpdate(
+            classeInsegnamento._id,
+            { $addToSet: { materie: { $each: materieIds } } }
+          );
+          
+          // Aggiorna il riferimento in ogni materia
+          await Materia.updateMany(
+            { _id: { $in: materieIds } },
+            { $addToSet: { classiInsegnamento: classeInsegnamento._id } }
+          );
         }
       } catch (itemError) {
         errors.push(`Errore nell'importazione dell'elemento ${item.codice}: ${itemError.message}`);

@@ -18,7 +18,7 @@ const MateriaSchema = new mongoose.Schema({
   decretoMinisteriale: {
     type: String
   },
-  classeInsegnamento: [{
+  classiInsegnamento: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ClasseInsegnamento'
   }]

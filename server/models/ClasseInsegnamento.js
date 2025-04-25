@@ -11,11 +11,10 @@ const ClasseInsegnamentoSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Inserisci la descrizione della classe di insegnamento']
   },
-  materia: {
+  materie: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Materia',
-    required: true
-  }
+    ref: 'Materia'
+  }]
 });
 
 module.exports = mongoose.model('ClasseInsegnamento', ClasseInsegnamentoSchema);
