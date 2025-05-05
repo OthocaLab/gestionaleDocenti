@@ -14,4 +14,7 @@ router.put('/:id', docenteController.updateDocente);
 // DELETE /api/docenti/:id - Elimina un docente
 router.delete('/:id', docenteController.deleteDocente);
 
+// GET /api/docenti/recupero - Ottieni docenti con ore da recuperare
+router.get('/recupero', docenteController.getDocentiRecupero);
+
 module.exports = router;

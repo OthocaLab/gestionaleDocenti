@@ -30,7 +30,13 @@ const docenteSchema = new mongoose.Schema({
   classiInsegnamento: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ClasseInsegnamento'
-  }]
+  }],
+  oreRecupero: {
+    type: Number,
+    default: 0,
+    min: 0,
+    required: true
+  }
 });
 
 module.exports = mongoose.model('Docente', docenteSchema);

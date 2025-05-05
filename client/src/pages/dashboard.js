@@ -8,7 +8,7 @@ import DashboardHome from '../components/DashboardHome';
 import styles from '../styles/Dashboard.module.css';
 import GestioneDocenti from '../components/GestioneDocenti';
 import GestioneAssenze from '../components/GestioneAssenze';
-
+import RecuperoOre from '../components/RecuperoOre';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
@@ -135,6 +135,12 @@ const Dashboard = () => {
               </li>
             )}
             <li>
+              <a href="#" className={activeTab === 'recupero' ? styles.active : ''} onClick={() => setActiveTab('recupero')}>
+                <span className={styles.icon}>⏱️</span>
+                <span className={styles.label}>Recupero Ore</span>
+              </a>
+            </li>
+            <li>
               <a href="#" className={activeTab === 'importa' ? styles.active : ''} onClick={() => setActiveTab('importa')}>
                 <span className={styles.icon}>📥</span>
                 <span className={styles.label}>Importa Dati</span>
@@ -197,6 +203,12 @@ const Dashboard = () => {
               <h2>Report</h2>
               <p>Qui potrai generare report sulle sostituzioni e le ore da recuperare.</p>
               {/* Contenuto della sezione report */}
+            </div>
+          )}
+
+          {activeTab === 'recupero' && (
+            <div>
+              <RecuperoOre />
             </div>
           )}
         </main>
