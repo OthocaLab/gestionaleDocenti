@@ -82,14 +82,16 @@ Creare un file .env nella cartella server con le seguenti variabili:
 ### **Configurazione del Frontend**
 
 Navigare nella cartella del client:
-
+```
 cd ../client
 Installare le dipendenze:
 
 npm install
+```
 Creare un file .env.local nella cartella client con le seguenti variabili:
-
+```
 NEXT\_PUBLIC\_API\_URL=http://localhost:3000/api
+```
 
 ## **Avvio dell'Applicazione**
 
@@ -97,16 +99,18 @@ NEXT\_PUBLIC\_API\_URL=http://localhost:3000/api
 
 Dalla cartella server:
 
-Bash
+```Bash
 npm run dev
+```
 Il server sarà in ascolto sulla porta 3000 (o quella specificata nel file .env).
 
 ### **Avvio del Frontend**
 
 Dalla cartella client:
 
-Bash
+```Bash
 npm run dev
+```
 L'applicazione frontend sarà disponibile all'indirizzo http://localhost:3001.
 
 ## **Struttura del Progetto**
