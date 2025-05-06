@@ -854,3 +854,28 @@
   margin-bottom: 10px;
   color: #333;
 }
+
+.noResultsMessage {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+}
+
+.noResultsMessage p {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.noResultsMessage p::before {
+  content: "🔍";
+  margin-right: 10px;
+  font-size: 1.5rem;
+}

@@ -94,6 +94,75 @@ const GestioneDocenti = () => {
     });
   };
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredDocenti, setFilteredDocenti] = useState([]);
+  const [filters, setFilters] = useState({
+    minOre: '',
+    maxOre: '',
+    classe: '',
+    materia: ''
+  });
+
+  useEffect(() => {
+    applyFilters();
+  }, [docenti, searchTerm, filters]);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const applyFilters = () => {
+    let filtered = [...docenti];
+  
+    // Applica filtro di ricerca
+    if (searchTerm) {
+      filtered = filtered.filter(docente => 
+        docente.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        docente.cognome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        docente.email.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+  
+    // Applica filtro range ore
+    if (filters.minOre) {
+      filtered = filtered.filter(docente => docente.oreSettimanali >= parseInt(filters.minOre));
+    }
+    if (filters.maxOre) {
+      filtered = filtered.filter(docente => docente.oreSettimanali <= parseInt(filters.maxOre));
+    }
+  
+    // Applica filtro classe
+    if (filters.classe) {
+      filtered = filtered.filter(docente => 
+        docente.classiInsegnamento && docente.classiInsegnamento.some(classe => 
+          typeof classe === 'object' && classe.nome && 
+          classe.nome.toLowerCase().includes(filters.classe.toLowerCase())
+        )
+      );
+    }
+  
+    // Applica filtro materia
+    if (filters.materia) {
+      filtered = filtered.filter(docente => 
+        docente.classiInsegnamento && docente.classiInsegnamento.some(classe => 
+          typeof classe === 'object' && classe.materia && classe.materia.descrizione &&
+          classe.materia.descrizione.toLowerCase().includes(filters.materia.toLowerCase())
+        )
+      );
+    }
+  
+    setFilteredDocenti(filtered);
+  };
+
+  // Modifica la parte del render per includere gli handler
   return (
     <div className={styles.docentiContainer}>
       {/* Stats Cards con nuovo stile */}
@@ -151,7 +220,50 @@ const GestioneDocenti = () => {
                 type="text" 
                 placeholder="Cerca docente..." 
                 className={styles.searchInput}
+                value={searchTerm}
+                onChange={handleSearchChange}
               />
+            </div>
+            <div className={styles.filters}>
+              <div className={styles.filterGroup}>
+                <label>Range Ore:</label>
+                <input
+                  type="number"
+                  name="minOre"
+                  placeholder="Min"
+                  value={filters.minOre}
+                  onChange={handleFilterChange}
+                />
+                <input
+                  type="number"
+                  name="maxOre"
+                  placeholder="Max"
+                  value={filters.maxOre}
+                  onChange={handleFilterChange}
+                />
+              </div>
+              
+              <div className={styles.filterGroup}>
+                <label>Classe:</label>
+                <input
+                  type="text"
+                  name="classe"
+                  placeholder="es. 1A"
+                  value={filters.classe}
+                  onChange={handleFilterChange}
+                />
+              </div>
+              
+              <div className={styles.filterGroup}>
+                <label>Materia:</label>
+                <input
+                  type="text"
+                  name="materia"
+                  placeholder="es. Matematica"
+                  value={filters.materia}
+                  onChange={handleFilterChange}
+                />
+              </div>
             </div>
             <button 
               className={`${styles.addButton} ${showForm ? styles.active : ''}`}
@@ -315,51 +427,66 @@ const GestioneDocenti = () => {
           </div>
         ) : (
           <div className={styles.tableContainer}>
-            <table className={styles.dataTable}>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Cognome</th>
-                  <th>Email</th>
-                  <th>Telefono</th>
-                  <th>Ore Settimanali</th>
-                  <th>Classi Insegnamento</th>
-                  <th style={{ textAlign: 'center', minWidth: '300px' }}>Azioni</th>
-                </tr>
-              </thead>
-              <tbody>
-                {docenti.map((docente) => (
-                  <tr key={docente._id}>
-                    <td>{docente.nome}</td>
-                    <td>{docente.cognome}</td>
-                    <td>{docente.email}</td>
-                    <td>{docente.telefono || '-'}</td>
-                    <td>{docente.oreSettimanali || 18}</td>
-                    <td>
-                      {docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
-                        ? docente.classiInsegnamento.map(classe => 
-                            typeof classe === 'object' ? classe.nome || classe.descrizione : 'Classe ID: ' + classe
-                          ).join(', ')
-                        : '-'
-                      }
-                    </td>
-                    <td>
-                      <div className={styles.actionButtons}>
-                        <button className={`${styles.actionButton} ${styles.editButton}`}>
-                          ✏️ Modifica
-                        </button>
-                        <button className={`${styles.actionButton} ${styles.deleteButton}`}>
-                          🗑️ Elimina
-                        </button>
-                        <button className={`${styles.actionButton} ${styles.scheduleButton}`}>
-                          📅 Orario
-                        </button>
-                      </div>
-                    </td>
+            {filteredDocenti.length > 0 ? (
+              <table className={styles.dataTable}>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Email</th>
+                    <th>Telefono</th>
+                    <th>Classi</th>
+                    <th>Materie</th>
+                    <th>Ore da Recuperare</th>
+                    <th style={{ textAlign: 'center', minWidth: '300px' }}>Azioni</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredDocenti.map((docente) => (
+                    <tr key={docente._id}>
+                      <td>{docente.nome}</td>
+                      <td>{docente.cognome}</td>
+                      <td>{docente.email}</td>
+                      <td>{docente.telefono || '-'}</td>
+                      <td>
+                        {docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
+                          ? docente.classiInsegnamento.map(classe => 
+                              typeof classe === 'object' ? classe.nome : '-'
+                            ).join(', ')
+                          : '-'
+                        }
+                      </td>
+                      <td>
+                        {docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
+                          ? docente.classiInsegnamento.map(classe => 
+                              typeof classe === 'object' && classe.materia ? classe.materia.descrizione : '-'
+                            ).filter((value, index, self) => self.indexOf(value) === index).join(', ')
+                          : '-'
+                        }
+                      </td>
+                      <td>{docente.oreRecupero || 0} ore</td>
+                      <td>
+                        <div className={styles.actionButtons}>
+                          <button className={`${styles.actionButton} ${styles.editButton}`}>
+                            ✏️ Modifica
+                          </button>
+                          <button className={`${styles.actionButton} ${styles.deleteButton}`}>
+                            🗑️ Elimina
+                          </button>
+                          <button className={`${styles.actionButton} ${styles.scheduleButton}`}>
+                            📅 Orario
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className={styles.noResultsMessage}>
+                <p>Nessun docente trovato</p>
+              </div>
+            )}
           </div>
         )}
       </div>

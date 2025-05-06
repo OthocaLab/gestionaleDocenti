@@ -5,6 +5,7 @@ import { getAllDocenti } from '../services/docenteService';
 
 const RecuperoOre = () => {
   const [docenti, setDocenti] = useState([]);
+  const [docentiNonFiltrati, setDocentiNonFiltrati] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filtri, setFiltri] = useState({
@@ -13,6 +14,7 @@ const RecuperoOre = () => {
     classe: '',
     materia: ''
   });
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchDocenti();
@@ -22,7 +24,9 @@ const RecuperoOre = () => {
     try {
       setLoading(true);
       const response = await getAllDocenti();
-      setDocenti(Array.isArray(response.data) ? response.data : []);
+      const docentiData = Array.isArray(response.data) ? response.data : [];
+      setDocentiNonFiltrati(docentiData);
+      setDocenti(docentiData);
       setLoading(false);
     } catch (err) {
       setError('Errore nel caricamento dei docenti');
@@ -38,8 +42,57 @@ const RecuperoOre = () => {
     }));
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   const applicaFiltri = () => {
-    fetchDocenti();
+    let docentiFiltered = [...docentiNonFiltrati];
+    
+    // Filtra per termine di ricerca
+    if (searchTerm.trim() !== '') {
+      const searchLower = searchTerm.toLowerCase();
+      docentiFiltered = docentiFiltered.filter(docente => 
+        docente.nome.toLowerCase().includes(searchLower) || 
+        docente.cognome.toLowerCase().includes(searchLower) || 
+        docente.email.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Filtra per range di ore
+    if (filtri.minOre !== '') {
+      docentiFiltered = docentiFiltered.filter(docente => 
+        (docente.oreRecupero || 0) >= parseInt(filtri.minOre)
+      );
+    }
+    
+    if (filtri.maxOre !== '') {
+      docentiFiltered = docentiFiltered.filter(docente => 
+        (docente.oreRecupero || 0) <= parseInt(filtri.maxOre)
+      );
+    }
+    
+    // Filtra per classe
+    if (filtri.classe !== '') {
+      const classeLower = filtri.classe.toLowerCase();
+      docentiFiltered = docentiFiltered.filter(docente => 
+        docente.classiInsegnamento?.some(c => 
+          c.nome.toLowerCase().includes(classeLower)
+        )
+      );
+    }
+    
+    // Filtra per materia
+    if (filtri.materia !== '') {
+      const materiaLower = filtri.materia.toLowerCase();
+      docentiFiltered = docentiFiltered.filter(docente => 
+        docente.classiInsegnamento?.some(c => 
+          c.materia?.nome.toLowerCase().includes(materiaLower)
+        )
+      );
+    }
+    
+    setDocenti(docentiFiltered);
   };
 
   const azzeraFiltri = () => {
@@ -49,7 +102,8 @@ const RecuperoOre = () => {
       classe: '',
       materia: ''
     });
-    fetchDocenti();
+    setSearchTerm('');
+    setDocenti(docentiNonFiltrati);
   };
 
   if (loading) {
@@ -97,6 +151,8 @@ const RecuperoOre = () => {
                 type="text"
                 placeholder="Cerca docente..."
                 className={styles.searchInput}
+                value={searchTerm}
+                onChange={handleSearchChange}
               />
               <span className={styles.searchIcon}>🔍</span>
             </div>
