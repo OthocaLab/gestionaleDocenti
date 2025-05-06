@@ -478,15 +478,38 @@ async function processImportAsync(filePath, user) {
           for (let k = 0; k < lezioni.length; k++) {
             const lezione = lezioni[k];
             try {
-              if (!lezione.giorno || !lezione.ora || !lezione.classe || !lezione.materia) {
+              // Controlla i dati obbligatori, ma permetti classe e aula vuoti se è disponibilità
+              if (!lezione.giorno || !lezione.ora || !lezione.materia) {
                 stats.errors.push(`Dati lezione incompleti per docente ${codiceDocente}`);
                 console.log(`Lezione ${k + 1} saltata: dati incompleti`);
                 continue; // Salta questa lezione
               }
               
-              // Normalizzazione dell'aula
-              const aula = lezione.aula && lezione.aula.trim() !== '' ? lezione.aula.trim() : 'N/D';
-              console.log(`Lezione ${k + 1}/${lezioni.length}: ${lezione.giorno} ${lezione.ora} - Classe: ${lezione.classe} - Aula: ${aula} - Materia: ${lezione.materia}`);
+              // Gestisci diversi casi:
+              // 1. Disponibilità: permette classe e aula vuoti
+              // 2. Lezione normale ma con aula o classe vuota: usa valori di default
+              const isDisponibilita = lezione.materia === "DISP";
+              const hasClasse = lezione.classe && lezione.classe.trim() !== '';
+              const hasAula = lezione.aula && lezione.aula.trim() !== '';
+              
+              // Per lezioni normali, deve esserci almeno la classe o l'aula
+              if (!isDisponibilita && !hasClasse && !hasAula) {
+                stats.errors.push(`Dati lezione incompleti per docente ${codiceDocente}: mancano sia classe che aula`);
+                console.log(`Lezione ${k + 1} saltata: mancano sia classe che aula per lezione normale`);
+                continue; // Salta questa lezione se è normale ma mancano sia classe che aula
+              }
+              
+              // Normalizzazione dell'aula e classe
+              let aula, classeNome;
+              if (isDisponibilita) {
+                aula = 'Disponibilità';
+                classeNome = '';
+              } else {
+                aula = hasAula ? lezione.aula.trim() : 'N/D';
+                classeNome = hasClasse ? lezione.classe.trim() : 'N/D';
+              }
+              
+              console.log(`Lezione ${k + 1}/${lezioni.length}: ${lezione.giorno} ${lezione.ora} - ${isDisponibilita ? 'Disponibilità' : ('Classe: ' + classeNome + ' - Aula: ' + aula)} - Materia: ${lezione.materia}`);
               
               // Trova o crea la materia con gestione eccezioni
               let materia;
@@ -523,51 +546,87 @@ async function processImportAsync(filePath, user) {
               
               // Estrai anno e sezione dal nome della classe
               let anno = 1;
-              let sezione = lezione.classe;
-              
-              if (lezione.classe.length >= 2) {
-                const match = lezione.classe.match(/^([1-5])([A-Z].*)$/);
-                if (match) {
-                  anno = parseInt(match[1]);
-                  sezione = match[2];
-                }
-              }
-              
-              // Trova o crea la classe con gestione eccezioni
+              let sezione = classeNome;
               let classe;
-              try {
-                // Trova o crea la classe usando upsert per evitare duplicati
-                const classeResult = await ClasseScolastica.findOneAndUpdate(
-                  {
-                    anno: anno,
-                    sezione: sezione
-                  },
-                  {
-                    $setOnInsert: {
-                      anno: anno,
-                      sezione: sezione,
-                      aula: aula,
-                      indirizzo: 'Da definire'
-                    }
-                  },
-                  {
-                    new: true,
-                    upsert: true // Crea se non esiste
+              
+              // Se è una disponibilità o la classe non è specificata ma abbiamo l'aula, non serve cercare o creare una classe reale
+              if (isDisponibilita || (!hasClasse && hasAula)) {
+                console.log(`Lezione senza classe reale: ${isDisponibilita ? 'disponibilità' : 'solo aula specificata'}`);
+                
+                // Per le lezioni con aula ma senza classe, creiamo una classe virtuale solo per scopi di organizzazione
+                if (!isDisponibilita && !hasClasse && hasAula) {
+                  try {
+                    // Usa l'aula come identificatore per una classe virtuale
+                    const classeResult = await ClasseScolastica.findOneAndUpdate(
+                      {
+                        anno: 0, // 0 indica classe virtuale
+                        sezione: `AULA_${aula}`
+                      },
+                      {
+                        $setOnInsert: {
+                          anno: 0,
+                          sezione: `AULA_${aula}`,
+                          aula: aula,
+                          indirizzo: 'Classe Virtuale'
+                        }
+                      },
+                      {
+                        new: true,
+                        upsert: true
+                      }
+                    );
+                    classe = classeResult;
+                    console.log(`Classe virtuale creata per aula ${aula}: ${classe._id}`);
+                  } catch (error) {
+                    console.error(`Errore creazione classe virtuale per aula ${aula}:`, error.message);
+                    // Continuiamo comunque, non è critico
                   }
-                );
-                
-                classe = classeResult;
-                console.log(`Classe: ${classe.anno}${classe.sezione} (${classe._id})`);
-                
-                // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
-                if (stats.newClasses === 0) {
-                  stats.newClasses++;
                 }
-              } catch (error) {
-                console.error(`Errore classe ${anno}${sezione}:`, error.message);
-                stats.errors.push(`Errore classe ${anno}${sezione}: ${error.message}`);
-                console.log(`Lezione ${k + 1} saltata per errore nella classe`);
-                continue; // Salta questa lezione se c'è un errore con la classe
+              } else {
+                // Gestione normale delle classi
+                if (classeNome.length >= 2) {
+                  const match = classeNome.match(/^([1-5])([A-Z].*)$/);
+                  if (match) {
+                    anno = parseInt(match[1]);
+                    sezione = match[2];
+                  }
+                }
+                
+                // Trova o crea la classe con gestione eccezioni
+                try {
+                  // Trova o crea la classe usando upsert per evitare duplicati
+                  const classeResult = await ClasseScolastica.findOneAndUpdate(
+                    {
+                      anno: anno,
+                      sezione: sezione
+                    },
+                    {
+                      $setOnInsert: {
+                        anno: anno,
+                        sezione: sezione,
+                        aula: aula !== 'N/D' ? aula : 'N/D',
+                        indirizzo: 'Da definire'
+                      }
+                    },
+                    {
+                      new: true,
+                      upsert: true // Crea se non esiste
+                    }
+                  );
+                  
+                  classe = classeResult;
+                  console.log(`Classe: ${classe.anno}${classe.sezione} (${classe._id})`);
+                  
+                  // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
+                  if (stats.newClasses === 0) {
+                    stats.newClasses++;
+                  }
+                } catch (error) {
+                  console.error(`Errore classe ${anno}${sezione}:`, error.message);
+                  stats.errors.push(`Errore classe ${anno}${sezione}: ${error.message}`);
+                  console.log(`Lezione ${k + 1} saltata per errore nella classe`);
+                  continue; // Salta questa lezione se c'è un errore con la classe
+                }
               }
               
               // Calcola orario inizio e fine
@@ -594,24 +653,30 @@ async function processImportAsync(filePath, user) {
                   ora: getOraNumber(oraInizio),
                   oraInizio: oraInizio,
                   oraFine: oraFine,
-                  aula: aula // Ora utilizziamo il valore dell'aula normalizzato
+                  aula: aula, // Ora utilizziamo il valore dell'aula normalizzato
+                  isDisponibilita: isDisponibilita // Imposta il flag di disponibilità
                 });
                 
                 const savedOrario = await nuovoOrario.save();
                 console.log(`Orario creato: ${savedOrario._id} per ${giornoMap[lezione.giorno] || lezione.giorno} ora ${getOraNumber(oraInizio)}`);
                 
-                // Aggiorna la classe con il riferimento alla lezione
-                const updateResult = await ClasseScolastica.findByIdAndUpdate(
-                  classe._id,
-                  { 
-                    $addToSet: { orarioLezioni: nuovoOrario._id },
-                    // Se non è già impostata un'aula per la classe, la impostiamo
-                    $set: { 
-                      aula: classe.aula === 'N/D' && aula !== 'N/D' ? aula : classe.aula 
+                // Se è una disponibilità non deve essere collegata a una classe
+                if (!isDisponibilita) {
+                  // Aggiorna la classe con il riferimento alla lezione
+                  const updateResult = await ClasseScolastica.findByIdAndUpdate(
+                    classe._id,
+                    { 
+                      $addToSet: { orarioLezioni: nuovoOrario._id },
+                      // Se non è già impostata un'aula per la classe, la impostiamo
+                      $set: { 
+                        aula: classe.aula === 'N/D' && aula !== 'N/D' ? aula : classe.aula 
+                      }
                     }
-                  }
-                );
-                console.log(`Classe ${classe._id} aggiornata con orario ${nuovoOrario._id}`);
+                  );
+                  console.log(`Classe ${classe._id} aggiornata con orario ${nuovoOrario._id}`);
+                } else {
+                  console.log(`Orario di disponibilità ${nuovoOrario._id} non collegato a classi`);
+                }
                 
                 stats.updatedSchedules++;
               } catch (error) {
