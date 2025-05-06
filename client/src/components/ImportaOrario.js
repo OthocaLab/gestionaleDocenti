@@ -58,7 +58,16 @@ const ImportaOrario = () => {
       // Invia il file direttamente al server
       const response = await importOrario(file);
       
-      setMessage(`Orario importato con successo! ${response.updatedSchedules} orari importati, ${response.newClasses} nuove classi, ${response.insertedTeachers} nuovi docenti, ${response.newSubjects} nuove materie.`);
+      if (response.updatedSchedules !== undefined) {
+        // Risposta vecchia API che contiene le statistiche complete
+        setMessage(`Orario importato con successo! ${response.updatedSchedules} orari importati, ${response.newClasses} nuove classi, ${response.insertedTeachers} nuovi docenti, ${response.newSubjects} nuove materie.`);
+      } else {
+        // Risposta nuova API asincrona
+        setMessage(`File ricevuto correttamente. L'importazione continua in background sul server. 
+          I dati saranno disponibili a breve. L'operazione potrebbe richiedere alcuni minuti 
+          per file di grandi dimensioni.`);
+      }
+      
       setFile(null);
       // Reset file input
       document.getElementById('orarioFile').value = '';

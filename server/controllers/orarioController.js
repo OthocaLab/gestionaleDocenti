@@ -281,33 +281,68 @@ exports.importaOrari = async (req, res) => {
         message: 'No file uploaded' 
       });
     }
-    
+
     const filePath = req.file.path;
     
+    // Rispondi immediatamente al client per evitare timeout
+    res.status(200).json({
+      success: true,
+      message: 'File ricevuto, elaborazione in corso...',
+      file: {
+        filename: req.file.filename,
+        originalname: req.file.originalname,
+        size: req.file.size
+      }
+    });
+    
+    // Continua l'elaborazione in background
+    processImportAsync(filePath, req.user).catch(err => {
+      console.error('Errore durante l\'elaborazione asincrona:', err);
+    });
+    
+  } catch (error) {
+    console.error('Error during schedule import:', error);
+    
+    // Assicurati di eliminare il file temporaneo in caso di errore
+    if (req.file && req.file.path) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (e) {
+        console.error('Error deleting temporary file:', e);
+      }
+    }
+    
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred during import',
+      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    });
+  }
+};
+
+// Funzione asincrona per elaborare l'import in background
+async function processImportAsync(filePath, user) {
+  try {
     // Leggi il file JSON
     let orariData;
     try {
-      // Leggi il file JSON in modo più efficiente (usando stream se necessario per file molto grandi)
       const fileContent = fs.readFileSync(filePath, 'utf8');
       orariData = JSON.parse(fileContent);
+      console.log(`File JSON letto correttamente, contiene ${orariData.orari?.length || 0} docenti`);
     } catch (error) {
       console.error('Error reading JSON file:', error);
-      // Elimina il file temporaneo in caso di errore
-      fs.unlinkSync(filePath);
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid JSON file',
-        error: process.env.NODE_ENV === 'development' ? error.message : {}
-      });
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+      return; // Questo return è necessario perché non abbiamo i dati per procedere
     }
     
     if (!orariData || !orariData.orari || !Array.isArray(orariData.orari)) {
-      // Elimina il file temporaneo
-      fs.unlinkSync(filePath);
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid data format. Expected { orari: [...] }'
-      });
+      console.error('Invalid data format. Expected { orari: [...] }');
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+      return; // Questo return è necessario perché il formato non è valido
     }
     
     // Statistiche per l'importazione
@@ -347,22 +382,28 @@ exports.importaOrari = async (req, res) => {
       return `${sanitizedCode}@temp.scuola.it`;
     };
     
-    // Elabora i dati degli orari utilizzando batch processing
-    const BATCH_SIZE = 10; // Elabora 10 docenti alla volta
+    // Processo più piccoli batch con pause tra loro
+    const BATCH_SIZE = 1; // Elaboriamo un docente alla volta per garantire il funzionamento
     const professori = orariData.orari;
+    
+    console.log(`Inizio elaborazione di ${professori.length} docenti in batch di ${BATCH_SIZE}`);
     
     for (let i = 0; i < professori.length; i += BATCH_SIZE) {
       const batch = professori.slice(i, i + BATCH_SIZE);
+      console.log(`Elaborazione batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(professori.length / BATCH_SIZE)}, ${batch.length} docenti`);
       
-      // Elabora ogni batch in parallelo ma con un limite al parallelismo
-      await Promise.all(batch.map(async (professore) => {
+      // Elaborazione sequenziale per evitare troppe operazioni simultanee
+      for (let j = 0; j < batch.length; j++) {
+        const professore = batch[j];
         try {
+          console.log(`Elaborazione docente ${i + j + 1}/${professori.length}: ${professore.professore}`);
           stats.processedTeachers++;
           const codiceDocente = professore.professore;
           
           if (!codiceDocente) {
             stats.errors.push(`Teacher record is missing 'professore' field`);
-            return; // Salta questo record
+            console.log(`Docente ${i + j + 1} saltato: manca il campo professore`);
+            continue; // Salta questo record, ma continua con gli altri
           }
           
           // Cerca o crea docente
@@ -381,7 +422,7 @@ exports.importaOrari = async (req, res) => {
               oreRecupero: 0
             };
             
-            console.log(`Elaborazione docente: ${codiceDocente}`, docenteData);
+            console.log(`Dati docente: ${codiceDocente}`, JSON.stringify(docenteData).substring(0, 100) + '...');
             
             // Trova il docente esistente
             let existingDocente = await Docente.findOne({
@@ -411,204 +452,221 @@ exports.importaOrari = async (req, res) => {
               
               docente = await existingDocente.save();
               stats.updatedTeachers++;
-              console.log(`Docente aggiornato: ${docente.nome} ${docente.cognome}`);
+              console.log(`Docente aggiornato: ${docente.nome} ${docente.cognome} (${docente._id})`);
             } else {
               // Crea un nuovo docente
               docente = await Docente.create(docenteData);
               stats.insertedTeachers++;
-              console.log(`Nuovo docente creato: ${docente.nome} ${docente.cognome}`);
+              console.log(`Nuovo docente creato: ${docente.nome} ${docente.cognome} (${docente._id})`);
             }
             
             // Rimuovi gli orari esistenti per il docente
-            await OrarioLezioni.deleteMany({ docente: docente._id });
+            const deletedCount = await OrarioLezioni.deleteMany({ docente: docente._id });
+            console.log(`Rimossi ${deletedCount.deletedCount} orari esistenti per docente ${docente._id}`);
             
           } catch (error) {
-            console.error(`Errore creazione/aggiornamento docente ${codiceDocente}:`, error.message);
+            console.error(`Errore docente ${codiceDocente}:`, error.message);
             stats.errors.push(`Errore docente ${codiceDocente}: ${error.message}`);
-            return; // Salta questo professore in caso di errore
+            console.log(`Docente ${i + j + 1} saltato per errore, continuiamo con il prossimo`);
+            continue; // Salta questo professore in caso di errore ma continua con gli altri
           }
           
           // Itera sulle lezioni del professore
           const lezioni = professore.lezioni || [];
+          console.log(`Elaborazione di ${lezioni.length} lezioni per docente ${docente.codiceDocente}`);
           
-          for (const lezione of lezioni) {
-            if (!lezione.giorno || !lezione.ora || !lezione.classe || !lezione.materia) {
-              stats.errors.push(`Dati lezione incompleti per docente ${codiceDocente}`);
-              continue; // Salta questa lezione
-            }
-            
-            // Normalizzazione dell'aula
-            const aula = lezione.aula && lezione.aula.trim() !== '' ? lezione.aula.trim() : 'N/D';
-            console.log(`Lezione: ${lezione.giorno} ${lezione.ora} - Classe: ${lezione.classe} - Aula: ${aula} - Materia: ${lezione.materia}`);
-            
-            // Trova o crea la materia
-            let materia;
+          for (let k = 0; k < lezioni.length; k++) {
+            const lezione = lezioni[k];
             try {
-              // Trova o crea la materia usando upsert per evitare duplicati
-              const materiaResult = await Materia.findOneAndUpdate(
-                { codiceMateria: lezione.materia },
-                {
-                  $setOnInsert: {
-                    codiceMateria: lezione.materia,
-                    descrizione: lezione.materia,
-                    coloreMateria: '#' + Math.floor(Math.random()*16777215).toString(16) // Colore casuale
+              if (!lezione.giorno || !lezione.ora || !lezione.classe || !lezione.materia) {
+                stats.errors.push(`Dati lezione incompleti per docente ${codiceDocente}`);
+                console.log(`Lezione ${k + 1} saltata: dati incompleti`);
+                continue; // Salta questa lezione
+              }
+              
+              // Normalizzazione dell'aula
+              const aula = lezione.aula && lezione.aula.trim() !== '' ? lezione.aula.trim() : 'N/D';
+              console.log(`Lezione ${k + 1}/${lezioni.length}: ${lezione.giorno} ${lezione.ora} - Classe: ${lezione.classe} - Aula: ${aula} - Materia: ${lezione.materia}`);
+              
+              // Trova o crea la materia con gestione eccezioni
+              let materia;
+              try {
+                // Trova o crea la materia usando upsert per evitare duplicati
+                const materiaResult = await Materia.findOneAndUpdate(
+                  { codiceMateria: lezione.materia },
+                  {
+                    $setOnInsert: {
+                      codiceMateria: lezione.materia,
+                      descrizione: lezione.materia,
+                      coloreMateria: '#' + Math.floor(Math.random()*16777215).toString(16) // Colore casuale
+                    }
+                  },
+                  {
+                    new: true,
+                    upsert: true // Crea se non esiste
                   }
-                },
-                {
-                  new: true,
-                  upsert: true // Crea se non esiste
+                );
+                
+                materia = materiaResult;
+                console.log(`Materia: ${materia.codiceMateria} (${materia._id})`);
+                
+                // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
+                if (stats.newSubjects === 0) {
+                  stats.newSubjects++;
                 }
-              );
-              
-              materia = materiaResult;
-              
-              // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
-              if (stats.newSubjects === 0) {
-                stats.newSubjects++;
+              } catch (error) {
+                console.error(`Errore materia ${lezione.materia}:`, error.message);
+                stats.errors.push(`Errore materia ${lezione.materia}: ${error.message}`);
+                console.log(`Lezione ${k + 1} saltata per errore nella materia`);
+                continue; // Salta questa lezione se c'è un errore con la materia
               }
-            } catch (error) {
-              console.error(`Errore creazione materia ${lezione.materia}:`, error.message);
-              stats.errors.push(`Errore creazione materia ${lezione.materia}: ${error.message}`);
-              continue; // Salta questa lezione se c'è un errore con la materia
-            }
-            
-            // Estrai anno e sezione dal nome della classe
-            let anno = 1;
-            let sezione = lezione.classe;
-            
-            if (lezione.classe.length >= 2) {
-              const match = lezione.classe.match(/^([1-5])([A-Z].*)$/);
-              if (match) {
-                anno = parseInt(match[1]);
-                sezione = match[2];
+              
+              // Estrai anno e sezione dal nome della classe
+              let anno = 1;
+              let sezione = lezione.classe;
+              
+              if (lezione.classe.length >= 2) {
+                const match = lezione.classe.match(/^([1-5])([A-Z].*)$/);
+                if (match) {
+                  anno = parseInt(match[1]);
+                  sezione = match[2];
+                }
               }
-            }
-            
-            // Trova o crea la classe
-            let classe;
-            try {
-              // Trova o crea la classe usando upsert per evitare duplicati
-              const classeResult = await ClasseScolastica.findOneAndUpdate(
-                {
-                  anno: anno,
-                  sezione: sezione
-                },
-                {
-                  $setOnInsert: {
+              
+              // Trova o crea la classe con gestione eccezioni
+              let classe;
+              try {
+                // Trova o crea la classe usando upsert per evitare duplicati
+                const classeResult = await ClasseScolastica.findOneAndUpdate(
+                  {
                     anno: anno,
-                    sezione: sezione,
-                    aula: aula,
-                    indirizzo: 'Da definire'
+                    sezione: sezione
+                  },
+                  {
+                    $setOnInsert: {
+                      anno: anno,
+                      sezione: sezione,
+                      aula: aula,
+                      indirizzo: 'Da definire'
+                    }
+                  },
+                  {
+                    new: true,
+                    upsert: true // Crea se non esiste
                   }
-                },
-                {
-                  new: true,
-                  upsert: true // Crea se non esiste
+                );
+                
+                classe = classeResult;
+                console.log(`Classe: ${classe.anno}${classe.sezione} (${classe._id})`);
+                
+                // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
+                if (stats.newClasses === 0) {
+                  stats.newClasses++;
                 }
-              );
+              } catch (error) {
+                console.error(`Errore classe ${anno}${sezione}:`, error.message);
+                stats.errors.push(`Errore classe ${anno}${sezione}: ${error.message}`);
+                console.log(`Lezione ${k + 1} saltata per errore nella classe`);
+                continue; // Salta questa lezione se c'è un errore con la classe
+              }
               
-              classe = classeResult;
+              // Calcola orario inizio e fine
+              let oraInizio = lezione.ora;
+              let oraFine = '';
               
-              // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
-              if (stats.newClasses === 0) {
-                stats.newClasses++;
+              // Aggiungi 60 minuti all'ora di inizio per ottenere l'ora di fine
+              if (oraInizio.includes(':')) {
+                const [ore, minuti] = oraInizio.split(':').map(Number);
+                const dataInizio = new Date();
+                dataInizio.setHours(ore, minuti);
+                const dataFine = new Date(dataInizio.getTime() + 60 * 60 * 1000);
+                oraFine = `${dataFine.getHours()}:${dataFine.getMinutes().toString().padStart(2, '0')}`;
+              } else {
+                oraFine = oraInizio; // Fallback se il formato non è corretto
+              }
+              
+              // Crea il nuovo record di orario
+              try {
+                const nuovoOrario = new OrarioLezioni({
+                  docente: docente._id,
+                  materia: materia._id,
+                  giornoSettimana: giornoMap[lezione.giorno] || lezione.giorno,
+                  ora: getOraNumber(oraInizio),
+                  oraInizio: oraInizio,
+                  oraFine: oraFine,
+                  aula: aula // Ora utilizziamo il valore dell'aula normalizzato
+                });
+                
+                const savedOrario = await nuovoOrario.save();
+                console.log(`Orario creato: ${savedOrario._id} per ${giornoMap[lezione.giorno] || lezione.giorno} ora ${getOraNumber(oraInizio)}`);
+                
+                // Aggiorna la classe con il riferimento alla lezione
+                const updateResult = await ClasseScolastica.findByIdAndUpdate(
+                  classe._id,
+                  { 
+                    $addToSet: { orarioLezioni: nuovoOrario._id },
+                    // Se non è già impostata un'aula per la classe, la impostiamo
+                    $set: { 
+                      aula: classe.aula === 'N/D' && aula !== 'N/D' ? aula : classe.aula 
+                    }
+                  }
+                );
+                console.log(`Classe ${classe._id} aggiornata con orario ${nuovoOrario._id}`);
+                
+                stats.updatedSchedules++;
+              } catch (error) {
+                console.error(`Errore orario per ${codiceDocente}:`, error.message);
+                stats.errors.push(`Errore orario per ${codiceDocente}: ${error.message}`);
+                console.log(`Lezione ${k + 1} saltata per errore nell'orario`);
+                continue; // Salta questa lezione in caso di errore
               }
             } catch (error) {
-              console.error(`Errore creazione classe ${anno}${sezione}:`, error.message);
-              stats.errors.push(`Errore creazione classe ${anno}${sezione}: ${error.message}`);
-              continue; // Salta questa lezione se c'è un errore con la classe
+              console.error(`Errore elaborazione lezione ${k + 1}:`, error.message);
+              stats.errors.push(`Errore lezione ${k + 1}: ${error.message}`);
+              console.log(`Lezione ${k + 1} saltata per errore generico`);
+              // Continua con la prossima lezione
             }
-            
-            // Calcola orario inizio e fine
-            let oraInizio = lezione.ora;
-            let oraFine = '';
-            
-            // Aggiungi 60 minuti all'ora di inizio per ottenere l'ora di fine
-            if (oraInizio.includes(':')) {
-              const [ore, minuti] = oraInizio.split(':').map(Number);
-              const dataInizio = new Date();
-              dataInizio.setHours(ore, minuti);
-              const dataFine = new Date(dataInizio.getTime() + 60 * 60 * 1000);
-              oraFine = `${dataFine.getHours()}:${dataFine.getMinutes().toString().padStart(2, '0')}`;
-            } else {
-              oraFine = oraInizio; // Fallback se il formato non è corretto
-            }
-            
-            // Crea il nuovo record di orario
-            try {
-              const nuovoOrario = new OrarioLezioni({
-                docente: docente._id,
-                materia: materia._id,
-                giornoSettimana: giornoMap[lezione.giorno] || lezione.giorno,
-                ora: getOraNumber(oraInizio),
-                oraInizio: oraInizio,
-                oraFine: oraFine,
-                aula: aula // Ora utilizziamo il valore dell'aula normalizzato
-              });
-              
-              await nuovoOrario.save();
-              
-              // Aggiorna la classe con il riferimento alla lezione
-              await ClasseScolastica.findByIdAndUpdate(
-                classe._id,
-                { 
-                  $addToSet: { orarioLezioni: nuovoOrario._id },
-                  // Se non è già impostata un'aula per la classe, la impostiamo
-                  $set: { 
-                    aula: classe.aula === 'N/D' && aula !== 'N/D' ? aula : classe.aula 
-                  }
-                }
-              );
-              
-              stats.updatedSchedules++;
-            } catch (error) {
-              console.error(`Errore creazione orario per ${codiceDocente}:`, error.message);
-              stats.errors.push(`Errore orario per ${codiceDocente}: ${error.message}`);
-              continue; // Salta questa lezione in caso di errore
-            }
-          }
+          } // fine loop lezioni
+          
+          console.log(`Docente ${i + j + 1}/${professori.length} completato`);
+          
         } catch (error) {
-          console.error(`Error processing teacher batch:`, error.message);
-          stats.errors.push(error.message);
-          // Continua con il prossimo insegnante nel batch
+          console.error(`Errore elaborazione docente ${i + j + 1}/${professori.length}:`, error.message);
+          stats.errors.push(`Errore docente ${i + j + 1}: ${error.message}`);
+          console.log(`Docente ${i + j + 1} saltato per errore generico, continuo con il prossimo`);
+          // Continua con il prossimo insegnante
         }
-      }));
+      } // fine loop docenti nel batch
       
-      // Piccola pausa tra i batch per evitare sovraccarico di memoria
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
+      // Pausa più lunga tra i batch per ridurre il carico sul server
+      console.log(`Pausa dopo batch ${Math.floor(i / BATCH_SIZE) + 1}...`);
+      await new Promise(resolve => setTimeout(resolve, 100)); // Ridotta a 100ms per velocizzare
+    } // fine loop batch
     
     // Elimina il file temporaneo
-    fs.unlinkSync(filePath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log('File temporaneo eliminato');
+    }
     
-    return res.status(200).json({
-      success: true,
-      message: 'Import completed successfully',
+    console.log('Import completato con successo:', {
       ...stats,
       errorCount: stats.errors.length,
-      // Limita gli errori visualizzati a 10 per non sovracaricare la risposta
-      errors: stats.errors.slice(0, 10)
     });
     
   } catch (error) {
-    console.error('Error during schedule import:', error);
+    console.error('Error during async import processing:', error);
     
     // Assicurati di eliminare il file temporaneo in caso di errore
-    if (req.file && req.file.path) {
-      try {
-        fs.unlinkSync(req.file.path);
-      } catch (e) {
-        console.error('Error deleting temporary file:', e);
+    try {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
       }
+    } catch (e) {
+      console.error('Error deleting temporary file:', e);
     }
-    
-    return res.status(500).json({
-      success: false,
-      message: 'An error occurred during import',
-      error: process.env.NODE_ENV === 'development' ? error.message : {}
-    });
   }
-};
+}
 
 // Simple test endpoint for file uploads
 exports.testFileUpload = async (req, res) => {
