@@ -56,19 +56,20 @@ npm o yarn
 ## **Installazione**
 
 ### **Clonare il Repository** 
+```
 git clone [https://github.com/OthocaLab/othoca-labs.git](https://github.com/tuorepository/othoca-labs.git) 
 cd othoca-labs
+```
 
 ### **Configurazione del Backend**
 
 Navigare nella cartella del server:
+```cd server```
 
-cd server
 Installare le dipendenze:
-
-npm install
+```npm install```
 Creare un file .env nella cartella server con le seguenti variabili:
-
+```
     NODE\_ENV=development
     PORT=3000
     MONGODB\_URI=mongodb://localhost:27017/othoca-labs
@@ -78,7 +79,7 @@ Creare un file .env nella cartella server con le seguenti variabili:
     EMAIL\_USERNAME=tua\_email@gmail.com
     EMAIL\_PASSWORD=tua\_password\_app
     EMAIL\_FROM=noreply@othocalabs.it
-
+```
 ### **Configurazione del Frontend**
 
 Navigare nella cartella del client:
