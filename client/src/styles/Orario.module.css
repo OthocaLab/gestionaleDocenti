@@ -649,14 +649,20 @@
 }
 
 .materiaText {
-  font-weight: 600;
-  margin-bottom: 4px;
-  font-size: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+  margin-bottom: 2px;
 }
 
 .docenteText {
-  font-size: 12px;
-  opacity: 0.9;
+  font-size: 0.85em;
+  margin-bottom: 2px;
+}
+
+.aulaText {
+  font-size: 0.75em;
+  color: #555;
+  font-style: italic;
 }
 
 /* Styles for the import section */

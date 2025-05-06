@@ -22,7 +22,7 @@ const OrarioLezioniSchema = new mongoose.Schema({
   },
   docente: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Docente',
     required: true
   },
   materia: {
@@ -30,9 +30,17 @@ const OrarioLezioniSchema = new mongoose.Schema({
     ref: 'Materia',
     required: true
   },
+  aula: {
+    type: String,
+    default: 'N/D'
+  },
   settimana: {
     type: Number,
     default: null // null indica tutte le settimane
+  },
+  isDisponibilita: {
+    type: Boolean,
+    default: false // Indica se si tratta di uno slot di disponibilità
   }
 });
 

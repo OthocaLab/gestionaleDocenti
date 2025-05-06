@@ -104,9 +104,23 @@ exports.getOrarioByClasse = async (req, res) => {
       });
     }
 
+    console.log(`Recupero orario per classe ${classeId}, con ${classe.orarioLezioni?.length || 0} lezioni`);
+
     const orari = await OrarioLezioni.find({ _id: { $in: classe.orarioLezioni } })
-      .populate('docente', 'nome cognome')
-      .populate('materia', 'descrizione coloreMateria');
+      .populate([
+        { 
+          path: 'docente',
+          select: 'nome cognome codiceDocente',
+          model: 'Docente'
+        },
+        {
+          path: 'materia',
+          select: 'descrizione coloreMateria'
+        }
+      ]);
+
+    console.log(`Trovate ${orari.length} lezioni, primo elemento:`, 
+      orari.length > 0 ? JSON.stringify(orari[0]) : 'nessuna lezione');
 
     res.status(200).json({
       success: true,
@@ -354,50 +368,63 @@ exports.importaOrari = async (req, res) => {
           // Cerca o crea docente
           let docente;
           try {
-            // Genera email temporanea
-            const tempEmail = generateTempEmail(codiceDocente);
+            // Estrai i dati del docente dal JSON
+            const docenteData = {
+              nome: professore.nome || codiceDocente,
+              cognome: professore.cognome || codiceDocente,
+              codiceFiscale: professore.codiceFiscale || codiceDocente,
+              codiceDocente: codiceDocente,
+              email: professore.email || generateTempEmail(codiceDocente),
+              telefono: professore.telefono || '',
+              stato: professore.stato || 'attivo',
+              classiInsegnamento: professore.classiInsegnamento || [],
+              oreRecupero: 0
+            };
             
-            // Trova o crea docente usando upsert
-            const docenteResult = await Docente.findOneAndUpdate(
-              { 
-                $or: [
-                  { codiceFiscale: codiceDocente },
-                  { codiceDocente: codiceDocente }
-                ]
-              },
-              {
-                $setOnInsert: {
-                  nome: codiceDocente,
-                  cognome: codiceDocente,
-                  codiceFiscale: codiceDocente,
-                  codiceDocente: codiceDocente,
-                  email: tempEmail,
-                  stato: 'attivo',
-                  oreRecupero: 0
-                }
-              },
-              {
-                new: true,
-                upsert: true
+            console.log(`Elaborazione docente: ${codiceDocente}`, docenteData);
+            
+            // Trova il docente esistente
+            let existingDocente = await Docente.findOne({
+              $or: [
+                { codiceFiscale: codiceDocente },
+                { codiceDocente: codiceDocente }
+              ]
+            });
+            
+            if (existingDocente) {
+              // Aggiorna solo i campi che non sono già valorizzati
+              if (!existingDocente.nome || existingDocente.nome === existingDocente.codiceDocente) {
+                existingDocente.nome = docenteData.nome;
               }
-            );
-            
-            docente = docenteResult;
-            
-            // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
-            // quindi controlliamo se la data createdAt è recente
-            if (!stats.processedTeachers) {
-              stats.insertedTeachers++;
-            } else {
+              if (!existingDocente.cognome || existingDocente.cognome === existingDocente.codiceDocente) {
+                existingDocente.cognome = docenteData.cognome;
+              }
+              if (!existingDocente.email || existingDocente.email.includes('@temp.scuola.it')) {
+                existingDocente.email = docenteData.email;
+              }
+              if (professore.telefono && (!existingDocente.telefono || existingDocente.telefono === '')) {
+                existingDocente.telefono = docenteData.telefono;
+              }
+              if (professore.stato) {
+                existingDocente.stato = docenteData.stato;
+              }
+              
+              docente = await existingDocente.save();
               stats.updatedTeachers++;
+              console.log(`Docente aggiornato: ${docente.nome} ${docente.cognome}`);
+            } else {
+              // Crea un nuovo docente
+              docente = await Docente.create(docenteData);
+              stats.insertedTeachers++;
+              console.log(`Nuovo docente creato: ${docente.nome} ${docente.cognome}`);
             }
             
             // Rimuovi gli orari esistenti per il docente
             await OrarioLezioni.deleteMany({ docente: docente._id });
             
           } catch (error) {
-            console.error(`Errore creazione docente ${codiceDocente}:`, error.message);
-            stats.errors.push(`Errore creazione docente ${codiceDocente}: ${error.message}`);
+            console.error(`Errore creazione/aggiornamento docente ${codiceDocente}:`, error.message);
+            stats.errors.push(`Errore docente ${codiceDocente}: ${error.message}`);
             return; // Salta questo professore in caso di errore
           }
           
@@ -406,9 +433,13 @@ exports.importaOrari = async (req, res) => {
           
           for (const lezione of lezioni) {
             if (!lezione.giorno || !lezione.ora || !lezione.classe || !lezione.materia) {
-              stats.errors.push(`Lesson data incomplete for teacher ${codiceDocente}`);
+              stats.errors.push(`Dati lezione incompleti per docente ${codiceDocente}`);
               continue; // Salta questa lezione
             }
+            
+            // Normalizzazione dell'aula
+            const aula = lezione.aula && lezione.aula.trim() !== '' ? lezione.aula.trim() : 'N/D';
+            console.log(`Lezione: ${lezione.giorno} ${lezione.ora} - Classe: ${lezione.classe} - Aula: ${aula} - Materia: ${lezione.materia}`);
             
             // Trova o crea la materia
             let materia;
@@ -466,7 +497,7 @@ exports.importaOrari = async (req, res) => {
                   $setOnInsert: {
                     anno: anno,
                     sezione: sezione,
-                    aula: lezione.aula || 'N/D',
+                    aula: aula,
                     indirizzo: 'Da definire'
                   }
                 },
@@ -512,7 +543,7 @@ exports.importaOrari = async (req, res) => {
                 ora: getOraNumber(oraInizio),
                 oraInizio: oraInizio,
                 oraFine: oraFine,
-                aula: lezione.aula || 'N/D'
+                aula: aula // Ora utilizziamo il valore dell'aula normalizzato
               });
               
               await nuovoOrario.save();
@@ -520,13 +551,19 @@ exports.importaOrari = async (req, res) => {
               // Aggiorna la classe con il riferimento alla lezione
               await ClasseScolastica.findByIdAndUpdate(
                 classe._id,
-                { $addToSet: { orarioLezioni: nuovoOrario._id } }
+                { 
+                  $addToSet: { orarioLezioni: nuovoOrario._id },
+                  // Se non è già impostata un'aula per la classe, la impostiamo
+                  $set: { 
+                    aula: classe.aula === 'N/D' && aula !== 'N/D' ? aula : classe.aula 
+                  }
+                }
               );
               
               stats.updatedSchedules++;
             } catch (error) {
               console.error(`Errore creazione orario per ${codiceDocente}:`, error.message);
-              stats.errors.push(`Errore creazione orario per ${codiceDocente}: ${error.message}`);
+              stats.errors.push(`Errore orario per ${codiceDocente}: ${error.message}`);
               continue; // Salta questa lezione in caso di errore
             }
           }

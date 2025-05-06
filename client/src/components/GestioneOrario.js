@@ -343,9 +343,12 @@ const GestioneOrario = () => {
                         >
                           {lezione ? (
                             <div className={styles.lezione}>
-                              <div className={styles.materiaText}>{lezione.materia.descrizione}</div>
+                              <div className={styles.materiaText}>{lezione.materia?.descrizione || 'Materia non specificata'}</div>
                               <div className={styles.docenteText}>
-                                {lezione.docente.nome} {lezione.docente.cognome}
+                                {lezione.docente ? `${lezione.docente.nome || ''} ${lezione.docente.cognome || ''}` : 'Docente non specificato'}
+                              </div>
+                              <div className={styles.aulaText}>
+                                {lezione.aula ? `Aula: ${lezione.aula}` : 'Aula: N/D'}
                               </div>
                             </div>
                           ) : null}
