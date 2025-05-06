@@ -59,3 +59,32 @@ exports.authorize = (...roles) => {
     next();
   };
 };
+
+// Middleware for debugging auth issues
+exports.debugAuth = (req, res, next) => {
+  console.log('Debug Auth Middleware');
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('Auth header:', req.headers.authorization);
+  
+  try {
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      const token = req.headers.authorization.split(' ')[1];
+      console.log('Token presente:', token ? 'Sì' : 'No');
+      
+      if (token) {
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          console.log('Token decodificato:', decoded);
+        } catch (e) {
+          console.log('Errore decodifica token:', e.message);
+        }
+      }
+    } else {
+      console.log('Nessun token Bearer trovato');
+    }
+  } catch (error) {
+    console.error('Errore nel debug auth:', error);
+  }
+  
+  next();
+};

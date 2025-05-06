@@ -26,12 +26,27 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-app.use(helmet());
-app.use(morgan('dev'));
+app.use(morgan('dev')); // Logging
+app.use(cors({
+  origin: '*', // Consenti richieste da qualsiasi origine per debugging
+  credentials: true
+}));
 
+// Aumenta il limite di dimensione per le richieste
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Disabilita Helmet temporaneamente per debug
+// app.use(helmet());
+
+// Imposta il limite di memoria per NodeJS
+if (process.env.NODE_ENV === 'production') {
+  // In produzione, usa un valore più conservativo
+  process.env.NODE_OPTIONS = '--max-old-space-size=2048';
+} else {
+  // In sviluppo, usa un valore più alto per facilitare i test
+  process.env.NODE_OPTIONS = '--max-old-space-size=4096';
+}
 
 // Rate limiting
 const limiter = rateLimit({
@@ -45,32 +60,55 @@ const limiter = rateLimit({
 // Applica il rate limiter alle route di autenticazione
 app.use('/api/auth', limiter);
 
-// Route
-app.use('/api/auth', authRoutes);
 // Mount routers
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/orario', orarioRoutes);
-app.use('/api/materie', materiaRoutes);
-// Make sure this line is added to your server.js file
-app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
 app.use('/api/docenti', docenteRoutes);
-// Make sure the assenze routes are properly included
 app.use('/api/assenze', assenzaRoutes);
-app.use('/api/classi', classeRoutes); // Added classeRoutes to the Express app
+app.use('/api/materie', materiaRoutes);
+app.use('/api/classi', classeRoutes);
+app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
 
 // Route di base
 app.get('/', (req, res) => {
-  res.send('API per la gestione delle sostituzioni docenti');
+  res.send('API per la gestione delle sostituzioni dei docenti');
 });
 
 // Gestione degli errori
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Server error:', err.stack);
+  
+  // Verifica se l'errore è correlato a limiti di payload
+  if (err instanceof SyntaxError && 'body' in err) {
+    return res.status(413).json({
+      success: false,
+      message: 'Payload troppo grande o malformato',
+      error: process.env.NODE_ENV === 'development' ? err.message : {}
+    });
+  }
+  
   res.status(500).json({
     success: false,
     message: 'Si è verificato un errore interno del server',
     error: process.env.NODE_ENV === 'development' ? err.message : {}
   });
+});
+
+// Gestione delle eccezioni non catturate
+process.on('uncaughtException', (err) => {
+  console.error('Eccezione non catturata:', err);
+  console.error('Stack trace:', err.stack);
+  // In produzione, potresti voler riavviare il server con PM2 o simile
+  // Oppure inviare una notifica al team di sviluppo
+});
+
+// Gestione delle promesse rifiutate non catturate
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Promessa rifiutata non gestita:');
+  console.error('Reason:', reason);
+  // In produzione, potresti voler riavviare il server con PM2 o simile
+  // Oppure inviare una notifica al team di sviluppo
 });
 
 // Connessione al database

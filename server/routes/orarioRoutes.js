@@ -1,8 +1,8 @@
 const express = require('express');
 const { check } = require('express-validator');
 const orarioController = require('../controllers/orarioController');
-const { protect, authorize } = require('../middleware/auth');
-const upload = require('../middleware/uploadMiddleware');
+const { protect, authorize, debugAuth } = require('../middleware/auth');
+const { upload, uploadWithErrorHandling } = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
 
@@ -43,22 +43,17 @@ router.post('/classi', protect, authorize('admin', 'vicepresidenza'), classeVali
 router.get('/orario/classe/:classeId', protect, orarioController.getOrarioByClasse);
 router.get('/orario/docente/:docenteId', protect, orarioController.getOrarioByDocente);
 router.post('/orario', protect, authorize('admin', 'vicepresidenza'), orarioValidation, orarioController.createOrarioLezione);
-// Update the import route to include authentication and proper file handling
+
+// Rotta di test per gli upload
+router.post('/test-upload', upload.single('file'), orarioController.testFileUpload);
+
+// Rotta di importazione
 router.post('/import', 
-  protect, 
-  authorize('admin', 'vicepresidenza'),
-  upload.single('file'), 
-  (req, res, next) => {
-    console.log('Route middleware - req.file:', req.file);
-    console.log('Route middleware - req.body:', req.body);
-    next();
-  },
+  debugAuth,  // Debug middleware per controllare l'autenticazione
+  protect,  // Richiede autenticazione
+  authorize('admin', 'vicepresidenza'),  // Richiede autorizzazione
+  uploadWithErrorHandling('file'),  // Gestisce l'upload con miglior gestione degli errori
   orarioController.importaOrari
 );
 
-// Test route for file uploads
-router.post('/test-upload', 
-  upload.single('file'), 
-  orarioController.testFileUpload
-);
 module.exports = router;

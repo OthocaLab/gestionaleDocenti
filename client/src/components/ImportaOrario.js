@@ -52,29 +52,21 @@ const ImportaOrario = () => {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        setLoading(true);
-        const fileContent = JSON.parse(event.target.result);
-        
-        // Invia i dati al server
-        const response = await importOrario(fileContent);
-        
-        setMessage('Orario importato con successo!');
-        setLoading(false);
-      } catch (err) {
-        setError('Errore durante l\'importazione: ' + (err.message || 'Formato file non valido'));
-        setLoading(false);
-      }
-    };
-    
-    reader.onerror = () => {
-      setError('Errore nella lettura del file');
+    try {
+      setLoading(true);
+      
+      // Invia il file direttamente al server
+      const response = await importOrario(file);
+      
+      setMessage(`Orario importato con successo! ${response.updatedSchedules} orari importati, ${response.newClasses} nuove classi, ${response.insertedTeachers} nuovi docenti, ${response.newSubjects} nuove materie.`);
+      setFile(null);
+      // Reset file input
+      document.getElementById('orarioFile').value = '';
+    } catch (err) {
+      setError('Errore durante l\'importazione: ' + (err.message || 'Errore nella richiesta al server'));
+    } finally {
       setLoading(false);
-    };
-    
-    reader.readAsText(file);
+    }
   };
 
   const handleClassiInsegnamentoSubmit = async (e) => {
@@ -173,18 +165,24 @@ const ImportaOrario = () => {
           <div className={styles.instructions}>
             <h4>Formato del file JSON:</h4>
             <pre>
-              {`[
-  {
-    "classeId": "id_classe",
-    "giornoSettimana": "Lun",
-    "ora": 1,
-    "oraInizio": "08:00",
-    "oraFine": "09:00",
-    "docente": "id_docente",
-    "materia": "id_materia"
-  },
-  ...
-]`}
+              {`{
+  "orari": [
+    {
+      "professore": "ARDU",
+      "lezioni": [
+        {
+          "giorno": "LU",
+          "ora": "8:15",
+          "classe": "2G",
+          "aula": "S02",
+          "materia": "LET"
+        },
+        ...
+      ]
+    },
+    ...
+  ]
+}`}
             </pre>
           </div>
         </div>

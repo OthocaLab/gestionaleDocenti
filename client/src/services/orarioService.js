@@ -78,23 +78,95 @@ export const createOrarioLezione = async (orarioData) => {
   }
 };
 
-export const importOrario = async (file) => {
+export const importOrario = async (fileObject) => {
   try {
-    const formData = new FormData();
-    formData.append('file', file);
+    // Verifico se il file è valido
+    if (!fileObject || !fileObject.name) {
+      throw new Error('File non valido');
+    }
     
-    // Important: Do NOT set Content-Type header when using FormData
-    // The browser will automatically set the correct boundary
-    const config = getAuthConfig();
+    const formData = new FormData();
+    formData.append('file', fileObject);
+    
+    // Log authentication token for debugging
+    const token = localStorage.getItem('token');
+    console.log('Auth token:', token ? 'Token presente' : 'Token mancante');
+    
+    // Configurazione completa per la richiesta
+    const config = {
+      headers: {
+        'Authorization': token ? `Bearer ${token}` : '',
+        // Non specificare Content-Type, sarà impostato automaticamente per FormData
+      },
+      // Opzioni importanti per CORS
+      withCredentials: false,
+      timeout: 60000, // 60 secondi di timeout
+    };
     
     // Add debugging
-    console.log('FormData contents:', file.name, file.type, file.size);
+    console.log('FormData contents:', fileObject.name, fileObject.type, fileObject.size);
     
-    const response = await axios.post(`${API_URL}/orario/import`, formData, config);
-    return response.data;
+    // Assicurarsi che API_URL sia corretto
+    const serverUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const apiUrl = serverUrl.endsWith('/api') ? serverUrl : `${serverUrl}/api`;
+    console.log('API URL:', apiUrl);
+    
+    const fullUrl = `${apiUrl}/orario/import`;
+    console.log('Full request URL:', fullUrl);
+    
+    // Use the real import endpoint that saves to MongoDB with gestione errori e retry
+    let retries = 3;
+    let lastError = null;
+    
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        console.log(`Tentativo di upload ${attempt + 1}/${retries}...`);
+        const response = await axios.post(fullUrl, formData, config);
+        console.log('Import response:', response.data);
+        return response.data;
+      } catch (err) {
+        console.error(`Errore tentativo ${attempt + 1}:`, err.message);
+        lastError = err;
+        
+        // Se abbiamo una risposta dal server, non ritentare
+        if (err.response) {
+          throw err;
+        }
+        
+        // Attendi un po' prima di riprovare (backoff esponenziale)
+        if (attempt < retries - 1) {
+          const delay = Math.pow(2, attempt) * 1000;
+          console.log(`Attendo ${delay}ms prima di riprovare...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+    
+    // Se arriviamo qui, tutti i tentativi sono falliti
+    throw lastError || new Error('Impossibile connettersi al server dopo multipli tentativi');
   } catch (error) {
-    console.error('Error details:', error);
-    throw error.response?.data || { message: 'Errore nell\'importazione dell\'orario' };
+    console.error('Error type:', error.constructor.name);
+    console.error('Error message:', error.message);
+    
+    if (error.response) {
+      // La richiesta è stata effettuata e il server ha risposto con un codice di stato
+      // che non rientra nell'intervallo 2xx
+      console.error('Error status:', error.response.status);
+      console.error('Error data:', error.response.data);
+    } else if (error.request) {
+      // La richiesta è stata effettuata ma non è stata ricevuta alcuna risposta
+      console.error('No response received:', error.request);
+    }
+    
+    if (error.response && error.response.status === 401) {
+      throw { message: 'Sessione scaduta. Effettua di nuovo il login.' };
+    } else if (error.response && error.response.status === 403) {
+      throw { message: 'Non hai i permessi necessari per questa operazione. Contatta l\'amministratore.' };
+    } else if (error.message.includes('Network Error') || error.code === 'ECONNREFUSED' || error.code === 'ECONNABORTED') {
+      throw { message: 'Impossibile connettersi al server. Verifica la tua connessione e che il server sia attivo.' };
+    }
+    
+    throw { message: `Errore nell'importazione dell'orario: ${error.message}` };
   }
 };
 

@@ -4,6 +4,7 @@ const ClasseInsegnamento = require('../models/ClasseInsegnamento');
 const ClasseScolastica = require('../models/ClasseScolastica');
 const OrarioLezioni = require('../models/OrarioLezioni');
 const User = require('../models/User');
+const Docente = require('../models/Docente');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -210,47 +211,44 @@ const validateJsonStructure = (data) => {
     throw new Error('The JSON file does not contain a valid object');
   }
 
-  // Check that there is at least one teacher
-  if (Object.keys(data).length === 0) {
-    throw new Error('The JSON file does not contain any teacher data');
+  // Check for orari array in the new format
+  if (!data.orari || !Array.isArray(data.orari) || data.orari.length === 0) {
+    throw new Error('The JSON file does not contain a valid "orari" array or it is empty');
   }
 
-  // Validate structure for each teacher
-  for (const codiceDocente in data) {
-    const docente = data[codiceDocente];
-    
-    if (!docente.docente) {
-      throw new Error(`Missing 'docente' field for ${codiceDocente}`);
+  // Validate structure for each professor
+  for (const docenteObj of data.orari) {
+    if (!docenteObj.professore) {
+      throw new Error('Missing "professore" field in one of the entries');
     }
     
-    if (!Array.isArray(docente.orario)) {
-      throw new Error(`The 'orario' field for ${codiceDocente} must be an array`);
+    if (!Array.isArray(docenteObj.lezioni)) {
+      throw new Error(`The "lezioni" field for ${docenteObj.professore} must be an array`);
     }
     
-    // Validate each day in the schedule
-    docente.orario.forEach((giorno, idx) => {
-      if (!giorno.giorno) {
-        throw new Error(`Missing 'giorno' field in the schedule of ${codiceDocente} at index ${idx}`);
+    // Validate each lesson
+    docenteObj.lezioni.forEach((lezione, lezioneIdx) => {
+      if (!lezione.giorno) {
+        throw new Error(`Missing "giorno" field in the lesson of ${docenteObj.professore} at index ${lezioneIdx}`);
       }
       
-      if (!Array.isArray(giorno.lezioni)) {
-        throw new Error(`The 'lezioni' field for ${codiceDocente} on day ${giorno.giorno} must be an array`);
+      if (!lezione.ora) {
+        throw new Error(`Missing "ora" field in the lesson of ${docenteObj.professore} at index ${lezioneIdx}`);
       }
       
-      // Validate each lesson
-      giorno.lezioni.forEach((lezione, lezioneIdx) => {
-        if (!lezione.ora) {
-          throw new Error(`Missing 'ora' field in the lesson of ${codiceDocente} on day ${giorno.giorno} at index ${lezioneIdx}`);
-        }
-        
-        if (!lezione.classe) {
-          throw new Error(`Missing 'classe' field in the lesson of ${codiceDocente} on day ${giorno.giorno} at index ${lezioneIdx}`);
-        }
-        
-        if (!lezione.aula) {
-          throw new Error(`Missing 'aula' field in the lesson of ${codiceDocente} on day ${giorno.giorno} at index ${lezioneIdx}`);
-        }
-      });
+      // Check classe field, but allow empty string if materia is "DISP"
+      if (lezione.classe === undefined) {
+        throw new Error(`Missing "classe" field in the lesson of ${docenteObj.professore} at index ${lezioneIdx}`);
+      }
+      
+      // Check aula field, but allow empty string if materia is "DISP"
+      if (lezione.aula === undefined) {
+        throw new Error(`Missing "aula" field in the lesson of ${docenteObj.professore} at index ${lezioneIdx}`);
+      }
+      
+      if (!lezione.materia) {
+        throw new Error(`Missing "materia" field in the lesson of ${docenteObj.professore} at index ${lezioneIdx}`);
+      }
     });
   }
   
@@ -258,15 +256,8 @@ const validateJsonStructure = (data) => {
 };
 
 // Controller for importing schedules
-// In your importaOrari function, make sure you're correctly handling the file upload
-
 exports.importaOrari = async (req, res) => {
-  // Start the session at the beginning of the function
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  
   try {
-    // Debug logging
     console.log('Request file:', req.file);
     console.log('Request headers:', req.headers);
     
@@ -276,180 +267,303 @@ exports.importaOrari = async (req, res) => {
         message: 'No file uploaded' 
       });
     }
-
-    // Read the JSON file
-    const filePath = path.join(req.file.path);
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    let jsonData;
     
+    const filePath = req.file.path;
+    
+    // Leggi il file JSON
+    let orariData;
     try {
-      jsonData = JSON.parse(fileContent);
+      // Leggi il file JSON in modo più efficiente (usando stream se necessario per file molto grandi)
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      orariData = JSON.parse(fileContent);
     } catch (error) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'The file does not contain valid JSON', 
-        error: error.message 
+      console.error('Error reading JSON file:', error);
+      // Elimina il file temporaneo in caso di errore
+      fs.unlinkSync(filePath);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid JSON file',
+        error: process.env.NODE_ENV === 'development' ? error.message : {}
       });
     }
-
-    // Validate JSON structure
-    try {
-      validateJsonStructure(jsonData);
-    } catch (error) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Invalid JSON structure', 
-        error: error.message 
+    
+    if (!orariData || !orariData.orari || !Array.isArray(orariData.orari)) {
+      // Elimina il file temporaneo
+      fs.unlinkSync(filePath);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid data format. Expected { orari: [...] }'
       });
     }
-
-    // Statistics for the response
+    
+    // Statistiche per l'importazione
     const stats = {
+      totalTeachers: orariData.orari.length,
+      processedTeachers: 0,
+      newClasses: 0,
+      newSubjects: 0,
       insertedTeachers: 0,
+      updatedTeachers: 0,
       updatedSchedules: 0,
-      newClasses: 0
+      errors: []
+    };
+    
+    // Mappa per i giorni della settimana
+    const giornoMap = {
+      'LU': 'Lun',
+      'MA': 'Mar',
+      'ME': 'Mer',
+      'GI': 'Gio',
+      'VE': 'Ven',
+      'SA': 'Sab'
+    };
+    
+    // Funzione helper per convertire l'ora in formato numerico
+    const getOraNumber = (oraStr) => {
+      // Usa la logica di conversione orario esistente
+      const ore = parseInt(oraStr.split(':')[0]);
+      // Ipotizziamo che la prima ora inizi alle 8:15, seconda alle 9:15, ecc.
+      return ore - 7; // Ad esempio, 8:15 => ora 1
     };
 
-    // Set to track processed classes
-    const processedClasses = new Set();
-
-    // Process each teacher in the JSON
-    for (const codiceDocente in jsonData) {
-      const docenteData = jsonData[codiceDocente];
+    // Genera un'email temporanea valida per docenti
+    const generateTempEmail = (codiceDocente) => {
+      // Rimuovi caratteri speciali e spazi, aggiungi dominio fittizio
+      const sanitizedCode = codiceDocente.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+      return `${sanitizedCode}@temp.scuola.it`;
+    };
+    
+    // Elabora i dati degli orari utilizzando batch processing
+    const BATCH_SIZE = 10; // Elabora 10 docenti alla volta
+    const professori = orariData.orari;
+    
+    for (let i = 0; i < professori.length; i += BATCH_SIZE) {
+      const batch = professori.slice(i, i + BATCH_SIZE);
       
-      // Find or create the teacher
-      let docente = await User.findOne({ 
-        codiceDocente: docenteData.docente,
-        ruolo: 'docente'
-      }).session(session);
-      
-      if (!docente) {
-        docente = new User({
-          nome: `Docente ${docenteData.docente}`, // Temporary name
-          cognome: '', // To be updated manually
-          email: `${docenteData.docente.toLowerCase()}@scuola.it`, // Temporary email
-          password: await require('bcryptjs').hash('password123', 10), // Default password
-          ruolo: 'docente',
-          codiceDocente: docenteData.docente
-        });
-        
-        await docente.save({ session });
-        stats.insertedTeachers++;
-      }
-
-      // Delete existing schedules for this teacher
-      await OrarioLezioni.deleteMany({ docente: docente._id }).session(session);
-      
-      // Process the teacher's schedule
-      for (const giorno of docenteData.orario) {
-        for (const lezione of giorno.lezioni) {
-          // Check if the class exists
-          const classeNome = lezione.classe;
+      // Elabora ogni batch in parallelo ma con un limite al parallelismo
+      await Promise.all(batch.map(async (professore) => {
+        try {
+          stats.processedTeachers++;
+          const codiceDocente = professore.professore;
           
-          // Extract year and section from class name (e.g., "1A" -> year: 1, section: "A")
-          const anno = parseInt(classeNome.charAt(0));
-          const sezione = classeNome.substring(1);
+          if (!codiceDocente) {
+            stats.errors.push(`Teacher record is missing 'professore' field`);
+            return; // Salta questo record
+          }
           
-          let classe = await ClasseScolastica.findOne({ 
-            anno: anno,
-            sezione: sezione
-          }).session(session);
-          
-          if (!classe) {
-            classe = new ClasseScolastica({
-              anno: anno,
-              sezione: sezione,
-              aula: lezione.aula,
-              indirizzo: 'Generale' // Default value, to be updated manually
-            });
+          // Cerca o crea docente
+          let docente;
+          try {
+            // Genera email temporanea
+            const tempEmail = generateTempEmail(codiceDocente);
             
-            await classe.save({ session });
+            // Trova o crea docente usando upsert
+            const docenteResult = await Docente.findOneAndUpdate(
+              { 
+                $or: [
+                  { codiceFiscale: codiceDocente },
+                  { codiceDocente: codiceDocente }
+                ]
+              },
+              {
+                $setOnInsert: {
+                  nome: codiceDocente,
+                  cognome: codiceDocente,
+                  codiceFiscale: codiceDocente,
+                  codiceDocente: codiceDocente,
+                  email: tempEmail,
+                  stato: 'attivo',
+                  oreRecupero: 0
+                }
+              },
+              {
+                new: true,
+                upsert: true
+              }
+            );
             
-            if (!processedClasses.has(classeNome)) {
-              stats.newClasses++;
-              processedClasses.add(classeNome);
+            docente = docenteResult;
+            
+            // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
+            // quindi controlliamo se la data createdAt è recente
+            if (!stats.processedTeachers) {
+              stats.insertedTeachers++;
+            } else {
+              stats.updatedTeachers++;
+            }
+            
+            // Rimuovi gli orari esistenti per il docente
+            await OrarioLezioni.deleteMany({ docente: docente._id });
+            
+          } catch (error) {
+            console.error(`Errore creazione docente ${codiceDocente}:`, error.message);
+            stats.errors.push(`Errore creazione docente ${codiceDocente}: ${error.message}`);
+            return; // Salta questo professore in caso di errore
+          }
+          
+          // Itera sulle lezioni del professore
+          const lezioni = professore.lezioni || [];
+          
+          for (const lezione of lezioni) {
+            if (!lezione.giorno || !lezione.ora || !lezione.classe || !lezione.materia) {
+              stats.errors.push(`Lesson data incomplete for teacher ${codiceDocente}`);
+              continue; // Salta questa lezione
+            }
+            
+            // Trova o crea la materia
+            let materia;
+            try {
+              // Trova o crea la materia usando upsert per evitare duplicati
+              const materiaResult = await Materia.findOneAndUpdate(
+                { codiceMateria: lezione.materia },
+                {
+                  $setOnInsert: {
+                    codiceMateria: lezione.materia,
+                    descrizione: lezione.materia,
+                    coloreMateria: '#' + Math.floor(Math.random()*16777215).toString(16) // Colore casuale
+                  }
+                },
+                {
+                  new: true,
+                  upsert: true // Crea se non esiste
+                }
+              );
+              
+              materia = materiaResult;
+              
+              // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
+              if (stats.newSubjects === 0) {
+                stats.newSubjects++;
+              }
+            } catch (error) {
+              console.error(`Errore creazione materia ${lezione.materia}:`, error.message);
+              stats.errors.push(`Errore creazione materia ${lezione.materia}: ${error.message}`);
+              continue; // Salta questa lezione se c'è un errore con la materia
+            }
+            
+            // Estrai anno e sezione dal nome della classe
+            let anno = 1;
+            let sezione = lezione.classe;
+            
+            if (lezione.classe.length >= 2) {
+              const match = lezione.classe.match(/^([1-5])([A-Z].*)$/);
+              if (match) {
+                anno = parseInt(match[1]);
+                sezione = match[2];
+              }
+            }
+            
+            // Trova o crea la classe
+            let classe;
+            try {
+              // Trova o crea la classe usando upsert per evitare duplicati
+              const classeResult = await ClasseScolastica.findOneAndUpdate(
+                {
+                  anno: anno,
+                  sezione: sezione
+                },
+                {
+                  $setOnInsert: {
+                    anno: anno,
+                    sezione: sezione,
+                    aula: lezione.aula || 'N/D',
+                    indirizzo: 'Da definire'
+                  }
+                },
+                {
+                  new: true,
+                  upsert: true // Crea se non esiste
+                }
+              );
+              
+              classe = classeResult;
+              
+              // Non possiamo usare isNew su un documento ottenuto da findOneAndUpdate
+              if (stats.newClasses === 0) {
+                stats.newClasses++;
+              }
+            } catch (error) {
+              console.error(`Errore creazione classe ${anno}${sezione}:`, error.message);
+              stats.errors.push(`Errore creazione classe ${anno}${sezione}: ${error.message}`);
+              continue; // Salta questa lezione se c'è un errore con la classe
+            }
+            
+            // Calcola orario inizio e fine
+            let oraInizio = lezione.ora;
+            let oraFine = '';
+            
+            // Aggiungi 60 minuti all'ora di inizio per ottenere l'ora di fine
+            if (oraInizio.includes(':')) {
+              const [ore, minuti] = oraInizio.split(':').map(Number);
+              const dataInizio = new Date();
+              dataInizio.setHours(ore, minuti);
+              const dataFine = new Date(dataInizio.getTime() + 60 * 60 * 1000);
+              oraFine = `${dataFine.getHours()}:${dataFine.getMinutes().toString().padStart(2, '0')}`;
+            } else {
+              oraFine = oraInizio; // Fallback se il formato non è corretto
+            }
+            
+            // Crea il nuovo record di orario
+            try {
+              const nuovoOrario = new OrarioLezioni({
+                docente: docente._id,
+                materia: materia._id,
+                giornoSettimana: giornoMap[lezione.giorno] || lezione.giorno,
+                ora: getOraNumber(oraInizio),
+                oraInizio: oraInizio,
+                oraFine: oraFine,
+                aula: lezione.aula || 'N/D'
+              });
+              
+              await nuovoOrario.save();
+              
+              // Aggiorna la classe con il riferimento alla lezione
+              await ClasseScolastica.findByIdAndUpdate(
+                classe._id,
+                { $addToSet: { orarioLezioni: nuovoOrario._id } }
+              );
+              
+              stats.updatedSchedules++;
+            } catch (error) {
+              console.error(`Errore creazione orario per ${codiceDocente}:`, error.message);
+              stats.errors.push(`Errore creazione orario per ${codiceDocente}: ${error.message}`);
+              continue; // Salta questa lezione in caso di errore
             }
           }
-          
-          // Create a default subject if none exists
-          let materia = await Materia.findOne({ 
-            codiceMateria: 'DEFAULT'
-          }).session(session);
-          
-          if (!materia) {
-            materia = new Materia({
-              codiceMateria: 'DEFAULT',
-              descrizione: 'Materia Default',
-              coloreMateria: '#3498db'
-            });
-            
-            await materia.save({ session });
-          }
-          
-          // Parse time range (e.g., "8:15-9:15")
-          const [oraInizio, oraFine] = lezione.ora.split('-');
-          
-          // Map day names to abbreviated format
-          const giornoMap = {
-            'Lunedì': 'Lun',
-            'Martedì': 'Mar',
-            'Mercoledì': 'Mer',
-            'Giovedì': 'Gio',
-            'Venerdì': 'Ven',
-            'Sabato': 'Sab',
-            'Domenica': 'Dom'
-          };
-          
-          // Determine the hour number based on start time
-          const getOraNumber = (timeStr) => {
-            const hour = parseInt(timeStr.split(':')[0]);
-            return hour - 7; // Assuming first hour starts at 8:00, so 8-7=1, 9-7=2, etc.
-          };
-          
-          // Create the new schedule record
-          const nuovoOrario = new OrarioLezioni({
-            docente: docente._id,
-            materia: materia._id,
-            giornoSettimana: giornoMap[giorno.giorno] || giorno.giorno,
-            ora: getOraNumber(oraInizio),
-            oraInizio: oraInizio,
-            oraFine: oraFine,
-            aula: lezione.aula
-          });
-          
-          await nuovoOrario.save({ session });
-          
-          // Update the class with the reference to the lesson
-          await ClasseScolastica.findByIdAndUpdate(
-            classe._id,
-            { $addToSet: { orarioLezioni: nuovoOrario._id } },
-            { session }
-          );
-          
-          stats.updatedSchedules++;
+        } catch (error) {
+          console.error(`Error processing teacher batch:`, error.message);
+          stats.errors.push(error.message);
+          // Continua con il prossimo insegnante nel batch
         }
-      }
+      }));
+      
+      // Piccola pausa tra i batch per evitare sovraccarico di memoria
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
-
-    // Commit the transaction
-    await session.commitTransaction();
-    session.endSession();
     
-    // Delete the temporary file
+    // Elimina il file temporaneo
     fs.unlinkSync(filePath);
     
     return res.status(200).json({
       success: true,
       message: 'Import completed successfully',
-      ...stats
+      ...stats,
+      errorCount: stats.errors.length,
+      // Limita gli errori visualizzati a 10 per non sovracaricare la risposta
+      errors: stats.errors.slice(0, 10)
     });
     
   } catch (error) {
-    // Rollback in case of error
-    await session.abortTransaction();
-    session.endSession();
-    
     console.error('Error during schedule import:', error);
+    
+    // Assicurati di eliminare il file temporaneo in caso di errore
+    if (req.file && req.file.path) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (e) {
+        console.error('Error deleting temporary file:', e);
+      }
+    }
     
     return res.status(500).json({
       success: false,
