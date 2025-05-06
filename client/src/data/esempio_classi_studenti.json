@@ -1,0 +1,115 @@
+{
+  "scuola": "Istituto Superiore Generico",
+  "sezioni": {
+    "SezioneA": {
+      "sezione": "Sezione A",
+      "indirizzo": "Meccanica",
+      "classi": {
+        "1A": { "aula": "101", "studenti": 24 },
+        "2A": { "aula": "102", "studenti": 22 },
+        "3A": { "aula": "103", "studenti": 25 },
+        "4A": { "aula": "104", "studenti": 21 },
+        "5A": { "aula": "105", "studenti": 23 }
+      }
+    },
+    "SezioneB": {
+      "sezione": "Sezione B",
+      "indirizzo": "Meccanica",
+      "classi": {
+        "1B": { "aula": "106", "studenti": 20 },
+        "2B": { "aula": "107", "studenti": 18 },
+        "3B": { "aula": "108", "studenti": 21 },
+        "4B": { "aula": "109", "studenti": 22 },
+        "5B": { "aula": "110", "studenti": 20 }
+      }
+    },
+    "SezioneC": {
+      "sezione": "Sezione C",
+      "indirizzo": "Elettronica",
+      "classi": {
+        "1C": { "aula": "201", "studenti": 23 },
+        "2C": { "aula": "202", "studenti": 25 },
+        "3C": { "aula": "203", "studenti": 24 },
+        "4C": { "aula": "204", "studenti": 26 },
+        "5C": { "aula": "205", "studenti": 22 }
+      }
+    },
+    "SezioneD": {
+      "sezione": "Sezione D",
+      "indirizzo": "Elettronica",
+      "classi": {
+        "1D": { "aula": "206", "studenti": 20 },
+        "2D": { "aula": "207", "studenti": 21 },
+        "3D": { "aula": "208", "studenti": 23 },
+        "4D": { "aula": "209", "studenti": 22 },
+        "5D": { "aula": "210", "studenti": 24 }
+      }
+    },
+    "SezioneF": {
+      "sezione": "Sezione F",
+      "indirizzo": "Informatica",
+      "classi": {
+        "1F": { "aula": "301", "studenti": 25 },
+        "2F": { "aula": "302", "studenti": 27 },
+        "3F": { "aula": "303", "studenti": 24 },
+        "4F": { "aula": "304", "studenti": 23 },
+        "5F": { "aula": "305", "studenti": 26 }
+      }
+    },
+    "SezioneG": {
+      "sezione": "Sezione G",
+      "indirizzo": "Informatica",
+      "classi": {
+        "1G": { "aula": "306", "studenti": 22 },
+        "2G": { "aula": "307", "studenti": 20 },
+        "3G": { "aula": "308", "studenti": 21 },
+        "4G": { "aula": "309", "studenti": 23 },
+        "5G": { "aula": "310", "studenti": 24 }
+      }
+    },
+    "SezioneH": {
+      "sezione": "Sezione H",
+      "indirizzo": "Informatica",
+      "classi": {
+        "1H": { "aula": "311", "studenti": 19 },
+        "2H": { "aula": "312", "studenti": 21 },
+        "3H": { "aula": "313", "studenti": 22 },
+        "4H": { "aula": "314", "studenti": 23 },
+        "5H": { "aula": "315", "studenti": 24 }
+      }
+    },
+    "SezioneI": {
+      "sezione": "Sezione I",
+      "indirizzo": "Informatica",
+      "classi": {
+        "1I": { "aula": "316", "studenti": 20 },
+        "2I": { "aula": "317", "studenti": 22 },
+        "3I": { "aula": "318", "studenti": 23 },
+        "4I": { "aula": "319", "studenti": 24 },
+        "5I": { "aula": "320", "studenti": 25 }
+      }
+    },
+    "SezioneM": {
+      "sezione": "Sezione M",
+      "indirizzo": "Liceo",
+      "classi": {
+        "1M": { "aula": "401", "studenti": 26 },
+        "2M": { "aula": "402", "studenti": 25 },
+        "3M": { "aula": "403", "studenti": 24 },
+        "4M": { "aula": "404", "studenti": 23 },
+        "5M": { "aula": "405", "studenti": 22 }
+      }
+    },
+    "SezioneN": {
+      "sezione": "Sezione N",
+      "indirizzo": "Liceo",
+      "classi": {
+        "1N": { "aula": "406", "studenti": 21 },
+        "2N": { "aula": "407", "studenti": 22 },
+        "3N": { "aula": "408", "studenti": 20 },
+        "4N": { "aula": "409", "studenti": 19 },
+        "5N": { "aula": "410", "studenti": 21 }
+      }
+    }
+  }
+}

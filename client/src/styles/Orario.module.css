@@ -707,7 +707,19 @@
   cursor: pointer;
 }
 
-/* Adding styles for the add button and form sections */
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+}
+
+.importButton {
+  background-color: #4caf50;
+}
+
+.importButton:hover {
+  background-color: #45a049;
+}
+
 .addButton {
   background-color: #971645;
   color: white;
