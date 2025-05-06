@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getAllClassi, createClasse } from '../services/orarioService';
+import { getAllClassi, createClasse, importaClassiEsempio } from '../services/orarioService';
 import styles from '../styles/Orario.module.css';
+import datiEsempioClassi from '../data/esempio_classi_studenti.json';
 
 const GestioneClassi = () => {
   const [classi, setClassi] = useState([]);
@@ -72,16 +73,45 @@ const GestioneClassi = () => {
     }
   };
 
+  const handleImportaEsempio = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // Usa i dati di esempio importati
+      const response = await importaClassiEsempio(datiEsempioClassi);
+      
+      setSuccess('Classi di esempio importate con successo!');
+      
+      // Ricarica l'elenco delle classi
+      fetchClassi();
+      
+      setLoading(false);
+    } catch (err) {
+      setError('Errore nell\'importazione delle classi di esempio: ' + (err.response?.data?.message || err.message || 'Errore sconosciuto'));
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.gestioneClassiContainer}>
       <div className={styles.headerSection}>
         <h3>Gestione Classi</h3>
-        <button
-          className={styles.addButton}
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? 'Chiudi Form' : 'Aggiungi Classe'}
-        </button>
+        <div className={styles.buttonGroup}>
+          <button
+            className={styles.addButton}
+            onClick={() => setShowForm(!showForm)}
+          >
+            {showForm ? 'Chiudi Form' : 'Aggiungi Classe'}
+          </button>
+          <button
+            className={`${styles.addButton} ${styles.importButton}`}
+            onClick={handleImportaEsempio}
+            disabled={loading}
+          >
+            Carica classi esempio
+          </button>
+        </div>
       </div>
       
       {error && <div className={styles.errorMessage}>{error}</div>}

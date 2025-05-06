@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllMaterie, createMateria } from '../services/orarioService';
+import { getAllMaterie, createMateria, updateMateria, deleteMateria } from '../services/materiaService';
 import styles from '../styles/Orario.module.css';
 
 const GestioneMaterie = () => {
@@ -11,8 +11,12 @@ const GestioneMaterie = () => {
   const [formData, setFormData] = useState({
     codice: '',
     descrizione: '',
-    coloreMateria: '#971645'
+    coloreMateria: '#971645',
+    decretoMinisteriale: '',
+    classiInsegnamento: []
   });
+  const [editMode, setEditMode] = useState(false);
+  const [currentMateriaId, setCurrentMateriaId] = useState(null);
 
   useEffect(() => {
     fetchMaterie();
@@ -25,7 +29,7 @@ const GestioneMaterie = () => {
       setMaterie(response.data);
       setLoading(false);
     } catch (err) {
-      setError('Errore nel caricamento delle materie');
+      setError('Errore nel caricamento delle materie: ' + (err.message || 'Errore sconosciuto'));
       setLoading(false);
     }
   };
@@ -48,23 +52,83 @@ const GestioneMaterie = () => {
     
     try {
       setLoading(true);
-      await createMateria(formData);
       
-      setSuccess('Materia creata con successo!');
+      if (editMode) {
+        await updateMateria(currentMateriaId, {
+          codiceMateria: formData.codice,
+          descrizione: formData.descrizione,
+          coloreMateria: formData.coloreMateria,
+          decretoMinisteriale: formData.decretoMinisteriale,
+          classiInsegnamento: formData.classiInsegnamento
+        });
+        setSuccess('Materia aggiornata con successo!');
+      } else {
+        await createMateria(formData);
+        setSuccess('Materia creata con successo!');
+      }
+      
+      // Reset form
       setFormData({
         codice: '',
         descrizione: '',
-        coloreMateria: '#971645'
+        coloreMateria: '#971645',
+        decretoMinisteriale: '',
+        classiInsegnamento: []
       });
       
+      // Refresh materie list
       await fetchMaterie();
       
+      // Close form and reset edit mode
       setShowForm(false);
+      setEditMode(false);
+      setCurrentMateriaId(null);
       setLoading(false);
     } catch (err) {
-      setError('Errore nella creazione della materia: ' + (err.message || 'Errore sconosciuto'));
+      setError('Errore nella gestione della materia: ' + (err.response?.data?.message || err.message || 'Errore sconosciuto'));
       setLoading(false);
     }
+  };
+
+  const handleEdit = (materia) => {
+    setFormData({
+      codice: materia.codiceMateria,
+      descrizione: materia.descrizione,
+      coloreMateria: materia.coloreMateria || '#971645',
+      decretoMinisteriale: materia.decretoMinisteriale || '',
+      classiInsegnamento: materia.classiInsegnamento || []
+    });
+    setEditMode(true);
+    setCurrentMateriaId(materia._id);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Sei sicuro di voler eliminare questa materia?')) {
+      try {
+        setLoading(true);
+        await deleteMateria(id);
+        setSuccess('Materia eliminata con successo!');
+        await fetchMaterie();
+        setLoading(false);
+      } catch (err) {
+        setError('Errore nell\'eliminazione della materia: ' + (err.response?.data?.message || err.message || 'Errore sconosciuto'));
+        setLoading(false);
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      codice: '',
+      descrizione: '',
+      coloreMateria: '#971645',
+      decretoMinisteriale: '',
+      classiInsegnamento: []
+    });
+    setEditMode(false);
+    setCurrentMateriaId(null);
+    setShowForm(false);
   };
 
   return (
@@ -73,9 +137,15 @@ const GestioneMaterie = () => {
         <h3>Gestione Materie</h3>
         <button 
           className={styles.addButton}
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (showForm && editMode) {
+              resetForm();
+            } else {
+              setShowForm(!showForm);
+            }
+          }}
         >
-          {showForm ? 'Annulla' : 'Nuova Materia'}
+          {showForm ? (editMode ? 'Annulla Modifica' : 'Annulla') : 'Nuova Materia'}
         </button>
       </div>
       
@@ -84,7 +154,7 @@ const GestioneMaterie = () => {
       
       {showForm && (
         <div className={styles.formSection}>
-          <h4>Crea Nuova Materia</h4>
+          <h4>{editMode ? 'Modifica Materia' : 'Crea Nuova Materia'}</h4>
           <form onSubmit={handleFormSubmit} className={styles.materiaForm}>
             <div className={styles.formRow}>
               <div className={styles.formGroup}>
@@ -124,18 +194,30 @@ const GestioneMaterie = () => {
               />
             </div>
             
+            <div className={styles.formGroup}>
+              <label htmlFor="decretoMinisteriale">Decreto Ministeriale (opzionale):</label>
+              <input
+                type="text"
+                id="decretoMinisteriale"
+                name="decretoMinisteriale"
+                value={formData.decretoMinisteriale}
+                onChange={handleFormChange}
+                className={styles.textInput}
+              />
+            </div>
+            
             <button 
               type="submit" 
               className={styles.submitButton}
               disabled={loading}
             >
-              {loading ? 'Salvataggio in corso...' : 'Salva Materia'}
+              {loading ? 'Salvataggio in corso...' : (editMode ? 'Aggiorna Materia' : 'Salva Materia')}
             </button>
           </form>
         </div>
       )}
       
-      {loading ? (
+      {loading && !materie.length ? (
         <div className={styles.loading}>Caricamento in corso...</div>
       ) : (
         <div className={styles.materieList}>
@@ -145,26 +227,46 @@ const GestioneMaterie = () => {
                 <th>Codice</th>
                 <th>Descrizione</th>
                 <th>Colore</th>
+                <th>Decreto Ministeriale</th>
                 <th>Azioni</th>
               </tr>
             </thead>
             <tbody>
               {materie.map((materia) => (
                 <tr key={materia._id}>
-                  <td>{materia.codice}</td>
+                  <td>{materia.codiceMateria}</td>
                   <td>{materia.descrizione}</td>
                   <td>
                     <div 
                       className={styles.colorSample} 
                       style={{ backgroundColor: materia.coloreMateria }}
+                      title={materia.coloreMateria}
                     ></div>
                   </td>
+                  <td>{materia.decretoMinisteriale || '-'}</td>
                   <td>
-                    <button className={styles.actionButton}>Modifica</button>
-                    <button className={styles.actionButton}>Elimina</button>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleEdit(materia)}
+                    >
+                      Modifica
+                    </button>
+                    <button 
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
+                      onClick={() => handleDelete(materia._id)}
+                    >
+                      Elimina
+                    </button>
                   </td>
                 </tr>
               ))}
+              {materie.length === 0 && (
+                <tr>
+                  <td colSpan="5" className={styles.noData}>
+                    Nessuna materia disponibile. Aggiungi una nuova materia.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

@@ -97,3 +97,13 @@ export const importOrario = async (file) => {
     throw error.response?.data || { message: 'Errore nell\'importazione dell\'orario' };
   }
 };
+
+// Importa classi di esempio
+export const importaClassiEsempio = async (datiEsempio) => {
+  try {
+    const response = await axios.post('/api/classi/importa-esempio', datiEsempio);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

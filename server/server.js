@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const materiaRoutes = require('./routes/materiaRoutes');
 const classeInsegnamentoRoutes = require('./routes/classeInsegnamentoRoutes');
+const classeRoutes = require('./routes/classeRoutes'); // Added import for classeRoutes
 
 // Carica le variabili d'ambiente
 require('dotenv').config();
@@ -55,6 +56,7 @@ app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
 app.use('/api/docenti', docenteRoutes);
 // Make sure the assenze routes are properly included
 app.use('/api/assenze', assenzaRoutes);
+app.use('/api/classi', classeRoutes); // Added classeRoutes to the Express app
 
 // Route di base
 app.get('/', (req, res) => {
