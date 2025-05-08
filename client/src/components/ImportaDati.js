@@ -20,18 +20,7 @@ const ImportaDati = () => {
         >
           Importa Orario
         </button>
-        <button 
-          className={`${styles.tabButton} ${activeTab === 'materie' ? styles.active : ''}`}
-          onClick={() => setActiveTab('materie')}
-        >
-          Gestione Materie
-        </button>
-        <button 
-          className={`${styles.tabButton} ${activeTab === 'classi' ? styles.active : ''}`}
-          onClick={() => setActiveTab('classi')}
-        >
-          Gestione Classi
-        </button>
+       
         <button 
           className={`${styles.tabButton} ${activeTab === 'classiInsegnamento' ? styles.active : ''}`}
           onClick={() => setActiveTab('classiInsegnamento')}

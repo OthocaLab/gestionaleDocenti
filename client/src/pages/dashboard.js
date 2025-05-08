@@ -9,6 +9,8 @@ import styles from '../styles/Dashboard.module.css';
 import GestioneDocenti from '../components/GestioneDocenti';
 import GestioneAssenze from '../components/GestioneAssenze';
 import RecuperoOre from '../components/RecuperoOre';
+import ImportaDati from '../components/ImportaDati';
+import GestioneDidattica from '../components/GestioneDidattica';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
@@ -73,13 +75,15 @@ const Dashboard = () => {
           {activeTab === 'orario' && "Orari Classi"}
           {activeTab === 'sostituzioni' && "Gestione Sostituzioni"}
           {activeTab === 'docenti' && "Gestione Docenti"}
+          {activeTab === 'didattica' && "Gestione Didattica"}
           {activeTab === 'importa' && "Importa Dati"}
           {activeTab === 'report' && "Report"}
           {activeTab === 'assenze' && "Gestione Assenze"}
+         
         </div>
         <div className={styles.userInfo}>
           <div className={styles.notifications}>
-            <span className={styles.notificationIcon}>🔔</span>
+            <div className={styles.notificationIcon}>🔔</div>
           </div>
           <div className={styles.userAvatar}>
             <div className={styles.avatarCircle}>{user?.nome?.charAt(0) || 'U'}</div>
@@ -134,6 +138,16 @@ const Dashboard = () => {
                 </a>
               </li>
             )}
+             <li>
+              <a 
+                href="#" 
+                className={activeTab === 'didattica' ? styles.active : ''} 
+                onClick={() => setActiveTab('didattica')}
+              >
+                <span className={styles.icon}>📚</span>
+                <span className={styles.label}>Gestione Didattica</span>
+              </a>
+            </li>
             <li>
               <a href="#" className={activeTab === 'recupero' ? styles.active : ''} onClick={() => setActiveTab('recupero')}>
                 <span className={styles.icon}>⏱️</span>
@@ -152,6 +166,7 @@ const Dashboard = () => {
                 <span className={styles.label}>Report</span>
               </a>
             </li>
+           
             <li className={styles.logoutItem}>
               <a href="#" onClick={handleLogout}>
                 <span className={styles.icon}>🚪</span>
@@ -192,9 +207,7 @@ const Dashboard = () => {
 
           {activeTab === 'importa' && (
             <div>
-              <h2>Importa Dati</h2>
-              <p>Qui potrai importare l'orario dei docenti e le assenze.</p>
-              <ImportaOrario />
+              <ImportaDati />
             </div>
           )}
 
@@ -209,6 +222,12 @@ const Dashboard = () => {
           {activeTab === 'recupero' && (
             <div>
               <RecuperoOre />
+            </div>
+          )}
+          
+          {activeTab === 'didattica' && (
+            <div>
+              <GestioneDidattica />
             </div>
           )}
         </main>

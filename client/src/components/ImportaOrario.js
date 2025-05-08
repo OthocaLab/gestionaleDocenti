@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { importOrario } from '../services/orarioService';
-import GestioneMaterie from './GestioneMaterie';
-import GestioneClassi from './GestioneClassi';
 import styles from '../styles/Orario.module.css';
 import axios from 'axios';
 
@@ -11,7 +9,6 @@ const ImportaOrario = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('importa');
   const [preview, setPreview] = useState(null);
 
   const handleFileChange = (e) => {
@@ -114,67 +111,37 @@ const ImportaOrario = () => {
 
   return (
     <div className={styles.importContainer}>
-      <div className={styles.tabsContainer}>
-        <div className={styles.tabs}>
-          <button 
-            className={activeTab === 'importa' ? styles.activeTab : ''}
-            onClick={() => setActiveTab('importa')}
-          >
-            Importa Orario
-          </button>
-          <button 
-            className={activeTab === 'materie' ? styles.activeTab : ''}
-            onClick={() => setActiveTab('materie')}
-          >
-            Gestione Materie
-          </button>
-          <button 
-            className={activeTab === 'classi' ? styles.activeTab : ''}
-            onClick={() => setActiveTab('classi')}
-          >
-            Gestione Classi
-          </button>
-          <button 
-            className={activeTab === 'classiInsegnamento' ? styles.activeTab : ''}
-            onClick={() => setActiveTab('classiInsegnamento')}
-          >
-            Importa Classi Insegnamento
-          </button>
-        </div>
-      </div>
-      
-      {activeTab === 'importa' && (
-        <div className={styles.tabContent}>
-          <h3>Importa Orario</h3>
+      <div className={styles.tabContent}>
+        <h3>Importa Orario</h3>
+        
+        <form onSubmit={handleSubmit} className={styles.importForm}>
+          <div className={styles.fileInput}>
+            <label htmlFor="orarioFile">Seleziona file JSON con l'orario:</label>
+            <input
+              type="file"
+              id="orarioFile"
+              accept=".json"
+              onChange={handleFileChange}
+              disabled={loading}
+            />
+          </div>
           
-          <form onSubmit={handleSubmit} className={styles.importForm}>
-            <div className={styles.fileInput}>
-              <label htmlFor="orarioFile">Seleziona file JSON con l'orario:</label>
-              <input
-                type="file"
-                id="orarioFile"
-                accept=".json"
-                onChange={handleFileChange}
-                disabled={loading}
-              />
-            </div>
-            
-            <button 
-              type="submit" 
-              className={styles.importButton}
-              disabled={!file || loading}
-            >
-              {loading ? 'Importazione in corso...' : 'Importa Orario'}
-            </button>
-          </form>
-          
-          {message && <div className={styles.successMessage}>{message}</div>}
-          {error && <div className={styles.errorMessage}>{error}</div>}
-          
-          <div className={styles.instructions}>
-            <h4>Formato del file JSON:</h4>
-            <pre>
-              {`{
+          <button 
+            type="submit" 
+            className={styles.importButton}
+            disabled={!file || loading}
+          >
+            {loading ? 'Importazione in corso...' : 'Importa Orario'}
+          </button>
+        </form>
+        
+        {message && <div className={styles.successMessage}>{message}</div>}
+        {error && <div className={styles.errorMessage}>{error}</div>}
+        
+        <div className={styles.instructions}>
+          <h4>Formato del file JSON:</h4>
+          <pre>
+            {`{
   "orari": [
     {
       "professore": "ARDU",
@@ -192,80 +159,9 @@ const ImportaOrario = () => {
     ...
   ]
 }`}
-            </pre>
-          </div>
+          </pre>
         </div>
-      )}
-      
-      {activeTab === 'materie' && (
-        <div className={styles.tabContent}>
-          <GestioneMaterie />
-        </div>
-      )}
-      
-      {activeTab === 'classi' && (
-        <div className={styles.tabContent}>
-          <GestioneClassi />
-        </div>
-      )}
-      
-      {activeTab === 'classiInsegnamento' && (
-        <div className={styles.tabContent}>
-          <h3>Importa Classi di Insegnamento</h3>
-          
-          <form onSubmit={handleClassiInsegnamentoSubmit} className={styles.importForm}>
-            <div className={styles.fileInput}>
-              <label htmlFor="classiInsegnamentoFile">Seleziona file JSON con le classi di insegnamento:</label>
-              <input
-                type="file"
-                id="classiInsegnamentoFile"
-                accept=".json"
-                onChange={handleClassiInsegnamentoFileChange}
-                disabled={loading}
-              />
-            </div>
-            
-            {preview && (
-              <div className={styles.previewContainer}>
-                <h4>Anteprima (prime 3 classi):</h4>
-                <pre className={styles.jsonPreview}>
-                  {JSON.stringify(preview, null, 2)}
-                </pre>
-              </div>
-            )}
-            
-            <button 
-              type="submit" 
-              className={styles.importButton}
-              disabled={!classiInsegnamentoFile || loading}
-            >
-              {loading ? 'Importazione in corso...' : 'Importa Classi di Insegnamento'}
-            </button>
-          </form>
-          
-          {message && <div className={styles.successMessage}>{message}</div>}
-          {error && <div className={styles.errorMessage}>{error}</div>}
-          
-          <div className={styles.instructions}>
-            <h4>Formato del file JSON:</h4>
-            <pre>
-              {`[
-  {
-    "codice": "A-01",
-    "denominazione": "Arte e immagine nella scuola secondaria di I grado",
-    "materie": [
-      "Arte e Immagine (Scuola secondaria di I grado)"
-    ]
-  },
-  ...
-]`}
-            </pre>
-            <p>
-              Il sistema creerà automaticamente le classi di insegnamento e le materie associate se non esistono già.
-            </p>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
