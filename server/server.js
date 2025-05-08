@@ -1,89 +1,90 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const morgan = require('morgan');
-const dotenv = require('dotenv');
-const materiaRoutes = require('./routes/materiaRoutes');
-const classeInsegnamentoRoutes = require('./routes/classeInsegnamentoRoutes');
-const classeRoutes = require('./routes/classeRoutes'); // Added import for classeRoutes
+const bodyParser = require('body-parser');
 
-// Carica le variabili d'ambiente
-require('dotenv').config();
-
-// Importa le route
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const orarioRoutes = require('./routes/orarioRoutes');
-const docenteRoutes = require('./routes/docenteRoutes');
-const assenzaRoutes = require('./routes/assenzaRoutes'); // Nuova route per le assenze
-
-// Inizializza l'app Express
 const app = express();
-
-// Use PORT from .env, fallback to 5000 if not specified
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/gestionale_docenti';
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(helmet());
-app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minuti
-  max: 100, // limite di 100 richieste per IP
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: 'Troppe richieste da questo IP, riprova più tardi'
+// Connessione a MongoDB
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Connessione a MongoDB stabilita'))
+.catch(err => {
+  console.error('Errore di connessione a MongoDB:', err);
+  // Se non riesci a connetterti al database, puoi continuare
+  // ma è meglio che l'utente lo sappia
+  console.log('Il server continuerà a funzionare senza MongoDB');
 });
 
-// Applica il rate limiter alle route di autenticazione
-app.use('/api/auth', limiter);
+// Definizione dello schema e del modello per i docenti (esempio)
+const docenteSchema = new mongoose.Schema({
+  nome: { type: String, required: true },
+  cognome: { type: String, required: true },
+  materia: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  createdAt: { type: Date, default: Date.now }
+});
 
-// Route
-app.use('/api/auth', authRoutes);
-// Mount routers
-app.use('/api/users', userRoutes);
-app.use('/api/orario', orarioRoutes);
-app.use('/api/materie', materiaRoutes);
-// Make sure this line is added to your server.js file
-app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
-app.use('/api/docenti', docenteRoutes);
-// Make sure the assenze routes are properly included
-app.use('/api/assenze', assenzaRoutes);
-app.use('/api/classi', classeRoutes); // Added classeRoutes to the Express app
+const Docente = mongoose.model('Docente', docenteSchema);
 
-// Route di base
+// Rotte di base
 app.get('/', (req, res) => {
-  res.send('API per la gestione delle sostituzioni docenti');
+  res.json({ message: 'API del gestionale docenti funzionante!' });
 });
 
-// Gestione degli errori
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: 'Si è verificato un errore interno del server',
-    error: process.env.NODE_ENV === 'development' ? err.message : {}
-  });
+// Rotte per i docenti
+app.get('/api/docenti', async (req, res) => {
+  try {
+    const docenti = await Docente.find();
+    res.json(docenti);
+  } catch (error) {
+    console.error('Errore nel recupero dei docenti:', error);
+    res.status(500).json({ message: 'Errore del server' });
+  }
 });
 
-// Connessione al database
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('Connessione al database MongoDB stabilita con successo');
-    // Avvia il server
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+app.post('/api/docenti', async (req, res) => {
+  try {
+    const { nome, cognome, materia, email } = req.body;
+    const nuovoDocente = new Docente({ nome, cognome, materia, email });
+    await nuovoDocente.save();
+    res.status(201).json(nuovoDocente);
+  } catch (error) {
+    console.error('Errore nella creazione del docente:', error);
+    res.status(500).json({ message: 'Errore del server' });
+  }
+});
+
+// Esempio rotta di login (semplificata)
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Questa è una logica di autenticazione molto semplificata
+  // In un'applicazione reale, dovresti usare bcrypt per confrontare le password
+  if (username === 'admin' && password === 'password') {
+    res.json({
+      success: true,
+      message: 'Login effettuato con successo',
+      user: { username, role: 'admin' }
     });
-  })
-  .catch((err) => {
-    console.error('Errore di connessione al database:', err);
-    process.exit(1);
-  });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: 'Credenziali non valide'
+    });
+  }
+});
+
+// Avvio del server
+app.listen(PORT, () => {
+  console.log(`Server in esecuzione sulla porta ${PORT}`);
+});
