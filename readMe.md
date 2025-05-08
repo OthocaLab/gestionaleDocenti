@@ -1,191 +1,201 @@
-# **Othoca Labs \- Sistema di Gestione Sostituzioni Docenti**
+<div align="center">
+  
+# 🏫 Othoca Labs - Sistema di Gestione Sostituzioni Docenti
 
-Questo progetto è una web application per la gestione delle sostituzioni dei docenti, delle ore di avanzo/disavanzo e della gestione del personale docente. L'obiettivo è automatizzare e semplificare la gestione delle sostituzioni, integrando tecnologie moderne con un approccio innovativo.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-14%2B-green)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.x-green)](https://www.mongodb.com/)
+[![React](https://img.shields.io/badge/React-Latest-blue)](https://reactjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-Latest-black)](https://nextjs.org/)
 
-## **Tecnologie Utilizzate**
+*Semplifica la gestione delle sostituzioni docenti con un'applicazione web moderna ed efficiente*
 
-### **Frontend**
 
-Framework: React con Next.js
-Gestione Stato: Context API
-Routing: Next.js Router
-Chiamate API: Fetch API
-Stile: CSS Modules
+</div>
 
-### **Backend**
+---
 
-Framework: Node.js con Express
-Database: MongoDB
-Autenticazione: JWT (JSON Web Token)
+## 📋 Panoramica
 
-Validazione: Express Validator
+Othoca Labs è una web application completa progettata per automatizzare e semplificare la gestione delle sostituzioni dei docenti, monitorare ore di avanzo/disavanzo e ottimizzare la gestione del personale docente nelle istituzioni scolastiche.
 
-## **Funzionalità Principali**
+<div align="center">
+  <img src="client\public\img\logo.png" alt="Dashboard Othoca Labs" width="300" />
+</div>
 
-Gestione Utenti
-Registrazione e login
-Gestione profili docenti
-Ruoli differenziati (admin, vicepresidenza, docente)
+## ✨ Caratteristiche
 
-Importazione Dati
-Importazione dell'orario dei docenti da file (Excel/CSV)
+### 👤 Gestione Utenti
+- **Multi-ruolo**: Sistema con ruoli differenziati (admin, vicepresidenza, docente)
+- **Autenticazione sicura**: Login protetto con JWT
+- **Profili personalizzati**: Gestione completa dei profili docenti
 
-Importazione delle assenze dei docenti
-Modifica manuale dei dati importati
-Gestione Sostituzioni
-Segnalazione assenze docenti
-Selezione automatica dei sostituti in base a criteri prestabiliti
-Notifiche ai docenti sostituenti
-Gestione Ore
-Monitoraggio ore da recuperare
-Gestione ore buche
-Ore extra retribuite
-Report ed Esportazione
-Generazione report sostituzioni
-Esportazione dati in formato stampabile
-Statistiche sulle ore da recuperare
+### 📊 Gestione Dati
+- **Importazione intelligente**: Carica orari e assenze da file Excel/CSV
+- **Modifica intuitiva**: Interfaccia user-friendly per modifiche manuali
+- **Sincronizzazione**: Dati sempre aggiornati in tempo reale
 
-## **Requisiti di Sistema**
+### 🔄 Sostituzioni Smart
+- **Selezione automatica**: Algoritmo che propone i sostituti ideali
+- **Notifiche immediate**: I docenti vengono informati in tempo reale
+- **Gestione semplificata**: Interfaccia intuitiva per la vicepresidenza
 
-Node.js (v14.x o superiore)
+### ⏱️ Monitoraggio Ore
+- **Ore da recuperare**: Controllo preciso delle ore da compensare
+- **Gestione ore buche**: Ottimizzazione dell'orario scolastico
+- **Ore extra**: Monitoraggio delle ore aggiuntive retribuite
 
-MongoDB (v4.x o superiore)
+### 📝 Report ed Analytics
+- **Statistiche dettagliate**: Visualizzazione dell'andamento
+- **Esportazione dati**: Report in formato stampabile
+- **Dashboard personalizzate**: In base al ruolo dell'utente
 
-npm o yarn
+## 🛠️ Stack Tecnologico
 
-## **Installazione**
+### Frontend
+- **Framework**: React con Next.js
+- **Gestione Stato**: Context API
+- **Routing**: Next.js Router
+- **API**: Fetch API
+- **Stile**: CSS Modules
 
-### **Clonare il Repository** 
+### Backend
+- **Framework**: Node.js con Express
+- **Database**: MongoDB
+- **Autenticazione**: JWT (JSON Web Token)
+- **Validazione**: Express Validator
+
+## 🚀 Installazione
+
+### Clonare il Repository
+```bash
+git clone https://github.com/OthocaLab/gestionaleDocenti
+cd gestionaleDocenti
 ```
-git clone [https://github.com/OthocaLab/othoca-labs.git](https://github.com/tuorepository/othoca-labs.git) 
-cd othoca-labs
-```
 
-### **Configurazione del Backend**
+## 🔧 Configurazione
 
-Navigare nella cartella del server:
-```cd server```
+### Backend
+```bash
+# Navigare nella cartella del server
+cd server
 
-Installare le dipendenze:
-```npm install```
-Creare un file .env nella cartella server con le seguenti variabili:
-```
-    NODE\_ENV=development
-    PORT=3000
-    MONGODB\_URI=mongodb://localhost:27017/othoca-labs
-    JWT\_SECRET=il\_tuo\_jwt\_secret\_sicuro
-    JWT\_EXPIRE=30d
-    EMAIL\_SERVICE=gmail
-    EMAIL\_USERNAME=tua\_email@gmail.com
-    EMAIL\_PASSWORD=tua\_password\_app
-    EMAIL\_FROM=noreply@othocalabs.it
-```
-### **Configurazione del Frontend**
-
-Navigare nella cartella del client:
-```
-cd ../client
-Installare le dipendenze:
-
+# Installare le dipendenze
 npm install
 ```
-Creare un file .env.local nella cartella client con le seguenti variabili:
+
+Creare un file `.env` nella cartella server:
 ```
-NEXT\_PUBLIC\_API\_URL=http://localhost:3000/api
+NODE_ENV=development
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/othoca-labs
+JWT_SECRET=il_tuo_jwt_secret_sicuro
+JWT_EXPIRE=30d
+EMAIL_SERVICE=gmail
+EMAIL_USERNAME=tua_email@gmail.com
+EMAIL_PASSWORD=tua_password_app
+EMAIL_FROM=noreply@othocalabs.it
 ```
 
-## **Avvio dell'Applicazione**
+### Frontend
+```bash
+# Navigare nella cartella del client utilizzando un secondo terminale (Ctrl + Shift + ò)
+cd client
 
-### **Avvio del Backend**
+# Installare le dipendenze
+npm install
+```
 
-Dalla cartella server:
+## 🏃‍♂️ Avvio dell'Applicazione
 
-```Bash
+### Backend (Primo terminale)
+```bash
+cd server
 npm run dev
 ```
-Il server sarà in ascolto sulla porta 3000 (o quella specificata nel file .env).
 
-### **Avvio del Frontend**
-
-Dalla cartella client:
-
-```Bash
+### Frontend (Secondo terminale)
+```bash
+cd client
 npm run dev
 ```
-L'applicazione frontend sarà disponibile all'indirizzo http://localhost:3001.
+L'applicazione sarà disponibile all'indirizzo: [http://localhost:3000](http://localhost:3000)
 
-## **Struttura del Progetto**
+## 📁 Struttura del Progetto
 
-## othoca-labs/
-## ├── client/                  \# Frontend Next.js
-## │   ├── public/              \# File statici
-## │   ├── src/                 \# Codice sorgente
-## │   │   ├── components/      \# Componenti React
-## │   │   ├── context/         \# Context API
-## │   │   ├── hooks/           \# Custom hooks
-## │   │   ├── pages/           \# Pagine Next.js
-## │   │   ├── styles/          \# File CSS
-## │   │   └── utils/           \# Utility functions
-## │   ├── .env.local           \# Variabili d'ambiente frontend
-## │   └── next.config.js       \# Configurazione Next.js
-## │
-## ├── server/                  \# Backend Node.js/Express
-## │   ├── config/              \# Configurazioni
-## │   ├── controllers/         \# Controller API
-## │   ├── middleware/          \# Middleware Express
-## │   ├── models/              \# Modelli Mongoose
-## │   ├── routes/              \# Route API
-## │   ├── utils/               \# Utility functions
-## │   ├── .env                 \# Variabili d'ambiente backend
-## │   └── server.js            \# Entry point del server
-## │
-## └── README.md                \# Documentazione del progetto
+```
+othoca-labs/
+├── client/                  # Frontend Next.js
+│   ├── public/              # File statici
+│   ├── src/                 # Codice sorgente
+│   │   ├── components/      # Componenti React
+│   │   ├── context/         # Context API
+│   │   ├── hooks/           # Custom hooks
+│   │   ├── pages/           # Pagine Next.js
+│   │   ├── styles/          # File CSS
+│   │   └── utils/           # Utility functions
+│   ├── .env.local           # Variabili d'ambiente frontend
+│   └── next.config.js       # Configurazione Next.js
+│
+├── server/                  # Backend Node.js/Express
+│   ├── config/              # Configurazioni
+│   ├── controllers/         # Controller API
+│   ├── middleware/          # Middleware Express
+│   ├── models/              # Modelli Mongoose
+│   ├── routes/              # Route API
+│   ├── utils/               # Utility functions
+│   ├── .env                 # Variabili d'ambiente backend
+│   └── server.js            # Entry point del server
+│
+└── README.md                # Documentazione del progetto
+```
 
-## **Ruoli Utente**
+## 👥 Ruoli Utente
 
-* Amministratore
-* Gestione completa degli utenti
-* Configurazione del sistema
-* Accesso a tutte le funzionalità
-* Vicepresidenza
-* Gestione delle sostituzioni
-* Approvazione delle assenze
-* Generazione di report
-* Docente
-* Visualizzazione del proprio orario
-* Richiesta di assenze/permessi
-* Visualizzazione delle sostituzioni assegnate
+| Ruolo | Permessi |
+|-------|----------|
+| **Amministratore** | Gestione completa degli utenti<br>Configurazione del sistema<br>Accesso a tutte le funzionalità |
+| **Vicepresidenza** | Gestione delle sostituzioni<br>Approvazione delle assenze<br>Generazione di report |
+| **Docente** | Visualizzazione del proprio orario<br>Richiesta di assenze/permessi<br>Visualizzazione delle sostituzioni assegnate |
 
-## **Flusso di Lavoro Tipico**
+## 🔄 Flusso di Lavoro
 
-La segreteria o il docente segnala un'assenza
-Il sistema identifica le ore scoperte
-Il sistema propone i docenti sostituti in base ai criteri configurati
-La vicepresidenza conferma le sostituzioni
-I docenti sostituti ricevono una notifica
-Il sistema aggiorna il conteggio delle ore da recuperare
+```mermaid
+graph TD
+    A[Segnalazione Assenza] --> B[Identificazione Ore Scoperte]
+    B --> C[Proposta Sostituti]
+    C --> D[Conferma Sostituzioni]
+    D --> E[Notifica ai Docenti]
+    E --> F[Aggiornamento Conteggio Ore]
+```
 
-## **Contribuire al Progetto**
+1. La segreteria o il docente segnala un'assenza
+2. Il sistema identifica le ore scoperte
+3. Il sistema propone i docenti sostituti in base ai criteri configurati
+4. La vicepresidenza conferma le sostituzioni
+5. I docenti sostituti ricevono una notifica
+6. Il sistema aggiorna il conteggio delle ore da recuperare
 
-Per contribuire al progetto, seguire questi passaggi:
+## 👨‍💻 Contribuire al Progetto
 
-Fare un fork del repository
-Creare un branch per la nuova feature (git checkout \-b feature/nome-feature)
+1. Fork del repository
+2. Creare un branch per la nuova feature (`git checkout -b feature/nome-feature`)
+3. Commit delle modifiche (`git commit -m 'Aggiunta nuova feature'`)
+4. Push al branch (`git push origin feature/nome-feature`)
+5. Aprire una Pull Request
 
-Fare commit delle modifiche (git commit \-m 'Aggiunta nuova feature')
+## 📜 Licenza
 
-Fare push al branch (git push origin feature/nome-feature)
+Questo progetto è rilasciato sotto licenza [MIT](https://opensource.org/licenses/MIT).
 
-Aprire una Pull Request
+## 📞 Contatti
 
-## **Licenza**
+Per domande o supporto, contattare Andrea Siddi di Uras.
 
-Questo progetto è rilasciato sotto licenza MIT.
+---
 
-## **Contatti**
-
-Per domande o supporto, contattare Andrea Siddi di Uras e suonare direttamente dove abita\!
-
-\---
-
+<div align="center">
+  
 Sviluppato con ❤️ dal team Othoca Labs
+
+</div>
