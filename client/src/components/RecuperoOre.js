@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styles from '../styles/RecuperoOre.module.css';
 import axios from 'axios';
 import { getAllDocenti } from '../services/docenteService';
+// Rimuovi temporaneamente l'importazione di framer-motion
+// import { motion } from 'framer-motion';
 
 const RecuperoOre = () => {
   const [docenti, setDocenti] = useState([]);
@@ -119,10 +121,9 @@ const RecuperoOre = () => {
       <div className={styles.contentWrapper}>
         <div className={styles.pageHeader}>
           <h1 className={styles.mainTitle}>Gestione Recupero Ore</h1>
-          <p className={styles.subtitle}>Monitora e gestisci le ore di recupero dei docenti</p>
         </div>
 
-        {/* Stats Cards in griglia 2x2 */}
+        {/* Stats Cards in riga */}
         <div className={styles.statsContainer}>
           <div className={styles.statCard}>
             <div className={styles.statIcon}>⏱️</div>
@@ -130,7 +131,7 @@ const RecuperoOre = () => {
               <span className={styles.statValue}>
                 {docenti.reduce((total, doc) => total + (doc.oreRecupero || 0), 0)}
               </span>
-              <span className={styles.statLabel}>Ore da Recuperare</span>
+              <span className={styles.statLabel}>Ore</span>
             </div>
           </div>
           
@@ -143,9 +144,9 @@ const RecuperoOre = () => {
           </div>
         </div>
 
-        {/* Sezione Filtri */}
+        {/* Sezione Filtri Compatta */}
         <div className={styles.filterContainer}>
-          <div className={styles.searchSection}>
+          <div className={styles.searchAndFilters}>
             <div className={styles.searchWrapper}>
               <input
                 type="text"
@@ -156,79 +157,77 @@ const RecuperoOre = () => {
               />
               <span className={styles.searchIcon}>🔍</span>
             </div>
-          </div>
-
-          <div className={styles.filtersGrid}>
-            <div className={styles.filterItem}>
-              <label className={styles.filterLabel}>Range Ore</label>
-              <div className={styles.rangeInputs}>
+            
+            <div className={styles.filtersRow}>
+              <div className={styles.filterItem}>
                 <input
                   type="number"
                   name="minOre"
                   value={filtri.minOre}
                   onChange={handleFiltroChange}
-                  placeholder="Min"
-                  className={styles.numberInput}
+                  placeholder="Min ore"
+                  className={styles.smallInput}
                   min="0"
                 />
-                <span className={styles.rangeSeparator}>-</span>
+              </div>
+              <div className={styles.filterItem}>
                 <input
                   type="number"
                   name="maxOre"
                   value={filtri.maxOre}
                   onChange={handleFiltroChange}
-                  placeholder="Max"
-                  className={styles.numberInput}
+                  placeholder="Max ore"
+                  className={styles.smallInput}
                   min="0"
                 />
               </div>
-            </div>
-
-            <div className={styles.filterItem}>
-              <label className={styles.filterLabel}>Classe</label>
-              <input
-                type="text"
-                name="classe"
-                value={filtri.classe}
-                onChange={handleFiltroChange}
-                placeholder="es. 1A"
-                className={styles.input}
-              />
-            </div>
-
-            <div className={styles.filterItem}>
-              <label className={styles.filterLabel}>Materia</label>
-              <input
-                type="text"
-                name="materia"
-                value={filtri.materia}
-                onChange={handleFiltroChange}
-                placeholder="es. Matematica"
-                className={styles.input}
-              />
-            </div>
-
-            <div className={styles.filterActions}>
-              <button onClick={applicaFiltri} className={styles.primaryButton}>
-                Applica Filtri
-              </button>
-              <button onClick={azzeraFiltri} className={styles.secondaryButton}>
-                Azzera
-              </button>
+              <div className={styles.filterItem}>
+                <input
+                  type="text"
+                  name="classe"
+                  value={filtri.classe}
+                  onChange={handleFiltroChange}
+                  placeholder="Classe"
+                  className={styles.smallInput}
+                />
+              </div>
+              <div className={styles.filterItem}>
+                <input
+                  type="text"
+                  name="materia"
+                  value={filtri.materia}
+                  onChange={handleFiltroChange}
+                  placeholder="Materia"
+                  className={styles.smallInput}
+                />
+              </div>
+              <div className={styles.filterActions}>
+                <button 
+                  onClick={applicaFiltri} 
+                  className={styles.smallButton}
+                >
+                  Filtra
+                </button>
+                <button 
+                  onClick={azzeraFiltri} 
+                  className={styles.smallButton}
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Tabella Docenti */}
+        {/* Tabella Docenti Compatta */}
         <div className={styles.tableWrapper}>
           {loading ? (
             <div className={styles.loadingState}>
               <div className={styles.spinner}></div>
-              <p>Caricamento dati...</p>
+              <p>Caricamento...</p>
             </div>
           ) : error ? (
             <div className={styles.errorState}>
-              <span className={styles.errorIcon}>⚠️</span>
               <p>{error}</p>
             </div>
           ) : (
@@ -238,8 +237,8 @@ const RecuperoOre = () => {
                   <th>Docente</th>
                   <th>Classi</th>
                   <th>Materie</th>
-                  <th>Ore da Recuperare</th>
-                  <th>Azioni</th>
+                  <th>Ore</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -255,9 +254,6 @@ const RecuperoOre = () => {
                             <span className={styles.docenteName}>
                               {docente.cognome} {docente.nome}
                             </span>
-                            <span className={styles.docenteEmail}>
-                              {docente.email}
-                            </span>
                           </div>
                         </div>
                       </td>
@@ -265,7 +261,7 @@ const RecuperoOre = () => {
                       <td>{docente.classiInsegnamento?.map(c => c.materia?.nome).join(', ') || '-'}</td>
                       <td>
                         <span className={`${styles.oreBadge} ${docente.oreRecupero > 0 ? styles.pending : styles.completed}`}>
-                          {docente.oreRecupero || 0} ore
+                          {docente.oreRecupero || 0}
                         </span>
                       </td>
                       <td>
@@ -279,7 +275,6 @@ const RecuperoOre = () => {
                   <tr>
                     <td colSpan="5">
                       <div className={styles.emptyState}>
-                        <span className={styles.emptyIcon}>📊</span>
                         <p>Nessun docente trovato</p>
                       </div>
                     </td>
