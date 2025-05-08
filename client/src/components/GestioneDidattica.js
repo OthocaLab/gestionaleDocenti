@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import GestioneClassi from './GestioneClassi';
-import GestioneMaterie from './GestioneMaterie';  // Aggiungi questa importazione
-import styles from '../styles/Orario.module.css';
+import GestioneMaterie from './GestioneMaterie';
+import styles from '../styles/GestioneDidattica.module.css';
 
 const GestioneDidattica = () => {
   const [activeTab, setActiveTab] = useState('classi');

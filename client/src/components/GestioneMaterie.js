@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import styles from '../styles/Orario.module.css';
+import styles from '../styles/GestioneDidattica.module.css';
 
 const GestioneMaterie = () => {
   const [materie, setMaterie] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
+    nome: '',
     codice: '',
-    descrizione: '',
-    coloreMateria: '#3498db'
+    descrizione: ''
   });
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     fetchMaterie();
@@ -21,24 +22,11 @@ const GestioneMaterie = () => {
   const fetchMaterie = async () => {
     try {
       setLoading(true);
-      console.log('Fetching materie...');
       const response = await axios.get('/api/materie');
-      console.log('Response:', response.data);
-      
-      // Verifica la struttura della risposta
-      if (response.data && Array.isArray(response.data)) {
-        setMaterie(response.data);
-      } else if (response.data && Array.isArray(response.data.data)) {
-        setMaterie(response.data.data);
-      } else {
-        console.error('Formato risposta non valido:', response.data);
-        setError('Formato risposta non valido');
-      }
-      
+      setMaterie(response.data);
       setLoading(false);
     } catch (err) {
-      console.error('Errore nel caricamento delle materie:', err);
-      setError('Errore nel caricamento delle materie: ' + (err.message || 'Errore sconosciuto'));
+      setError('Errore nel caricamento delle materie');
       setLoading(false);
     }
   };
@@ -54,140 +42,181 @@ const GestioneMaterie = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.codice || !formData.descrizione) {
-      setError('Codice e descrizione sono campi obbligatori');
-      return;
-    }
-    
     try {
       setLoading(true);
-      await axios.post('/api/materie', formData);
       
-      setSuccess('Materia creata con successo!');
-      setFormData({
-        codice: '',
-        descrizione: '',
-        coloreMateria: '#3498db'
-      });
+      if (editingId) {
+        await axios.put(`/api/materie/${editingId}`, formData);
+        setSuccess('Materia aggiornata con successo!');
+      } else {
+        await axios.post('/api/materie', formData);
+        setSuccess('Materia creata con successo!');
+      }
       
-      // Ricarica l'elenco delle materie
+      resetForm();
       fetchMaterie();
-      
-      setShowForm(false);
-      setLoading(false);
     } catch (err) {
-      setError('Errore nella creazione della materia: ' + (err.message || 'Errore sconosciuto'));
+      setError('Errore: ' + (err.response?.data?.message || err.message));
       setLoading(false);
     }
   };
 
+  const handleEdit = (materia) => {
+    setFormData({
+      nome: materia.nome,
+      codice: materia.codice || '',
+      descrizione: materia.descrizione || ''
+    });
+    setEditingId(materia._id);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('Sei sicuro di voler eliminare questa materia?')) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`/api/materie/${id}`);
+      setSuccess('Materia eliminata con successo!');
+      fetchMaterie();
+    } catch (err) {
+      setError('Errore nell\'eliminazione della materia');
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      nome: '',
+      codice: '',
+      descrizione: ''
+    });
+    setEditingId(null);
+    setShowForm(false);
+    setLoading(false);
+  };
+
   return (
-    <div className={styles.gestioneMaterieContainer}>
+    <div className={styles.classiContainer}>
       <div className={styles.headerSection}>
-        <h2 className={styles.sectionTitle}>Gestione Materie</h2>
+        <h3 className={styles.title}>Gestione Materie</h3>
         <div className={styles.buttonGroup}>
-          <button
-            className={`${styles.actionButton} ${showForm ? styles.closeButton : styles.addButton}`}
+          <button 
+            className={styles.addButton}
             onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? '✕ Chiudi Form' : '+ Aggiungi Materia'}
+            {showForm ? 'Annulla' : '+ Aggiungi Materia'}
           </button>
         </div>
       </div>
-      
-      {error && <div className={`${styles.alertMessage} ${styles.errorMessage}`}>
-        <span className={styles.alertIcon}>⚠️</span> {error}
-      </div>}
-      
-      {success && <div className={`${styles.alertMessage} ${styles.successMessage}`}>
-        <span className={styles.alertIcon}>✅</span> {success}
-      </div>}
-      
+
+      {error && <div className={`${styles.message} ${styles.error}`}>{error}</div>}
+      {success && <div className={`${styles.message} ${styles.success}`}>{success}</div>}
+
       {showForm && (
-        <div className={`${styles.formSection} ${styles.cardEffect}`}>
-          <h3 className={styles.formTitle}>Inserisci nuova materia</h3>
-          <form onSubmit={handleSubmit} className={styles.materiaForm}>
+        <div className={styles.formCard}>
+          <h4 className={styles.formTitle}>{editingId ? 'Modifica Materia' : 'Aggiungi Nuova Materia'}</h4>
+          <form onSubmit={handleSubmit}>
             <div className={styles.formRow}>
               <div className={styles.formGroup}>
-                <label htmlFor="codice" className={styles.formLabel}>Codice:</label>
+                <label htmlFor="nome">Nome Materia</label>
+                <input
+                  type="text"
+                  id="nome"
+                  name="nome"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  className={styles.input}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="codice">Codice</label>
                 <input
                   type="text"
                   id="codice"
                   name="codice"
                   value={formData.codice}
                   onChange={handleChange}
-                  className={`${styles.formControl} ${styles.textInput}`}
-                  placeholder="Es. MAT, ITA, INF..."
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="descrizione" className={styles.formLabel}>Descrizione:</label>
-                <input
-                  type="text"
-                  id="descrizione"
-                  name="descrizione"
-                  value={formData.descrizione}
-                  onChange={handleChange}
-                  className={`${styles.formControl} ${styles.textInput}`}
-                  placeholder="Es. Matematica, Italiano..."
+                  className={styles.input}
                 />
               </div>
             </div>
             
             <div className={styles.formGroup}>
-              <label htmlFor="coloreMateria" className={styles.formLabel}>Colore:</label>
-              <input
-                type="color"
-                id="coloreMateria"
-                name="coloreMateria"
-                value={formData.coloreMateria}
+              <label htmlFor="descrizione">Descrizione</label>
+              <textarea
+                id="descrizione"
+                name="descrizione"
+                value={formData.descrizione}
                 onChange={handleChange}
-                className={styles.colorInput}
+                className={styles.input}
+                rows="3"
               />
             </div>
             
-            <div className={styles.formActions}>
+            <div>
+              <button 
+                type="button" 
+                className={styles.cancelButton}
+                onClick={resetForm}
+              >
+                Annulla
+              </button>
               <button 
                 type="submit" 
                 className={styles.submitButton}
                 disabled={loading}
               >
-                {loading ? 'Salvataggio...' : 'Salva Materia'}
+                {loading ? 'Salvataggio...' : editingId ? 'Aggiorna' : 'Salva'}
               </button>
             </div>
           </form>
         </div>
       )}
-      
-      {loading ? (
-        <div className={styles.loadingMessage}>Caricamento materie in corso...</div>
-      ) : (
-        <div className={styles.materieGrid}>
-          {materie.length === 0 ? (
-            <div className={styles.emptyState}>
-              <p>Nessuna materia trovata. Aggiungi la tua prima materia!</p>
-            </div>
-          ) : (
-            materie.map(materia => (
-              <div 
-                key={materia._id || materia.id} 
-                className={styles.materiaCard}
-                style={{ borderLeft: `4px solid ${materia.coloreMateria || '#3498db'}` }}
-              >
-                <div className={styles.materiaHeader}>
-                  <h3 className={styles.materiaCodice}>{materia.codice || materia.codiceMateria}</h3>
-                  <div 
-                    className={styles.colorIndicator}
-                    style={{ backgroundColor: materia.coloreMateria || '#3498db' }}
-                  ></div>
-                </div>
-                <p className={styles.materiaDescrizione}>{materia.descrizione}</p>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+
+      <div>
+        <h3>Elenco Materie</h3>
+        {loading && !showForm ? (
+          <p>Caricamento materie...</p>
+        ) : materie.length === 0 ? (
+          <p>Nessuna materia trovata.</p>
+        ) : (
+          <table className={styles.classiList}>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Codice</th>
+                <th>Descrizione</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              {materie.map((materia) => (
+                <tr key={materia._id}>
+                  <td>{materia.nome}</td>
+                  <td>{materia.codice || '-'}</td>
+                  <td>{materia.descrizione || '-'}</td>
+                  <td>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleEdit(materia)}
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
+                      onClick={() => handleDelete(materia._id)}
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };

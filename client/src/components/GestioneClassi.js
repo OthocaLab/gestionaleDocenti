@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import { getAllClassi, createClasse, importaClassiEsempio } from '../services/orarioService';
-import styles from '../styles/Orario.module.css';
-import datiEsempioClassi from '../data/esempio_classi_studenti.json';
+import axios from 'axios';
+import styles from '../styles/GestioneDidattica.module.css';
 
 const GestioneClassi = () => {
   const [classi, setClassi] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -13,9 +12,10 @@ const GestioneClassi = () => {
     anno: '',
     sezione: '',
     aula: '',
-    indirizzo: '',
+    indirizzo: 'Meccanica',
     numeroStudenti: ''
   });
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     fetchClassi();
@@ -24,11 +24,15 @@ const GestioneClassi = () => {
   const fetchClassi = async () => {
     try {
       setLoading(true);
-      const response = await getAllClassi();
-      setClassi(response.data);
+      const response = await axios.get('/api/classi');
+      // Estrai l'array di classi dalla risposta
+      const classiArray = response.data.data;
+      // Assicuriamoci che classi sia sempre un array
+      setClassi(Array.isArray(classiArray) ? classiArray : []);
       setLoading(false);
     } catch (err) {
-      setError('Errore nel caricamento delle classi: ' + (err.message || 'Errore sconosciuto'));
+      setError('Errore nel caricamento delle classi');
+      setClassi([]); // Imposta un array vuoto in caso di errore
       setLoading(false);
     }
   };
@@ -44,228 +48,251 @@ const GestioneClassi = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.anno || !formData.sezione || !formData.aula || !formData.indirizzo) {
-      setError('Tutti i campi sono obbligatori tranne il numero di studenti');
+    try {
+      setLoading(true);
+      
+      if (editingId) {
+        const response = await axios.put(`/api/classi/${editingId}`, formData);
+        if (response.data.success) {
+          setSuccess('Classe aggiornata con successo!');
+          resetForm();
+          fetchClassi();
+        } else {
+          // Gestione dell'errore restituito dal server
+          if (response.data.error && response.data.error.includes('duplicate key error')) {
+            setError(`Errore: Esiste già una classe ${formData.anno}${formData.sezione}. Scegli una combinazione diversa di anno e sezione.`);
+          } else {
+            setError('Errore: ' + (response.data.message || 'Errore sconosciuto'));
+          }
+          setLoading(false);
+        }
+      } else {
+        const response = await axios.post('/api/classi', formData);
+        if (response.data.success) {
+          setSuccess('Classe creata con successo!');
+          resetForm();
+          fetchClassi();
+        } else {
+          // Gestione dell'errore restituito dal server
+          if (response.data.error && response.data.error.includes('duplicate key error')) {
+            setError(`Errore: Esiste già una classe ${formData.anno}${formData.sezione}. Scegli una combinazione diversa di anno e sezione.`);
+          } else {
+            setError('Errore: ' + (response.data.message || 'Errore sconosciuto'));
+          }
+          setLoading(false);
+        }
+      }
+    } catch (err) {
+      // Gestione degli errori di rete o altri errori
+      if (err.response && err.response.data) {
+        const errorData = err.response.data;
+        if (errorData.error && errorData.error.includes('duplicate key error')) {
+          setError(`Errore: Esiste già una classe ${formData.anno}${formData.sezione}. Scegli una combinazione diversa di anno e sezione.`);
+        } else {
+          setError('Errore: ' + (errorData.message || err.message || 'Errore sconosciuto'));
+        }
+      } else {
+        setError('Errore di rete o server non disponibile');
+      }
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (classe) => {
+    setFormData({
+      anno: classe.anno,
+      sezione: classe.sezione,
+      aula: classe.aula,
+      indirizzo: classe.indirizzo,
+      numeroStudenti: classe.numeroStudenti || ''
+    });
+    setEditingId(classe._id);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('Sei sicuro di voler eliminare questa classe?')) {
       return;
     }
     
     try {
-      setLoading(true);
-      await createClasse(formData);
-      
-      setSuccess('Classe creata con successo!');
-      setFormData({
-        anno: '',
-        sezione: '',
-        aula: '',
-        indirizzo: '',
-        numeroStudenti: ''
-      });
-      
-      // Ricarica l'elenco delle classi
+      await axios.delete(`/api/classi/${id}`);
+      setSuccess('Classe eliminata con successo!');
       fetchClassi();
-      
-      setShowForm(false);
-      setLoading(false);
     } catch (err) {
-      setError('Errore nella creazione della classe: ' + (err.message || 'Errore sconosciuto'));
-      setLoading(false);
+      setError('Errore nell\'eliminazione della classe');
     }
   };
 
-  const handleImportaEsempio = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      
-      // Usa i dati di esempio importati
-      const response = await importaClassiEsempio(datiEsempioClassi);
-      
-      setSuccess('Classi di esempio importate con successo!');
-      
-      // Ricarica l'elenco delle classi
-      fetchClassi();
-      
-      setLoading(false);
-    } catch (err) {
-      setError('Errore nell\'importazione delle classi di esempio: ' + (err.response?.data?.message || err.message || 'Errore sconosciuto'));
-      setLoading(false);
-    }
+  const resetForm = () => {
+    setFormData({
+      anno: '',
+      sezione: '',
+      aula: '',
+      indirizzo: 'Meccanica',
+      numeroStudenti: ''
+    });
+    setEditingId(null);
+    setShowForm(false);
+    setLoading(false);
   };
 
   return (
-    <div className={styles.gestioneClassiContainer}>
+    <div className={styles.classiContainer}>
       <div className={styles.headerSection}>
-        <h2 className={styles.sectionTitle}>Gestione Classi</h2>
+        <h3 className={styles.title}>Gestione Classi</h3>
         <div className={styles.buttonGroup}>
-          <button
-            className={`${styles.actionButton} ${showForm ? styles.closeButton : styles.addButton}`}
+          <button 
+            className={styles.addButton}
             onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? '✕ Chiudi Form' : '+ Aggiungi Classe'}
+            {showForm ? 'Annulla' : '+ Aggiungi Classe'}
           </button>
-          <button
-            className={`${styles.actionButton} ${styles.importButton}`}
-            onClick={handleImportaEsempio}
-            disabled={loading}
-          >
-            {loading ? '⏳ Caricamento...' : '📥 Carica classi esempio'}
+          <button className={styles.importButton}>
+            ↑ Carica classi esempio
           </button>
         </div>
       </div>
-      
-      {error && <div className={`${styles.alertMessage} ${styles.errorMessage}`}>
-        <span className={styles.alertIcon}>⚠️</span> {error}
-      </div>}
-      
-      {success && <div className={`${styles.alertMessage} ${styles.successMessage}`}>
-        <span className={styles.alertIcon}>✅</span> {success}
-      </div>}
-      
+
+      {error && <div className={`${styles.message} ${styles.error}`}>{error}</div>}
+      {success && <div className={`${styles.message} ${styles.success}`}>{success}</div>}
+
       {showForm && (
-        <div className={`${styles.formSection} ${styles.cardEffect}`}>
-          <h3 className={styles.formTitle}>Inserisci nuova classe</h3>
-          <form onSubmit={handleSubmit} className={styles.classeForm}>
+        <div className={styles.formCard}>
+          <h4 className={styles.formTitle}>{editingId ? 'Modifica Classe' : 'Aggiungi Nuova Classe'}</h4>
+          <form onSubmit={handleSubmit}>
             <div className={styles.formRow}>
               <div className={styles.formGroup}>
-                <label htmlFor="anno" className={styles.formLabel}>Anno:</label>
-                <select
+                <label htmlFor="anno">Anno</label>
+                <input
+                  type="text"
                   id="anno"
                   name="anno"
                   value={formData.anno}
                   onChange={handleChange}
-                  className={`${styles.formControl} ${styles.select}`}
-                >
-                  <option value="">-- Seleziona --</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
+                  className={styles.input}
+                  required
+                />
               </div>
-              
               <div className={styles.formGroup}>
-                <label htmlFor="sezione" className={styles.formLabel}>Sezione:</label>
+                <label htmlFor="sezione">Sezione</label>
                 <input
                   type="text"
                   id="sezione"
                   name="sezione"
                   value={formData.sezione}
                   onChange={handleChange}
-                  className={`${styles.formControl} ${styles.textInput}`}
-                  placeholder="Es. A, B, C..."
+                  className={styles.input}
+                  required
                 />
               </div>
             </div>
             
             <div className={styles.formRow}>
               <div className={styles.formGroup}>
-                <label htmlFor="aula" className={styles.formLabel}>Aula:</label>
+                <label htmlFor="aula">Aula</label>
                 <input
                   type="text"
                   id="aula"
                   name="aula"
                   value={formData.aula}
                   onChange={handleChange}
-                  className={`${styles.formControl} ${styles.textInput}`}
-                  placeholder="Es. 101, Lab. Informatica..."
+                  className={styles.input}
+                  required
                 />
               </div>
-              
               <div className={styles.formGroup}>
-                <label htmlFor="numeroStudenti" className={styles.formLabel}>Numero Studenti:</label>
+                <label htmlFor="indirizzo">Indirizzo</label>
                 <input
-                  type="number"
-                  id="numeroStudenti"
-                  name="numeroStudenti"
-                  value={formData.numeroStudenti}
+                  type="text"
+                  id="indirizzo"
+                  name="indirizzo"
+                  value={formData.indirizzo}
                   onChange={handleChange}
-                  className={`${styles.formControl} ${styles.textInput}`}
-                  placeholder="Es. 25"
+                  className={styles.input}
+                  required
                 />
               </div>
             </div>
             
             <div className={styles.formGroup}>
-              <label htmlFor="indirizzo" className={styles.formLabel}>Indirizzo di studio:</label>
+              <label htmlFor="numeroStudenti">Numero Studenti</label>
               <input
-                type="text"
-                id="indirizzo"
-                name="indirizzo"
-                value={formData.indirizzo}
+                type="number"
+                id="numeroStudenti"
+                name="numeroStudenti"
+                value={formData.numeroStudenti}
                 onChange={handleChange}
-                className={`${styles.formControl} ${styles.textInput}`}
-                placeholder="Es. Informatica, Scientifico..."
+                className={styles.input}
               />
             </div>
             
-            <div className={styles.formActions}>
+            <div>
               <button 
                 type="button" 
-                className={`${styles.actionButton} ${styles.cancelButton}`}
-                onClick={() => setShowForm(false)}
-                disabled={loading}
+                className={styles.cancelButton}
+                onClick={resetForm}
               >
                 Annulla
               </button>
               <button 
                 type="submit" 
-                className={`${styles.actionButton} ${styles.submitButton}`}
+                className={styles.submitButton}
                 disabled={loading}
               >
-                {loading ? '⏳ Salvataggio...' : '💾 Salva Classe'}
+                {loading ? 'Salvataggio...' : editingId ? 'Aggiorna' : 'Salva'}
               </button>
             </div>
           </form>
         </div>
       )}
-      
-      {loading && !classi.length ? (
-        <div className={`${styles.loading} ${styles.centeredContent}`}>
-          <div className={styles.loadingSpinner}></div>
-          <p>Caricamento classi in corso...</p>
-        </div>
-      ) : (
-        <div className={`${styles.classiList} ${styles.cardEffect}`}>
-          <h3 className={styles.tableTitle}>Elenco Classi</h3>
-          <div className={styles.tableContainer}>
-            <table className={styles.dataTable}>
-              <thead>
-                <tr>
-                  <th>Anno</th>
-                  <th>Sezione</th>
-                  <th>Aula</th>
-                  <th>Indirizzo</th>
-                  <th>N. Studenti</th>
+
+      <div>
+        <h3>Elenco Classi</h3>
+        {loading && !showForm ? (
+          <p>Caricamento classi...</p>
+        ) : !Array.isArray(classi) || classi.length === 0 ? (
+          <p>Nessuna classe trovata.</p>
+        ) : (
+          <table className={styles.classiList}>
+            <thead>
+              <tr>
+                <th>Anno</th>
+                <th>Sezione</th>
+                <th>Aula</th>
+                <th>Indirizzo</th>
+                <th>N. Studenti</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              {classi.map((classe) => (
+                <tr key={classe._id || Math.random()}>
+                  <td>{classe.anno}</td>
+                  <td>{classe.sezione}</td>
+                  <td>{classe.aula}</td>
+                  <td>{classe.indirizzo}</td>
+                  <td>{classe.numeroStudenti || '-'}</td>
+                  <td>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleEdit(classe)}
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
+                      onClick={() => handleDelete(classe._id)}
+                    >
+                      🗑️
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {classi.map((classe) => (
-                  <tr key={classe._id} className={styles.tableRow}>
-                    <td>{classe.anno}°</td>
-                    <td>{classe.sezione}</td>
-                    <td>{classe.aula}</td>
-                    <td>{classe.indirizzo}</td>
-                    <td>{classe.numeroStudenti || '-'}</td>
-                  </tr>
-                ))}
-                {classi.length === 0 && (
-                  <tr>
-                    <td colSpan="5" className={styles.noData}>
-                      <div className={styles.emptyState}>
-                        <span className={styles.emptyIcon}>📚</span>
-                        <p>Nessuna classe disponibile</p>
-                        <p className={styles.emptySubtext}>Aggiungi una nuova classe o importa le classi di esempio</p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };
