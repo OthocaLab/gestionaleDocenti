@@ -124,31 +124,27 @@ L'applicazione sarà disponibile all'indirizzo: [http://localhost:3000](http://l
 ## 📁 Struttura del Progetto
 
 ```
-othoca-labs/
+gestionaleDocenti/
 ├── client/                  # Frontend Next.js
-│   ├── public/              # File statici
-│   ├── src/                 # Codice sorgente
-│   │   ├── components/      # Componenti React
-│   │   ├── context/         # Context API
-│   │   ├── hooks/           # Custom hooks
+│   ├── public/              # File statici (immagini, favicon, ecc.)
+│   ├── src/                 # Codice sorgente frontend
+│   │   ├── components/      # Componenti React riutilizzabili
+│   │   ├── context/         # Gestione stato globale (Context API)
+│   │   ├── data/            # Dati statici o mock
 │   │   ├── pages/           # Pagine Next.js
-│   │   ├── styles/          # File CSS
-│   │   └── utils/           # Utility functions
-│   ├── .env.local           # Variabili d'ambiente frontend
-│   └── next.config.js       # Configurazione Next.js
+│   │   ├── services/        # Funzioni per chiamate API
+│   │   └── styles/          # Stili CSS
+│   └── ...                  # Altri file di configurazione frontend
 │
 ├── server/                  # Backend Node.js/Express
-│   ├── config/              # Configurazioni
-│   ├── controllers/         # Controller API
-│   ├── middleware/          # Middleware Express
-│   ├── models/              # Modelli Mongoose
-│   ├── routes/              # Route API
-│   ├── utils/               # Utility functions
-│   ├── .env                 # Variabili d'ambiente backend
-│   └── server.js            # Entry point del server
+│   ├── controllers/         # Logica dei controller API
+│   ├── middleware/          # Middleware personalizzati
+│   ├── models/              # Modelli Mongoose (MongoDB)
+│   ├── routes/              # Definizione delle rotte API
+│   ├── utils/               # Funzioni di utilità backend
+│   └── ...                  # Altri file di configurazione backend
 │
-└── README.md                # Documentazione del progetto
-```
+└── ...                      # File di configurazione generali e documentazione
 
 ## 👥 Ruoli Utente
 
