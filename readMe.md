@@ -20,7 +20,7 @@
 Othoca Labs è una web application completa progettata per automatizzare e semplificare la gestione delle sostituzioni dei docenti, monitorare ore di avanzo/disavanzo e ottimizzare la gestione del personale docente nelle istituzioni scolastiche.
 
 <div align="center">
-  <img src="logo.png" alt="Dashboard Othoca Labs" width="300" />
+  <img src="client\public\img\logo.png" alt="Dashboard Othoca Labs" width="300" />
 </div>
 
 ## ✨ Caratteristiche
