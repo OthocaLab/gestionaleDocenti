@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAllDocenti, createDocente } from '../services/docenteService';
-import styles from '../styles/Orario.module.css';
+import styles from '../styles/GestioneDocenti.module.css';
 
 const GestioneDocenti = () => {
   const [docenti, setDocenti] = useState([]);
@@ -224,47 +224,77 @@ const GestioneDocenti = () => {
                 onChange={handleSearchChange}
               />
             </div>
-            <div className={styles.filters}>
-              <div className={styles.filterGroup}>
-                <label>Range Ore:</label>
-                <input
-                  type="number"
-                  name="minOre"
-                  placeholder="Min"
-                  value={filters.minOre}
-                  onChange={handleFilterChange}
-                />
-                <input
-                  type="number"
-                  name="maxOre"
-                  placeholder="Max"
-                  value={filters.maxOre}
-                  onChange={handleFilterChange}
-                />
+            
+            <div className={styles.filtersContainer}>
+              <div className={styles.filtersHeader}>
+                <span className={styles.filterIcon}>🔍</span>
+                <h3 className={styles.filtersTitle}>Filtri Avanzati</h3>
               </div>
-              
-              <div className={styles.filterGroup}>
-                <label>Classe:</label>
-                <input
-                  type="text"
-                  name="classe"
-                  placeholder="es. 1A"
-                  value={filters.classe}
-                  onChange={handleFilterChange}
-                />
-              </div>
-              
-              <div className={styles.filterGroup}>
-                <label>Materia:</label>
-                <input
-                  type="text"
-                  name="materia"
-                  placeholder="es. Matematica"
-                  value={filters.materia}
-                  onChange={handleFilterChange}
-                />
+              <div className={styles.filtersBody}>
+                <div className={styles.filterRow}>
+                  <div className={styles.filterGroup}>
+                    <label className={styles.filterLabel}>Range Ore:</label>
+                    <div className={styles.rangeInputs}>
+                      <input
+                        type="number"
+                        name="minOre"
+                        placeholder="Min"
+                        value={filters.minOre}
+                        onChange={handleFilterChange}
+                        className={styles.rangeInput}
+                      />
+                      <span className={styles.rangeSeparator}>-</span>
+                      <input
+                        type="number"
+                        name="maxOre"
+                        placeholder="Max"
+                        value={filters.maxOre}
+                        onChange={handleFilterChange}
+                        className={styles.rangeInput}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className={styles.filterGroup}>
+                    <label className={styles.filterLabel}>Classe:</label>
+                    <div className={styles.inputWithIcon}>
+                      <span className={styles.inputIcon}>🏫</span>
+                      <input
+                        type="text"
+                        name="classe"
+                        placeholder="es. 1A"
+                        value={filters.classe}
+                        onChange={handleFilterChange}
+                        className={styles.filterInput}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className={styles.filterGroup}>
+                    <label className={styles.filterLabel}>Materia:</label>
+                    <div className={styles.inputWithIcon}>
+                      <span className={styles.inputIcon}>📚</span>
+                      <input
+                        type="text"
+                        name="materia"
+                        placeholder="es. Matematica"
+                        value={filters.materia}
+                        onChange={handleFilterChange}
+                        className={styles.filterInput}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  className={styles.resetFiltersButton}
+                  onClick={() => setFilters({minOre: '', maxOre: '', classe: '', materia: ''})}
+                >
+                  Reimposta Filtri
+                </button>
               </div>
             </div>
+            
             <button 
               className={`${styles.addButton} ${showForm ? styles.active : ''}`}
               onClick={() => setShowForm(!showForm)}
