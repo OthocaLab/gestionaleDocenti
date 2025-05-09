@@ -23,6 +23,7 @@
 .logoIcon {
   width: 40px;
   height: 40px;
+  background-image:url("../../public/img/logo.png");
   background-color: #e91e63;
   color: white;
   border-radius: 8px;
