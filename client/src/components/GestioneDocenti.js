@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllDocenti, createDocente } from '../services/docenteService';
+import { getAllDocenti, createDocente, updateDocente, deleteDocente } from '../services/docenteService';
 import styles from '../styles/Orario.module.css';
 
 const GestioneDocenti = () => {
@@ -19,6 +19,8 @@ const GestioneDocenti = () => {
     classiInsegnamento: []
   });
   const [classiDisponibili, setClassiDisponibili] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [currentDocenteId, setCurrentDocenteId] = useState(null);
   
   useEffect(() => {
     fetchDocenti();
@@ -55,6 +57,47 @@ const GestioneDocenti = () => {
     });
   };
 
+  // Funzione per gestire la modifica di un docente
+  const handleModifica = (docente) => {
+    setFormData({
+      nome: docente.nome || '',
+      cognome: docente.cognome || '',
+      email: docente.email || '',
+      telefono: docente.telefono || '',
+      codiceFiscale: docente.codiceFiscale || '',
+      stato: docente.stato || 'attivo',
+      oreSettimanali: docente.oreSettimanali || '',
+      classiInsegnamento: docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
+        ? docente.classiInsegnamento.map(classe => 
+            typeof classe === 'object' ? classe._id : classe
+          )
+        : []
+    });
+    
+    setEditMode(true);
+    setCurrentDocenteId(docente._id);
+    setShowForm(true);
+    setError('');
+    setSuccess('');
+  };
+  
+  // Funzione per gestire l'eliminazione di un docente
+  const handleElimina = async (id) => {
+    if (window.confirm('Sei sicuro di voler eliminare questo docente? Questa azione non può essere annullata.')) {
+      try {
+        setLoading(true);
+        await deleteDocente(id);
+        setSuccess('Docente eliminato con successo!');
+        await fetchDocenti();
+        setLoading(false);
+      } catch (err) {
+        setError('Errore nell\'eliminazione del docente: ' + (err.message || 'Errore sconosciuto'));
+        setLoading(false);
+      }
+    }
+  };
+
+  // Modifica la funzione handleFormSubmit per gestire sia la creazione che l'aggiornamento
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     
@@ -65,23 +108,36 @@ const GestioneDocenti = () => {
     
     try {
       setLoading(true);
-      await createDocente(formData);
       
-      setSuccess('Docente creato con successo!');
+      if (editMode) {
+        // Aggiorna un docente esistente
+        await updateDocente(currentDocenteId, formData);
+        setSuccess('Docente aggiornato con successo!');
+      } else {
+        // Crea un nuovo docente
+        await createDocente(formData);
+        setSuccess('Docente creato con successo!');
+      }
+      
+      // Reset del form
       setFormData({
         nome: '',
         cognome: '',
         email: '',
         telefono: '',
         codiceFiscale: '',
-        stato: 'attivo'
+        stato: 'attivo',
+        oreSettimanali: '',
+        classiInsegnamento: []
       });
       
       await fetchDocenti();
       setShowForm(false);
+      setEditMode(false);
+      setCurrentDocenteId(null);
       setLoading(false);
     } catch (err) {
-      setError('Errore nella creazione del docente: ' + (err.message || 'Errore sconosciuto'));
+      setError('Errore nella gestione del docente: ' + (err.message || 'Errore sconosciuto'));
       setLoading(false);
     }
   };
@@ -291,7 +347,7 @@ const GestioneDocenti = () => {
         {/* Form in un card con ombra */}
         {showForm && (
           <div className={styles.formCard}>
-            <h3 className={styles.formTitle}>Inserisci Nuovo Docente</h3>
+            <h3 className={styles.formTitle}>{editMode ? 'Modifica Docente' : 'Inserisci Nuovo Docente'}</h3>
             <form onSubmit={handleFormSubmit} className={styles.docenteForm}>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
@@ -413,8 +469,33 @@ const GestioneDocenti = () => {
                 className={styles.submitButton}
                 disabled={loading}
               >
-                {loading ? 'Salvataggio in corso...' : 'Salva Docente'}
+                {loading ? 'Salvataggio in corso...' : (editMode ? 'Aggiorna Docente' : 'Salva Docente')}
               </button>
+              
+              {editMode && (
+                <button 
+                  type="button" 
+                  className={styles.cancelButton}
+                  onClick={() => {
+                    setEditMode(false);
+                    setCurrentDocenteId(null);
+                    setFormData({
+                      nome: '',
+                      cognome: '',
+                      email: '',
+                      telefono: '',
+                      codiceFiscale: '',
+                      stato: 'attivo',
+                      oreSettimanali: '',
+                      classiInsegnamento: []
+                    });
+                    setShowForm(false);
+                  }}
+                  style={{ marginLeft: '10px' }}
+                >
+                  Annulla Modifica
+                </button>
+              )}
             </form>
           </div>
         )}
@@ -467,10 +548,16 @@ const GestioneDocenti = () => {
                       <td>{docente.oreRecupero || 0} ore</td>
                       <td>
                         <div className={styles.actionButtons}>
-                          <button className={`${styles.actionButton} ${styles.editButton}`}>
+                          <button 
+                            className={`${styles.actionButton} ${styles.editButton}`}
+                            onClick={() => handleModifica(docente)}
+                          >
                             ✏️ Modifica
                           </button>
-                          <button className={`${styles.actionButton} ${styles.deleteButton}`}>
+                          <button 
+                            className={`${styles.actionButton} ${styles.deleteButton}`}
+                            onClick={() => handleElimina(docente._id)}
+                          >
                             🗑️ Elimina
                           </button>
                           <button className={`${styles.actionButton} ${styles.scheduleButton}`}>
