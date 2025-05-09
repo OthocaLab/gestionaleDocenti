@@ -4,6 +4,7 @@ import ImportaOrario from './ImportaOrario';
 import GestioneMaterie from './GestioneMaterie';
 import GestioneClassi from './GestioneClassi';
 import GestioneClassiInsegnamento from './GestioneClassiInsegnamento';
+import ImportaOrarioDocenti from './ImportaOrarioDocenti';
 
 const ImportaDati = () => {
   const [activeTab, setActiveTab] = useState('orario');
@@ -20,6 +21,13 @@ const ImportaDati = () => {
         >
           Importa Orario
         </button>
+        
+        <button 
+          className={`${styles.tabButton} ${activeTab === 'orarioDocenti' ? styles.active : ''}`}
+          onClick={() => setActiveTab('orarioDocenti')}
+        >
+          Importa Orario Docenti
+        </button>
        
         <button 
           className={`${styles.tabButton} ${activeTab === 'classiInsegnamento' ? styles.active : ''}`}
@@ -31,6 +39,7 @@ const ImportaDati = () => {
       
       <div className={styles.tabContent}>
         {activeTab === 'orario' && <ImportaOrario />}
+        {activeTab === 'orarioDocenti' && <ImportaOrarioDocenti />}
         {activeTab === 'materie' && <GestioneMaterie />}
         {activeTab === 'classi' && <GestioneClassi />}
         {activeTab === 'classiInsegnamento' && <GestioneClassiInsegnamento />}

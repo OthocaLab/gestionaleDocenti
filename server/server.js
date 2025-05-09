@@ -8,6 +8,8 @@ const dotenv = require('dotenv');
 const materiaRoutes = require('./routes/materiaRoutes');
 const classeInsegnamentoRoutes = require('./routes/classeInsegnamentoRoutes');
 const classeRoutes = require('./routes/classeRoutes'); // Added import for classeRoutes
+const path = require('path');
+const fs = require('fs');
 
 // Carica le variabili d'ambiente
 require('dotenv').config();
@@ -18,6 +20,7 @@ const userRoutes = require('./routes/userRoutes');
 const orarioRoutes = require('./routes/orarioRoutes');
 const docenteRoutes = require('./routes/docenteRoutes');
 const assenzaRoutes = require('./routes/assenzaRoutes'); // Nuova route per le assenze
+const importazioneRoutes = require('./routes/importazioneRoutes');
 
 // Inizializza l'app Express
 const app = express();
@@ -69,6 +72,8 @@ app.use('/api/assenze', assenzaRoutes);
 app.use('/api/materie', materiaRoutes);
 app.use('/api/classi', classeRoutes);
 app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
+app.use('/api/importazione', importazioneRoutes); // Questa è la riga che devi modificare
+
 
 // Route di base
 app.get('/', (req, res) => {
@@ -125,3 +130,9 @@ mongoose
     console.error('Errore di connessione al database:', err);
     process.exit(1);
   });
+
+// Assicurati che la directory uploads esista
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
