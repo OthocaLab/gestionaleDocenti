@@ -122,14 +122,63 @@ const GestioneOrario = () => {
     );
   };
 
+  // Funzione per determinare il colore del testo in base al colore di sfondo
+  const getTextColor = (backgroundColor) => {
+    if (!backgroundColor) return '#000';
+    
+    // Converte il colore esadecimale in RGB
+    const r = parseInt(backgroundColor.slice(1, 3), 16);
+    const g = parseInt(backgroundColor.slice(3, 5), 16);
+    const b = parseInt(backgroundColor.slice(5, 7), 16);
+    
+    // Calcola la luminosità (formula approssimativa)
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Restituisce bianco per colori scuri, nero per colori chiari
+    return luminance > 0.5 ? '#000' : '#fff';
+  };
+
   // Ottieni i dettagli della classe selezionata
   const classeSelezionata = classi.find(c => c._id === selectedClasse);
 
+  // Mappa delle abbreviazioni delle materie ai colori
+  const coloriMaterie = {
+    'SIS': '#1abc9c', // Verde acqua
+    'LET': '#e74c3c', // Rosso
+    'SMS': '#f39c12', // Giallo/arancione
+    'TEL': '#8e44ad', // Viola
+    'TPSI': '#3498db', // Blu
+    'MAT': '#2ecc71', // Verde
+    'INF': '#e67e22', // Arancione
+  };
+
+  // Funzione per ottenere il colore della materia
+  const getColorMateria = (lezione) => {
+    if (!lezione || !lezione.materia) return 'transparent';
+    
+    // Usa il colore dalla materia se disponibile
+    if (lezione.materia.coloreMateria) return lezione.materia.coloreMateria;
+    
+    // Altrimenti usa il colore dalla mappa in base al codice
+    const codiceMateria = lezione.materia.codice || '';
+    return coloriMaterie[codiceMateria] || '#cccccc';
+  };
+
   return (
     <div className={styles.orarioContainer}>
+      {/* Header con titolo e breadcrumb */}
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Gestione Orario Scolastico</h2>
+        <div className={styles.breadcrumb}>
+          <span>Dashboard</span> / <span className={styles.activePage}>Gestione Orario</span>
+        </div>
+      </div>
+
       <div className={styles.statsRow}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>👨‍🏫</div>
+          <div className={styles.statIconWrapper}>
+            <div className={styles.statIcon}>👨‍🏫</div>
+          </div>
           <div className={styles.statContent}>
             <div className={styles.statLabel}>Presenze Del Giorno</div>
             <div className={styles.statValue}>42</div>
@@ -137,7 +186,9 @@ const GestioneOrario = () => {
         </div>
         
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📚</div>
+          <div className={styles.statIconWrapper}>
+            <div className={styles.statIcon}>📚</div>
+          </div>
           <div className={styles.statContent}>
             <div className={styles.statLabel}>Classi Totali</div>
             <div className={styles.statValue}>{classi.length || 0}</div>
@@ -145,7 +196,9 @@ const GestioneOrario = () => {
         </div>
         
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📋</div>
+          <div className={styles.statIconWrapper}>
+            <div className={styles.statIcon}>📋</div>
+          </div>
           <div className={styles.statContent}>
             <div className={styles.statLabel}>Presenze Attive</div>
             <div className={styles.statValue}>38</div>
@@ -153,7 +206,9 @@ const GestioneOrario = () => {
         </div>
         
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>👥</div>
+          <div className={styles.statIconWrapper}>
+            <div className={styles.statIcon}>👥</div>
+          </div>
           <div className={styles.statContent}>
             <div className={styles.statLabel}>Personale Disponibile</div>
             <div className={styles.statValue}>5</div>
@@ -161,11 +216,12 @@ const GestioneOrario = () => {
         </div>
       </div>
 
-      <div className={styles.orarioPanel}>
-        <div className={styles.orarioHeader}>
-          <h3>Lista Orari</h3>
+      <div className={styles.docentiPanel}>
+        <div className={styles.docentiHeader}>
+          <h3 className={styles.panelTitle}>Lista Orari</h3>
           <div className={styles.searchFilters}>
             <div className={styles.searchBox}>
+              <div className={styles.searchIcon}>🔍</div>
               <input 
                 type="text" 
                 placeholder="Cerca in base a Indirizzo, Classe..." 
@@ -175,6 +231,7 @@ const GestioneOrario = () => {
             <div className={styles.filterButtons}>
               <button className={styles.filterButton}>Docenti</button>
               <button className={`${styles.filterButton} ${styles.activeFilter}`}>Classe</button>
+              <button className={styles.filterButton}>Aule</button>
             </div>
           </div>
         </div>
@@ -206,7 +263,7 @@ const GestioneOrario = () => {
           
           {showClasseForm && (
             <div className={styles.formSection}>
-              <h4>Crea Nuova Classe</h4>
+              <h4 className={styles.formTitle}>Crea Nuova Classe</h4>
               <form onSubmit={handleClasseFormSubmit} className={styles.classeForm}>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
@@ -236,6 +293,7 @@ const GestioneOrario = () => {
                       value={classeFormData.sezione}
                       onChange={handleClasseFormChange}
                       className={styles.textInput}
+                      placeholder="Es. A, B, C..."
                     />
                   </div>
                 </div>
@@ -249,6 +307,7 @@ const GestioneOrario = () => {
                     value={classeFormData.aula}
                     onChange={handleClasseFormChange}
                     className={styles.textInput}
+                    placeholder="Es. 101, Lab. Informatica..."
                   />
                 </div>
                 
@@ -261,6 +320,7 @@ const GestioneOrario = () => {
                     value={classeFormData.indirizzo}
                     onChange={handleClasseFormChange}
                     className={styles.textInput}
+                    placeholder="Es. Informatica, Scientifico..."
                   />
                 </div>
                 
@@ -273,23 +333,37 @@ const GestioneOrario = () => {
                     value={classeFormData.numeroStudenti}
                     onChange={handleClasseFormChange}
                     className={styles.textInput}
+                    placeholder="Es. 25"
+                    min="1"
                   />
                 </div>
                 
-                <button 
-                  type="submit" 
-                  className={styles.submitButton}
-                  disabled={loading}
-                >
-                  {loading ? 'Salvataggio in corso...' : 'Salva Classe'}
-                </button>
+                <div className={styles.formActions}>
+                  <button 
+                    type="button" 
+                    className={styles.cancelButton}
+                    onClick={() => setShowClasseForm(false)}
+                  >
+                    Annulla
+                  </button>
+                  <button 
+                    type="submit" 
+                    className={styles.submitButton}
+                    disabled={loading}
+                  >
+                    {loading ? 'Salvataggio...' : 'Salva Classe'}
+                  </button>
+                </div>
               </form>
             </div>
           )}
         </div>
 
         {loading ? (
-          <div className={styles.loading}>Caricamento in corso...</div>
+          <div className={styles.loadingContainer}>
+            <div className={styles.spinner}></div>
+            <div>Caricamento in corso...</div>
+          </div>
         ) : selectedClasse && (
           <div className={styles.orarioTableWrapper}>
             <div className={styles.classeInfoHeader}>
@@ -313,14 +387,25 @@ const GestioneOrario = () => {
                 <div className={styles.infoLabel}>Indirizzo</div>
                 <div className={styles.infoValue}>{classeSelezionata?.indirizzo || ''}</div>
               </div>
+              <div className={styles.headerActions}>
+                <button className={styles.actionButton} title="Stampa orario">
+                  🖨️
+                </button>
+                <button className={styles.actionButton} title="Esporta PDF">
+                  📄
+                </button>
+                <button className={styles.actionButton} title="Modifica orario">
+                  ✏️
+                </button>
+              </div>
             </div>
 
             <table className={styles.orarioTable}>
               <thead>
                 <tr>
-                  <th></th>
+                  <th className={styles.cornerHeader}></th>
                   {giorni.map(giorno => (
-                    <th key={giorno}>{giorno}</th>
+                    <th key={giorno} className={styles.giornoHeader}>{giorno}</th>
                   ))}
                 </tr>
               </thead>
@@ -338,7 +423,7 @@ const GestioneOrario = () => {
                       return (
                         <td 
                           key={`${giorno}-${ora.num}`}
-                          className={`${styles.lezioneCell} ${lezione ? styles.hasLezione : ''}`}
+                          className={`${styles.lezioneCell} ${lezione ? styles.hasLezione : styles.emptyLezione}`}
                           style={{ backgroundColor: lezione?.materia?.coloreMateria || 'transparent' }}
                         >
                           {lezione ? (
@@ -351,7 +436,13 @@ const GestioneOrario = () => {
                                 {lezione.aula ? `Aula: ${lezione.aula}` : 'Aula: N/D'}
                               </div>
                             </div>
-                          ) : null}
+                          ) : (
+                            <div className={styles.emptyLezioneContent}>
+                              <button className={styles.addLezioneButton} title="Aggiungi lezione">
+                                +
+                              </button>
+                            </div>
+                          )}
                         </td>
                       );
                     })}

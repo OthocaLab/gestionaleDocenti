@@ -1,3 +1,103 @@
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.breadcrumb {
+  font-size: 14px;
+  color: #666;
+}
+
+.activePage {
+  color: #971645;
+  font-weight: 500;
+}
+
+.legendContainer {
+  margin-top: 30px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.legendTitle {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.legendItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legendColor {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.legendText {
+  font-size: 14px;
+  color: #333;
+}
+
+.emptyLezioneContent {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addLezioneButton {
+  background: none;
+  border: none;
+  color: #bdbdbd;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+  opacity: 0;
+}
+
+.emptyLezione:hover .addLezioneButton {
+  opacity: 1;
+  color: #971645;
+}
+
+.cornerHeader {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.giornoHeader {
+  background-color: #971645;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  border-radius: 4px 4px 0 0;
+}
+
 .orarioContainer {
   margin: 20px 0;
 }
@@ -645,23 +745,26 @@
   justify-content: center;
   padding: 8px;
   color: #fff;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
 }
 
 .materiaText {
   font-weight: bold;
-  font-size: 0.9em;
-  margin-bottom: 2px;
+  font-size: 0.95em;
+  margin-bottom: 3px;
+  letter-spacing: 0.2px;
 }
 
 .docenteText {
   font-size: 0.85em;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .aulaText {
-  font-size: 0.75em;
-  color: #555;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.95);
   font-style: italic;
 }
 
