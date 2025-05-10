@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllDocenti, createDocente, updateDocente, deleteDocente } from '../services/docenteService';
+import { getAllDocenti, createDocente, updateDocente, deleteDocente, getAllClassiInsegnamento } from '../services/docenteService';
 import styles from '../styles/Orario.module.css';
 
 const GestioneDocenti = () => {
@@ -41,7 +41,6 @@ const GestioneDocenti = () => {
 
   const fetchClassiInsegnamento = async () => {
     try {
-      // You'll need to create this service function
       const response = await getAllClassiInsegnamento();
       setClassiDisponibili(response.data);
     } catch (err) {

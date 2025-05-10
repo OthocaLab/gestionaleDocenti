@@ -2,16 +2,23 @@ const Docente = require('../models/Docente');
 
 exports.getAllDocenti = async (req, res) => {
   try {
+    // Modifica qui per popolare anche le materie
     const docenti = await Docente.find()
       .populate({
         path: 'classiInsegnamento',
         populate: {
-          path: 'materia'
+          path: 'materie'  // Nota: materie al plurale, in base allo schema
         }
       });
+    
     res.status(200).json(docenti);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Errore nel recupero dei docenti:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Errore nel recupero dei docenti', 
+      error: error.message 
+    });
   }
 };
 
@@ -62,14 +69,14 @@ exports.getDocentiRecupero = async (req, res) => {
     }
     
     if (materia) {
-      query['classiInsegnamento.materia.nome'] = materia;
+      query['classiInsegnamento.materie.nome'] = materia;  // Nota: materie al plurale
     }
     
     const docenti = await Docente.find(query)
       .populate({
         path: 'classiInsegnamento',
         populate: {
-          path: 'materia'
+          path: 'materie'  // Nota: materie al plurale
         }
       });
       

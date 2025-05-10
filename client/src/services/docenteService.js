@@ -1,12 +1,11 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
 export const getAllDocenti = async () => {
   try {
-    const response = await axios.get(`${API_URL}/docenti`);
+    const response = await axios.get('/api/docenti');
     return response;
   } catch (error) {
+    console.error('Errore nella chiamata API getAllDocenti:', error);
     throw error;
   }
 };
@@ -38,6 +37,11 @@ export const deleteDocente = async (id) => {
   }
 };
 
-export const getAllClassiInsegnamento = () => {
-  return axios.get('/api/classi-insegnamento');
+export const getAllClassiInsegnamento = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/classi-insegnamento`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

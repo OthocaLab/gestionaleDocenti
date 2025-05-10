@@ -1,15 +1,14 @@
 const mongoose = require('mongoose');
 
-const ClasseInsegnamentoSchema = new mongoose.Schema({
+const classeInsegnamentoSchema = new mongoose.Schema({
   codiceClasse: {
     type: String,
-    required: [true, 'Inserisci il codice della classe di insegnamento'],
-    unique: true,
-    trim: true
+    required: true,
+    unique: true
   },
   descrizione: {
     type: String,
-    required: [true, 'Inserisci la descrizione della classe di insegnamento']
+    required: true
   },
   materie: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -17,4 +16,4 @@ const ClasseInsegnamentoSchema = new mongoose.Schema({
   }]
 });
 
-module.exports = mongoose.model('ClasseInsegnamento', ClasseInsegnamentoSchema);
+module.exports = mongoose.model('ClasseInsegnamento', classeInsegnamentoSchema);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getOrarioByDocente } from '../services/orarioService';
-import { getAllUsers } from '../services/userService';
+import { getAllDocenti } from '../services/docenteService';
 import styles from '../styles/Orario.module.css';
 
 const OrarioDocente = () => {
@@ -17,10 +17,9 @@ const OrarioDocente = () => {
     const fetchDocenti = async () => {
       try {
         setLoading(true);
-        const response = await getAllUsers();
-        // Filtra solo i docenti
-        const soloDocenti = response.data.filter(user => user.ruolo === 'docente');
-        setDocenti(soloDocenti);
+        const response = await getAllDocenti();
+        // Utilizziamo direttamente i dati dei docenti
+        setDocenti(response.data);
         setLoading(false);
       } catch (err) {
         setError('Errore nel caricamento dei docenti');
