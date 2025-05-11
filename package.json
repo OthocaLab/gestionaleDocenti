@@ -2,6 +2,8 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "framer-motion": "^12.10.2",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "mongoose": "^8.13.0",
     "multer": "^1.4.5-lts.2",
     "react": "^19.1.0",
