@@ -88,14 +88,19 @@ export const importOrario = async (fileObject) => {
     const formData = new FormData();
     formData.append('file', fileObject);
     
-    // Log authentication token for debugging
+    // Ottieni un token fresco dall'auth context o localStorage
     const token = localStorage.getItem('token');
-    console.log('Auth token:', token ? 'Token presente' : 'Token mancante');
+    
+    if (!token) {
+      throw new Error('Token di autenticazione mancante. Effettua il login.');
+    }
+    
+    console.log('Auth token:', 'Token presente e in uso');
     
     // Configurazione completa per la richiesta
     const config = {
       headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
+        'Authorization': `Bearer ${token}`,
         // Non specificare Content-Type, sarà impostato automaticamente per FormData
       },
       // Opzioni importanti per CORS

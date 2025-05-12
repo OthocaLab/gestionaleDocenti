@@ -274,6 +274,24 @@ exports.importaOrari = async (req, res) => {
   try {
     console.log('Request file:', req.file);
     console.log('Request headers:', req.headers);
+    console.log('User ID:', req.user ? req.user._id : 'Not authenticated');
+    console.log('User role:', req.user ? req.user.ruolo : 'Unknown');
+    
+    // Verifica di sicurezza aggiuntiva
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Autenticazione richiesta'
+      });
+    }
+    
+    // Verifica ruolo (backup se il middleware authorize fallisce)
+    if (!['admin', 'vicepresidenza'].includes(req.user.ruolo)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Permessi insufficienti per questa operazione'
+      });
+    }
     
     if (!req.file) {
       return res.status(400).json({ 
@@ -415,11 +433,43 @@ async function processImportAsync(filePath, user) {
             email: professore.email || generateTempEmail(codiceDocente),
             telefono: professore.telefono || '',
             stato: professore.stato || 'attivo',
-            classiInsegnamento: professore.classiInsegnamento || [],
+            classiInsegnamento: [], // Inizialmente vuoto, lo gestiremo separatamente
             oreRecupero: 0
           };
           
           console.log(`Dati docente: ${codiceDocente}`, JSON.stringify(docenteData).substring(0, 100) + '...');
+          
+          // Gestione delle classi di insegnamento
+          if (professore.classiInsegnamento && Array.isArray(professore.classiInsegnamento)) {
+            // Per ogni codice classe di insegnamento nel JSON
+            for (const codiceClasse of professore.classiInsegnamento) {
+              try {
+                console.log(`Cerco o creo classe di insegnamento: ${codiceClasse}`);
+                
+                // Trova o crea la classe di insegnamento
+                const classeInsegnamento = await ClasseInsegnamento.findOneAndUpdate(
+                  { codiceClasse: codiceClasse },
+                  {
+                    $setOnInsert: {
+                      codiceClasse: codiceClasse,
+                      descrizione: `Classe ${codiceClasse}`
+                    }
+                  },
+                  {
+                    new: true,
+                    upsert: true
+                  }
+                );
+                
+                // Aggiungi l'ID della classe all'array classiInsegnamento
+                docenteData.classiInsegnamento.push(classeInsegnamento._id);
+                console.log(`Classe di insegnamento aggiunta: ${codiceClasse} (${classeInsegnamento._id})`);
+              } catch (err) {
+                console.error(`Errore nella gestione della classe di insegnamento ${codiceClasse}:`, err);
+                stats.errors.push(`Errore classe insegnamento ${codiceClasse}: ${err.message}`);
+              }
+            }
+          }
           
           // Trova il docente esistente
           let existingDocente = await Docente.findOne({
