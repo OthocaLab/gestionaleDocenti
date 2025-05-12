@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import styles from '../styles/DashboardHome.module.css';
+import { getAllDocenti } from '../services/docenteService';
 
 const DashboardHome = () => {
   const [docenti, setDocenti] = useState([]);
@@ -15,28 +15,32 @@ const DashboardHome = () => {
     { id: 3, titolo: 'NOTA 3', contenuto: 'Contenuto della nota 3' }
   ]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('presenti');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Recupera l'elenco dei docenti
-        const docentiResponse = await axios.get('/api/docenti');
-        setDocenti(docentiResponse.data);
+        // Recupera l'elenco dei docenti usando il servizio
+        const response = await getAllDocenti();
+        const docentiData = response.data || [];
+        setDocenti(docentiData);
         
         // Calcola le statistiche
-        const presenti = docentiResponse.data.filter(d => !d.assente).length;
-        const assenti = docentiResponse.data.filter(d => d.assente).length;
+        const presenti = docentiData.filter(d => !d.assente).length;
+        const assenti = docentiData.filter(d => d.assente).length;
         
         setStatistiche({
           totalePresenze: presenti,
           totaleAssenze: assenti,
-          personaleAttivo: docentiResponse.data.length
+          personaleAttivo: docentiData.length
         });
         
         setLoading(false);
       } catch (error) {
         console.error('Errore nel recupero dei dati:', error);
+        setError('Si è verificato un errore nel caricamento dei dati. Riprova più tardi.');
+        setDocenti([]);
         setLoading(false);
       }
     };
@@ -100,7 +104,17 @@ const DashboardHome = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="5">Caricamento...</td>
+                    <td colSpan="6">Caricamento...</td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan="6" className={styles.errorMessage}>
+                      {error}
+                    </td>
+                  </tr>
+                ) : docenti.length === 0 ? (
+                  <tr>
+                    <td colSpan="6">Nessun docente {activeTab === 'presenti' ? 'presente' : 'assente'} trovato</td>
                   </tr>
                 ) : (
                   docenti
