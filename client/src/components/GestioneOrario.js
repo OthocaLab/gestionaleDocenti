@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getAllClassi, getOrarioByClasse, createClasse } from '../services/orarioService';
 import styles from '../styles/Orario.module.css';
 import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import jspdf from 'jspdf';
 
 const GestioneOrario = () => {
   const [classi, setClassi] = useState([]);
@@ -374,7 +374,7 @@ const GestioneOrario = () => {
       const imgData = canvas.toDataURL('image/png');
       
       // Crea un nuovo documento PDF
-      const pdf = new jsPDF({
+      const pdf = new jspdf({
         orientation: 'landscape', // Orizzontale per adattarsi meglio alla tabella
         unit: 'mm',
         format: 'a4'
