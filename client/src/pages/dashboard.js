@@ -12,6 +12,7 @@ import RecuperoOre from '../components/RecuperoOre';
 import ImportaDati from '../components/ImportaDati';
 import GestioneDidattica from '../components/GestioneDidattica';
 import GestioneSostituzioni from '../components/GestioneSostituzioni';
+import ElencoPianificazioneSostituzioni from '../components/ElencoPianificazioneSostituzioni';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
@@ -75,6 +76,7 @@ const Dashboard = () => {
           {activeTab === 'dashboard' && "Dashboard"}
           {activeTab === 'orario' && "Orari Classi"}
           {activeTab === 'sostituzioni' && "Gestione Sostituzioni"}
+          {activeTab === 'pianificazioneSostituzioni' && "Pianificazione Sostituzioni"}
           {activeTab === 'docenti' && "Gestione Docenti"}
           {activeTab === 'didattica' && "Gestione Didattica"}
           {activeTab === 'importa' && "Importa Dati"}
@@ -122,7 +124,17 @@ const Dashboard = () => {
                 onClick={() => handleTabChange('sostituzioni')}
               >
                 <span className={styles.icon}>🔄</span>
-                <span className={styles.label}>Sostituzioni</span>
+                <span className={styles.label}>Gestione Sostituzioni</span>
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#" 
+                className={activeTab === 'pianificazioneSostituzioni' ? styles.active : ''} 
+                onClick={() => handleTabChange('pianificazioneSostituzioni')}
+              >
+                <span className={styles.icon}>📅</span>
+                <span className={styles.label}>Calendario Sostituzioni</span>
               </a>
             </li>
             <li>
@@ -185,6 +197,12 @@ const Dashboard = () => {
           {activeTab === 'sostituzioni' && (
             <div>
               <GestioneSostituzioni />
+            </div>
+          )}
+
+          {activeTab === 'pianificazioneSostituzioni' && (
+            <div>
+              <ElencoPianificazioneSostituzioni />
             </div>
           )}
 

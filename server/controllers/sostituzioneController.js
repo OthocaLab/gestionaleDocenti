@@ -8,11 +8,43 @@ const mongoose = require('mongoose');
 // Ottieni tutte le sostituzioni
 exports.getSostituzioni = async (req, res) => {
   try {
-    const sostituzioni = await Sostituzione.find()
+    const { dataInizio, dataFine, docente, docenteSostituto, classe } = req.query;
+    const filtro = {};
+    
+    // Filtro per data
+    if (dataInizio || dataFine) {
+      filtro.data = {};
+      
+      if (dataInizio) {
+        filtro.data.$gte = new Date(dataInizio);
+      }
+      
+      if (dataFine) {
+        filtro.data.$lte = new Date(dataFine);
+      }
+    }
+    
+    // Filtro per docente assente
+    if (docente) {
+      filtro.docente = docente;
+    }
+    
+    // Filtro per docente sostituto
+    if (docenteSostituto) {
+      filtro.docenteSostituto = docenteSostituto;
+    }
+    
+    // Filtro per classe
+    if (classe) {
+      filtro.classe = classe;
+    }
+    
+    const sostituzioni = await Sostituzione.find(filtro)
       .populate('docente', 'nome cognome')
       .populate('docenteSostituto', 'nome cognome')
       .populate('assenza')
-      .populate('materia', 'codiceMateria descrizione');
+      .populate('materia', 'codiceMateria descrizione')
+      .sort({ data: 1, ora: 1 });
 
     res.status(200).json({
       success: true,
