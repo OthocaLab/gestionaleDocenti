@@ -1,6 +1,6 @@
 const Docente = require('../models/Docente');
 const ClasseInsegnamento = require('../models/ClasseInsegnamento');
-const Assenza = require('../models/Assenze');
+const Assenza = require('../models/Assenza');
 const OrarioLezioni = require('../models/OrarioLezioni');
 
 exports.getAllDocenti = async (req, res) => {

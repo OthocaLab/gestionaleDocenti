@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
 
 export const AuthContext = createContext();
 
@@ -36,30 +35,14 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (email, password) => {
-    try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      
-      if (response.data.success) {
-        localStorage.setItem('token', response.data.token);
-        
-        // Salva anche il refresh token
-        if (response.data.refreshToken) {
-          localStorage.setItem('refreshToken', response.data.refreshToken);
-        }
-        
-        setIsAuthenticated(true);
-        setUser(response.data.user);
-        return { success: true };
-      } else {
-        return { success: false, message: response.data.message };
-      }
-    } catch (error) {
-      return { 
-        success: false, 
-        message: error.response?.data?.message || 'Errore durante il login' 
-      };
+  const login = (newToken, userData) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('user', JSON.stringify(userData));
     }
+    setToken(newToken);
+    setUser(userData);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
@@ -72,40 +55,6 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
-  // Funzione per rinnovare il token se scaduto
-  const refreshToken = async () => {
-    try {
-      const refreshTokenValue = localStorage.getItem('refreshToken');
-      
-      if (!refreshTokenValue) {
-        console.log('Refresh token non disponibile');
-        return false;
-      }
-      
-      const response = await axios.post('/api/auth/refresh-token', { 
-        refreshToken: refreshTokenValue 
-      });
-      
-      if (response.data.success) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
-        
-        // Aggiorna lo stato dell'autenticazione
-        setIsAuthenticated(true);
-        setUser(response.data.user);
-        
-        console.log('Token rinnovato con successo');
-        return true;
-      } else {
-        console.log('Errore nel rinnovo del token:', response.data.message);
-        return false;
-      }
-    } catch (error) {
-      console.error('Errore nel rinnovo del token:', error);
-      return false;
-    }
-  };
-
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -113,8 +62,7 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated, 
       isLoading, 
       login, 
-      logout, 
-      refreshToken 
+      logout 
     }}>
       {children}
     </AuthContext.Provider>
