@@ -57,6 +57,13 @@ const OrarioDocente = () => {
     );
   };
 
+  // Funzione per ottenere tutte le lezioni per un determinato giorno e ora
+  const getLezioni = (giorno, ora) => {
+    return orario.filter(
+      (lezione) => lezione.giornoSettimana === giorno && lezione.ora === ora
+    );
+  };
+
   return (
     <div className={styles.orarioContainer}>
       <h3>Visualizza Orario Docente</h3>
@@ -98,15 +105,32 @@ const OrarioDocente = () => {
                 <tr key={ora}>
                   <td>{ora}ª</td>
                   {giorni.map((giorno) => {
-                    const lezione = getLezione(giorno, ora);
+                    const lezioni = getLezioni(giorno, ora);
                     return (
                       <td 
                         key={`${giorno}-${ora}`}
-                        style={{ backgroundColor: lezione?.materia?.coloreMateria }}
+                        style={{ backgroundColor: lezioni.length > 0 ? lezioni[0]?.materia?.coloreMateria : undefined }}
                       >
-                        {lezione ? (
+                        {lezioni.length > 0 ? (
                           <div className={styles.lezione}>
-                            <div className={styles.materia}>{lezione.materia.descrizione}</div>
+                            <div className={styles.materia}>{lezioni[0].materia.descrizione}</div>
+                            <div className={styles.docente}>
+                              {(() => {
+                                // Controlla se ci sono cognomi duplicati
+                                const cognomi = lezioni.map(l => l.docente?.cognome || '');
+                                const hasDuplicates = cognomi.some((cognome, idx) => 
+                                  cognomi.indexOf(cognome) !== idx && cognome !== '');
+                                
+                                return lezioni.map((lezione, index) => (
+                                  <span key={lezione._id || index}>
+                                    {index > 0 ? ', ' : ''}
+                                    {lezione.docente?.cognome || 'N/D'}
+                                    {hasDuplicates && lezione.docente?.nome ? 
+                                      `.${lezione.docente.nome.charAt(0)}` : ''}
+                                  </span>
+                                ));
+                              })()}
+                            </div>
                           </div>
                         ) : null}
                       </td>

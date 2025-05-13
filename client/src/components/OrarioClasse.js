@@ -17,7 +17,16 @@ const OrarioClasse = () => {
       try {
         setLoading(true);
         const response = await getAllClassi();
-        setClassi(response.data);
+        // Ordina le classi prima per anno e poi per sezione
+        const classiOrdinate = [...response.data].sort((a, b) => {
+          // Prima ordina per anno
+          if (parseInt(a.anno) !== parseInt(b.anno)) {
+            return parseInt(a.anno) - parseInt(b.anno);
+          }
+          // Poi per sezione (A, B, C, ecc.)
+          return a.sezione.localeCompare(b.sezione);
+        });
+        setClassi(classiOrdinate);
         setLoading(false);
       } catch (err) {
         setError('Errore nel caricamento delle classi');
@@ -50,6 +59,13 @@ const OrarioClasse = () => {
   // Funzione per ottenere la lezione per un determinato giorno e ora
   const getLezione = (giorno, ora) => {
     return orario.find(
+      (lezione) => lezione.giornoSettimana === giorno && lezione.ora === ora
+    );
+  };
+
+  // Funzione per ottenere tutte le lezioni per un determinato giorno e ora
+  const getLezioni = (giorno, ora) => {
+    return orario.filter(
       (lezione) => lezione.giornoSettimana === giorno && lezione.ora === ora
     );
   };
@@ -95,17 +111,31 @@ const OrarioClasse = () => {
                 <tr key={ora}>
                   <td>{ora}ª</td>
                   {giorni.map((giorno) => {
-                    const lezione = getLezione(giorno, ora);
+                    const lezioni = getLezioni(giorno, ora);
                     return (
                       <td 
                         key={`${giorno}-${ora}`}
-                        style={{ backgroundColor: lezione?.materia?.coloreMateria }}
+                        style={{ backgroundColor: lezioni.length > 0 ? lezioni[0]?.materia?.coloreMateria : undefined }}
                       >
-                        {lezione ? (
+                        {lezioni.length > 0 ? (
                           <div className={styles.lezione}>
-                            <div className={styles.materia}>{lezione.materia.descrizione}</div>
+                            <div className={styles.materia}>{lezioni[0].materia.descrizione}</div>
                             <div className={styles.docente}>
-                              {lezione.docente.nome} {lezione.docente.cognome}
+                              {(() => {
+                                // Controlla se ci sono cognomi duplicati
+                                const cognomi = lezioni.map(l => l.docente?.cognome || '');
+                                const hasDuplicates = cognomi.some((cognome, idx) => 
+                                  cognomi.indexOf(cognome) !== idx && cognome !== '');
+                                
+                                return lezioni.map((lezione, index) => (
+                                  <span key={lezione._id || index}>
+                                    {index > 0 ? ', ' : ''}
+                                    {lezione.docente?.cognome || 'N/D'}
+                                    {hasDuplicates && lezione.docente?.nome ? 
+                                      `.${lezione.docente.nome.charAt(0)}` : ''}
+                                  </span>
+                                ));
+                              })()}
                             </div>
                           </div>
                         ) : null}

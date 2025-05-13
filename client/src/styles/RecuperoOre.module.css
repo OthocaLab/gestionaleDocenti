@@ -73,6 +73,28 @@
   letter-spacing: 0.5px;
 }
 
+/* Messaggio di successo */
+.successMessage {
+  background-color: rgba(46, 204, 113, 0.1);
+  border-left: 4px solid #27ae60;
+  color: #27ae60;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* Messaggio di errore */
+.errorMessage {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-left: 4px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
 /* Sezione filtri */
 .filterContainer {
   background: #ffffff;
@@ -206,6 +228,32 @@
   border-bottom: none;
 }
 
+/* Stili per classi di insegnamento */
+.classeInsegnamento {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.classeInsegnamento:last-child {
+  margin-bottom: 0;
+}
+
+.classeNome {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.materiaTag {
+  background-color: rgba(142, 68, 173, 0.1);
+  color: #8e44ad;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .docenteInfo {
   display: flex;
   align-items: center;
@@ -287,4 +335,137 @@
 .emptyState p {
   color: #7f8c8d;
   font-weight: 600;
+}
+
+/* Stili per il modale */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.modalTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.modalBody {
+  padding: 1rem;
+}
+
+.modalInfo {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.docenteNomeModal {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.docenteEmailModal {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.textInput {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.textArea {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.modalFooter {
+  padding: 1rem;
+  border-top: 1px solid #ecf0f1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.cancelButton {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.saveButton {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: #8e44ad;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.saveButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }

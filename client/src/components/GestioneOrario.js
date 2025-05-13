@@ -46,7 +46,16 @@ const GestioneOrario = () => {
     try {
       setLoading(true);
       const response = await getAllClassi();
-      setClassi(response.data);
+      // Ordina le classi prima per anno e poi per sezione
+      const classiOrdinate = [...response.data].sort((a, b) => {
+        // Prima ordina per anno
+        if (parseInt(a.anno) !== parseInt(b.anno)) {
+          return parseInt(a.anno) - parseInt(b.anno);
+        }
+        // Poi per sezione (A, B, C, ecc.)
+        return a.sezione.localeCompare(b.sezione);
+      });
+      setClassi(classiOrdinate);
       setLoading(false);
     } catch (err) {
       setError('Errore nel caricamento delle classi');
@@ -120,6 +129,12 @@ const GestioneOrario = () => {
   // Funzione per ottenere la lezione per un determinato giorno e ora
   const getLezione = (giorno, ora) => {
     return orario.find(
+      (lezione) => lezione.giornoSettimana === giorno && lezione.ora === ora
+    );
+  };
+
+  const getLezioni = (giorno, ora) => {
+    return orario.filter(
       (lezione) => lezione.giornoSettimana === giorno && lezione.ora === ora
     );
   };
@@ -495,21 +510,37 @@ const GestioneOrario = () => {
                       </div>
                     </td>
                     {giorni.map((giorno) => {
-                      const lezione = getLezione(giorno, ora.num);
+                      const lezioni = getLezioni(giorno, ora.num);
                       return (
                         <td 
                           key={`${giorno}-${ora.num}`}
-                          className={`${styles.lezioneCell} ${lezione ? styles.hasLezione : styles.emptyLezione}`}
-                          style={{ backgroundColor: lezione?.materia?.coloreMateria || 'transparent' }}
+                          className={`${styles.lezioneCell} ${lezioni.length > 0 ? styles.hasLezione : styles.emptyLezione}`}
+                          style={{ backgroundColor: lezioni.length > 0 ? lezioni[0].materia?.coloreMateria || 'transparent' : 'transparent' }}
                         >
-                          {lezione ? (
+                          {lezioni.length > 0 ? (
                             <div className={styles.lezione}>
-                              <div className={styles.materiaText}>{lezione.materia?.descrizione || 'Materia non specificata'}</div>
+                              <div className={styles.materiaText}>
+                                {lezioni[0].materia?.descrizione || 'Materia non specificata'}
+                              </div>
                               <div className={styles.docenteText}>
-                                {lezione.docente ? `${lezione.docente.nome || ''} ${lezione.docente.cognome || ''}` : 'Docente non specificato'}
+                                {(() => {
+                                  // Controlla se ci sono cognomi duplicati
+                                  const cognomi = lezioni.map(l => l.docente?.cognome || '');
+                                  const hasDuplicates = cognomi.some((cognome, idx) => 
+                                    cognomi.indexOf(cognome) !== idx && cognome !== '');
+                                  
+                                  return lezioni.map((lezione, index) => (
+                                    <span key={lezione.docente._id}>
+                                      {index > 0 ? ', ' : ''}
+                                      {lezione.docente?.cognome || 'N/D'}
+                                      {hasDuplicates && lezione.docente?.nome ? 
+                                        `.${lezione.docente.nome.charAt(0)}` : ''}
+                                    </span>
+                                  ));
+                                })()}
                               </div>
                               <div className={styles.aulaText}>
-                                {lezione.aula ? `Aula: ${lezione.aula}` : 'Aula: N/D'}
+                                {lezioni[0].aula ? `Aula: ${lezioni[0].aula}` : 'Aula: N/D'}
                               </div>
                             </div>
                           ) : (

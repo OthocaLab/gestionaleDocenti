@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/RecuperoOre.module.css';
 import axios from 'axios';
-import { getAllDocenti } from '../services/docenteService';
+import { getAllDocenti, updateDocente } from '../services/docenteService';
 // Rimuovi temporaneamente l'importazione di framer-motion
 // import { motion } from 'framer-motion';
 
@@ -17,6 +17,11 @@ const RecuperoOre = () => {
     materia: ''
   });
   const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDocente, setSelectedDocente] = useState(null);
+  const [oreRecupero, setOreRecupero] = useState(0);
+  const [notaRecupero, setNotaRecupero] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchDocenti();
@@ -27,11 +32,20 @@ const RecuperoOre = () => {
       setLoading(true);
       const response = await getAllDocenti();
       const docentiData = Array.isArray(response.data) ? response.data : [];
-      setDocentiNonFiltrati(docentiData);
-      setDocenti(docentiData);
+      
+      // Se non ci sono dati, usa dati di esempio
+      if (docentiData.length === 0) {
+        console.warn('Nessun docente trovato, verifica la connessione al server');
+        setError('Nessun docente trovato. Verifica la connessione al server.');
+      } else {
+        setDocentiNonFiltrati(docentiData);
+        setDocenti(docentiData);
+      }
+      
       setLoading(false);
     } catch (err) {
-      setError('Errore nel caricamento dei docenti');
+      console.error("Errore nel caricamento dei docenti:", err);
+      setError('Errore nel caricamento dei docenti. Verifica la connessione al server.');
       setLoading(false);
     }
   };
@@ -79,7 +93,8 @@ const RecuperoOre = () => {
       const classeLower = filtri.classe.toLowerCase();
       docentiFiltered = docentiFiltered.filter(docente => 
         docente.classiInsegnamento?.some(c => 
-          c.nome.toLowerCase().includes(classeLower)
+          (c.codiceClasse?.toLowerCase().includes(classeLower) || 
+           c.nome?.toLowerCase().includes(classeLower))
         )
       );
     }
@@ -89,7 +104,9 @@ const RecuperoOre = () => {
       const materiaLower = filtri.materia.toLowerCase();
       docentiFiltered = docentiFiltered.filter(docente => 
         docente.classiInsegnamento?.some(c => 
-          c.materia?.nome.toLowerCase().includes(materiaLower)
+          (c.materia?.nome?.toLowerCase().includes(materiaLower) ||
+           c.materia?.descrizione?.toLowerCase().includes(materiaLower) ||
+           c.descrizione?.toLowerCase().includes(materiaLower))
         )
       );
     }
@@ -108,13 +125,84 @@ const RecuperoOre = () => {
     setDocenti(docentiNonFiltrati);
   };
 
-  if (loading) {
+  const handleGestisciClick = (docente) => {
+    setSelectedDocente(docente);
+    setOreRecupero(docente.oreRecupero || 0);
+    setNotaRecupero(docente.notaRecupero || '');
+    setShowModal(true);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    setSelectedDocente(null);
+    setOreRecupero(0);
+    setNotaRecupero('');
+  };
+
+  const handleSaveOreRecupero = async () => {
+    if (!selectedDocente) return;
+
+    try {
+      setLoading(true);
+      
+      // Aggiorna il docente selezionato con le nuove ore
+      const docenteAggiornato = {
+        ...selectedDocente,
+        oreRecupero: parseInt(oreRecupero),
+        notaRecupero: notaRecupero
+      };
+      
+      // Chiama il servizio per aggiornare il docente
+      await updateDocente(selectedDocente._id, docenteAggiornato);
+      
+      // Aggiorna la lista dei docenti
+      await fetchDocenti();
+      
+      // Chiudi il modale e mostra messaggio di successo
+      setShowModal(false);
+      setSuccessMessage('Ore di recupero aggiornate con successo!');
+      
+      // Nascondi il messaggio dopo 3 secondi
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+      
+      setLoading(false);
+    } catch (err) {
+      setError('Errore durante l\'aggiornamento delle ore di recupero');
+      setLoading(false);
+    }
+  };
+
+  if (loading && !showModal) {
     return <div>Caricamento in corso...</div>;
   }
 
-  if (error) {
+  if (error && !showModal && docenti.length === 0) {
     return <div className="text-red-500">{error}</div>;
   }
+
+  // Funzione di utilità per renderizzare le classi di insegnamento
+  const renderClassiInsegnamento = (docente) => {
+    if (!docente.classiInsegnamento || docente.classiInsegnamento.length === 0) {
+      return <div>-</div>;
+    }
+
+    return (
+      <>
+        {docente.classiInsegnamento.map(classe => (
+          <div key={classe._id || `classe-${Math.random()}`} className={styles.classeInsegnamento}>
+            <span className={styles.classeNome}>{classe.codiceClasse || classe.nome || '-'}</span>
+            {(classe.materia || classe.descrizione) && (
+              <span className={styles.materiaTag}>
+                {classe.materia?.nome || classe.materia?.descrizione || classe.descrizione || '-'}
+              </span>
+            )}
+          </div>
+        ))}
+      </>
+    );
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -143,6 +231,18 @@ const RecuperoOre = () => {
             </div>
           </div>
         </div>
+
+        {successMessage && (
+          <div className={styles.successMessage}>
+            {successMessage}
+          </div>
+        )}
+
+        {error && !loading && (
+          <div className={styles.errorMessage}>
+            {error}
+          </div>
+        )}
 
         {/* Sezione Filtri Compatta */}
         <div className={styles.filterContainer}>
@@ -226,7 +326,7 @@ const RecuperoOre = () => {
               <div className={styles.spinner}></div>
               <p>Caricamento...</p>
             </div>
-          ) : error ? (
+          ) : error && docenti.length === 0 ? (
             <div className={styles.errorState}>
               <p>{error}</p>
             </div>
@@ -235,8 +335,7 @@ const RecuperoOre = () => {
               <thead>
                 <tr>
                   <th>Docente</th>
-                  <th>Classi</th>
-                  <th>Materie</th>
+                  <th>Classi di insegnamento</th>
                   <th>Ore</th>
                   <th></th>
                 </tr>
@@ -257,15 +356,19 @@ const RecuperoOre = () => {
                           </div>
                         </div>
                       </td>
-                      <td>{docente.classiInsegnamento?.map(c => c.nome).join(', ') || '-'}</td>
-                      <td>{docente.classiInsegnamento?.map(c => c.materia?.nome).join(', ') || '-'}</td>
+                      <td>
+                        {renderClassiInsegnamento(docente)}
+                      </td>
                       <td>
                         <span className={`${styles.oreBadge} ${docente.oreRecupero > 0 ? styles.pending : styles.completed}`}>
                           {docente.oreRecupero || 0}
                         </span>
                       </td>
                       <td>
-                        <button className={styles.actionButton}>
+                        <button 
+                          className={styles.actionButton}
+                          onClick={() => handleGestisciClick(docente)}
+                        >
                           Gestisci
                         </button>
                       </td>
@@ -273,7 +376,7 @@ const RecuperoOre = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5">
+                    <td colSpan="4">
                       <div className={styles.emptyState}>
                         <p>Nessun docente trovato</p>
                       </div>
@@ -285,6 +388,72 @@ const RecuperoOre = () => {
           )}
         </div>
       </div>
+
+      {/* Modal per gestire le ore di recupero */}
+      {showModal && selectedDocente && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>Gestione Ore di Recupero</h2>
+              <button 
+                className={styles.closeButton}
+                onClick={handleModalClose}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.modalInfo}>
+                <p className={styles.docenteNomeModal}>
+                  {selectedDocente.cognome} {selectedDocente.nome}
+                </p>
+                <p className={styles.docenteEmailModal}>
+                  {selectedDocente.email}
+                </p>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="oreRecupero">Ore da recuperare:</label>
+                <input
+                  type="number"
+                  id="oreRecupero"
+                  value={oreRecupero}
+                  onChange={(e) => setOreRecupero(e.target.value)}
+                  className={styles.textInput}
+                  min="0"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="notaRecupero">Note:</label>
+                <textarea
+                  id="notaRecupero"
+                  value={notaRecupero}
+                  onChange={(e) => setNotaRecupero(e.target.value)}
+                  className={styles.textArea}
+                  rows="3"
+                  placeholder="Inserisci eventuali note sul recupero..."
+                />
+              </div>
+            </div>
+            <div className={styles.modalFooter}>
+              <button 
+                className={styles.cancelButton}
+                onClick={handleModalClose}
+              >
+                Annulla
+              </button>
+              <button 
+                className={styles.saveButton}
+                onClick={handleSaveOreRecupero}
+                disabled={loading}
+              >
+                {loading ? 'Salvataggio...' : 'Salva'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
