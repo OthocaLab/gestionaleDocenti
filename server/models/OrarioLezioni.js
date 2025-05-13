@@ -30,6 +30,10 @@ const OrarioLezioniSchema = new mongoose.Schema({
     ref: 'Materia',
     required: true
   },
+  classe: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ClasseScolastica'
+  },
   aula: {
     type: String,
     default: 'N/D'

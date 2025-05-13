@@ -1,0 +1,330 @@
+.container {
+  padding: 20px;
+  width: 100%;
+}
+
+.columnLayout {
+  display: flex;
+  gap: 30px;
+  height: calc(100vh - 180px);
+}
+
+/* Colonna sinistra - Elenco Assenze */
+.leftColumn {
+  flex: 1;
+  min-width: 350px;
+  max-width: 450px;
+  overflow-y: auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.leftColumn h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.assenzeList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.assenzaCard {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.assenzaCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.assenzaCard.selected {
+  background-color: #e8f4fd;
+  border-left: 4px solid #2196f3;
+}
+
+.assenzaCard h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.dettagliAssenza {
+  margin-bottom: 12px;
+}
+
+.dettagliAssenza p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.dettaglioButton {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.dettaglioButton:hover {
+  background-color: #1976d2;
+}
+
+/* Colonna destra - Dettaglio Sostituzione */
+.rightColumn {
+  flex: 2;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #888;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.dettaglioHeader {
+  margin-bottom: 20px;
+}
+
+.dettaglioHeader h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.dettaglioHeader h3 {
+  margin: 0;
+  color: #555;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+/* Sezione sostituti */
+.sostitutiSection {
+  margin-bottom: 30px;
+}
+
+.sostitutiSection h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.sostitutiList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sostitutoCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sostitutoInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.sostitutoNome {
+  margin: 0;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #333;
+}
+
+.sostitutoStato {
+  margin: 0;
+  font-size: 0.9rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+}
+
+.disponibile {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+}
+
+.occupato {
+  color: #d32f2f;
+  background-color: #ffebee;
+}
+
+.assegnaButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.assegnaButton:hover:not(:disabled) {
+  background-color: #388e3c;
+}
+
+.assegnaButton:disabled {
+  background-color: #c5c5c5;
+  cursor: not-allowed;
+}
+
+/* Sezione orario */
+.orarioSection {
+  margin-top: 30px;
+}
+
+.orarioSection h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.orarioTable {
+  overflow-x: auto;
+}
+
+.orarioTable table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.orarioTable th, .orarioTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.orarioTable th {
+  background-color: #f5f5f5;
+  color: #555;
+  font-weight: 600;
+}
+
+.oraCell {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.giornoEvidenziato {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+/* Stili per i tipi di cella dell'orario */
+.compresenza {
+  background-color: #fff3e0; /* Arancione chiaro */
+  border: 2px solid #ff9800; /* Bordo arancione */
+}
+
+.vuota {
+  background-color: #ffebee; /* Rosso chiaro */
+  border: 2px solid #f44336; /* Bordo rosso */
+}
+
+.assenza {
+  background-color: #e8eaf6; /* Blu chiaro */
+  border: 2px solid #3f51b5; /* Bordo blu */
+}
+
+td.selected {
+  background-color: #e8f5e9; /* Verde chiaro */
+  border: 2px solid #4caf50; /* Bordo verde */
+}
+
+.materia {
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.docente {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Stile per il loader */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Stile per messaggi di errore */
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #d32f2f;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.noAssenze {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #555;
+  text-align: center;
+}
+
+.noResults {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Stile per sostituzione confermata */
+.sostituzione {
+  background-color: #e8f5e9; /* Verde chiaro */
+  border: 2px solid #4caf50; /* Bordo verde */
+}
+
+.sostituto {
+  font-size: 0.8rem;
+  color: #4caf50;
+  font-style: italic;
+  margin-top: 3px;
+} 

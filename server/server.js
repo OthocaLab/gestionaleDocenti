@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const materiaRoutes = require('./routes/materiaRoutes');
 const classeInsegnamentoRoutes = require('./routes/classeInsegnamentoRoutes');
 const classeRoutes = require('./routes/classeRoutes'); // Added import for classeRoutes
+const sostituzioneRoutes = require('./routes/sostituzioneRoutes'); // Added import for sostituzioneRoutes
 
 // Carica le variabili d'ambiente
 require('dotenv').config();
@@ -69,6 +70,7 @@ app.use('/api/assenze', assenzaRoutes);
 app.use('/api/materie', materiaRoutes);
 app.use('/api/classi', classeRoutes);
 app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
+app.use('/api/sostituzioni', sostituzioneRoutes); // Added new route for sostituzioni
 
 // Route di base
 app.get('/', (req, res) => {

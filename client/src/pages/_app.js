@@ -1,11 +1,25 @@
-import React from 'react';
-import { AuthProvider } from '../context/AuthContext';
+import React, { useEffect } from 'react';
+import { AuthProvider, AuthContext } from '../context/AuthContext';
+import setupAxiosInterceptors from '../utils/axiosConfig';
 import '../styles/globals.css';
+
+// Componente wrapper che configura gli interceptor
+const AxiosInterceptor = ({ children }) => {
+  const { token } = React.useContext(AuthContext);
+
+  useEffect(() => {
+    setupAxiosInterceptors(token);
+  }, [token]);
+
+  return children;
+};
 
 function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <Component {...pageProps} />
+      <AxiosInterceptor>
+        <Component {...pageProps} />
+      </AxiosInterceptor>
     </AuthProvider>
   );
 }

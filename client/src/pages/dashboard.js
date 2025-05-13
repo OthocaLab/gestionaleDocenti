@@ -11,6 +11,7 @@ import GestioneAssenze from '../components/GestioneAssenze';
 import RecuperoOre from '../components/RecuperoOre';
 import ImportaDati from '../components/ImportaDati';
 import GestioneDidattica from '../components/GestioneDidattica';
+import GestioneSostituzioni from '../components/GestioneSostituzioni';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
@@ -118,7 +119,7 @@ const Dashboard = () => {
               <a 
                 href="#" 
                 className={activeTab === 'sostituzioni' ? styles.active : ''} 
-                onClick={() => setActiveTab('sostituzioni')}
+                onClick={() => handleTabChange('sostituzioni')}
               >
                 <span className={styles.icon}>🔄</span>
                 <span className={styles.label}>Sostituzioni</span>
@@ -183,9 +184,7 @@ const Dashboard = () => {
 
           {activeTab === 'sostituzioni' && (
             <div>
-              <h2>Gestione Sostituzioni</h2>
-              <p>Qui potrai gestire le sostituzioni dei docenti assenti.</p>
-              {/* Contenuto della sezione sostituzioni */}
+              <GestioneSostituzioni />
             </div>
           )}
 

@@ -169,29 +169,40 @@ exports.createOrarioLezione = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
+      return res.status(400).json({
+        success: false,
+        errors: errors.array()
+      });
     }
 
+    // Estrai il classeId dal corpo della richiesta
     const { classeId, ...orarioData } = req.body;
-    
-    // Crea la lezione
-    const orario = await OrarioLezioni.create(orarioData);
-    
-    // Aggiorna la classe con il riferimento alla lezione
-    await ClasseScolastica.findByIdAndUpdate(
-      classeId,
-      { $push: { orarioLezioni: orario._id } }
-    );
+
+    // Crea un nuovo orario lezione includendo il riferimento alla classe
+    const orarioLezione = new OrarioLezioni({
+      ...orarioData,
+      classe: classeId // Aggiungi il riferimento alla classe
+    });
+
+    await orarioLezione.save();
+
+    // Se la classe esiste, aggiorna il suo riferimento all'orario lezioni
+    if (classeId) {
+      await ClasseScolastica.findByIdAndUpdate(
+        classeId,
+        { $push: { orarioLezioni: orarioLezione._id } }
+      );
+    }
 
     res.status(201).json({
       success: true,
-      data: orario
+      data: orarioLezione
     });
   } catch (error) {
-    console.error('Errore nella creazione dell\'orario:', error);
+    console.error('Errore nella creazione dell\'orario lezione:', error);
     res.status(500).json({
       success: false,
-      message: 'Errore nella creazione dell\'orario',
+      message: 'Errore nella creazione dell\'orario lezione',
       error: process.env.NODE_ENV === 'development' ? error.message : {}
     });
   }
@@ -701,7 +712,8 @@ async function processImportAsync(filePath, user) {
                 oraInizio: oraInizio,
                 oraFine: oraFine,
                 aula: aula, // Ora utilizziamo il valore dell'aula normalizzato
-                isDisponibilita: isDisponibilita // Imposta il flag di disponibilità
+                isDisponibilita: isDisponibilita, // Imposta il flag di disponibilità
+                classe: !isDisponibilita && classe ? classe._id : null // Aggiungi il riferimento alla classe
               });
               
               const savedOrario = await nuovoOrario.save();
