@@ -46,7 +46,16 @@ const GestioneOrario = () => {
     try {
       setLoading(true);
       const response = await getAllClassi();
-      setClassi(response.data);
+      // Ordina le classi prima per anno e poi per sezione
+      const classiOrdinate = [...response.data].sort((a, b) => {
+        // Prima ordina per anno
+        if (parseInt(a.anno) !== parseInt(b.anno)) {
+          return parseInt(a.anno) - parseInt(b.anno);
+        }
+        // Poi per sezione (A, B, C, ecc.)
+        return a.sezione.localeCompare(b.sezione);
+      });
+      setClassi(classiOrdinate);
       setLoading(false);
     } catch (err) {
       setError('Errore nel caricamento delle classi');
