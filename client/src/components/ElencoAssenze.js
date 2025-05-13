@@ -139,7 +139,7 @@ const ElencoAssenze = () => {
               {assenzeFiltered.map((assenza) => (
                 <tr key={assenza._id}>
                   <td>
-                    {assenza.docente.nome} {assenza.docente.cognome}
+                    {assenza.docente ? `${assenza.docente.nome} ${assenza.docente.cognome}` : 'Docente non assegnato'}
                   </td>
                   <td>
                     {assenza.tipoAssenza.charAt(0).toUpperCase() + assenza.tipoAssenza.slice(1)}
