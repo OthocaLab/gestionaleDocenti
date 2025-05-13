@@ -813,3 +813,56 @@ exports.testFileUpload = async (req, res) => {
     });
   }
 };
+
+// Ottieni docenti disponibili per sostituzioni
+exports.getDocentiDisponibiliSostituzioni = async (req, res) => {
+  try {
+    const { giorno, ora } = req.query;
+    
+    if (!giorno || !ora) {
+      return res.status(400).json({
+        success: false,
+        message: 'Giorno e ora sono parametri obbligatori'
+      });
+    }
+    
+    // Trova le materie con codice "DISP"
+    const materieDisp = await Materia.find({ codiceMateria: "DISP" });
+    
+    if (!materieDisp || materieDisp.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Nessuna materia di disponibilità (DISP) trovata nel sistema'
+      });
+    }
+    
+    const materieDispIds = materieDisp.map(m => m._id);
+    
+    // Trova docenti con disponibilità nell'ora e giorno specificati
+    const orariDisponibili = await OrarioLezioni.find({
+      giornoSettimana: giorno,
+      ora: parseInt(ora),
+      materia: { $in: materieDispIds }
+    }).populate({
+      path: 'docente',
+      select: 'nome cognome codiceDocente oreRecupero email stato'
+    });
+    
+    // Estrai i docenti dalle disponibilità trovate
+    const docentiDisponibili = orariDisponibili.map(orario => orario.docente);
+    
+    res.status(200).json({
+      success: true,
+      count: docentiDisponibili.length,
+      data: docentiDisponibili
+    });
+    
+  } catch (error) {
+    console.error('Errore nel recupero dei docenti disponibili:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nel recupero dei docenti disponibili',
+      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    });
+  }
+};
