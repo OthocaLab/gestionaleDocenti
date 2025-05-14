@@ -224,7 +224,7 @@
 }
 
 .modificaButton {
-  background-color: #FD025C;
+  background-color: #4a90e2;
   color: white;
   border: none;
   border-radius: 4px;
@@ -235,7 +235,7 @@
 }
 
 .modificaButton:hover {
-  background-color: #d10149;
+  background-color: #357abd;
   transform: translateY(-2px);
 }
 
@@ -386,12 +386,12 @@
 }
 
 .saveButton {
-  background-color: #FD025C;
+  background-color: #4a90e2;
   color: white;
 }
 
 .saveButton:hover:not(:disabled) {
-  background-color: #d10149;
+  background-color: #357abd;
 }
 
 .cancelButton:disabled, .saveButton:disabled {
