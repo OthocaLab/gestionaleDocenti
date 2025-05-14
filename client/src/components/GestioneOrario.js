@@ -425,7 +425,7 @@ const GestioneOrario = () => {
                 <option value="">-- Seleziona un docente --</option>
                 {docenti.map((docente) => (
                   <option key={docente._id} value={docente._id}>
-                    {docente.cognome} {docente.nome}
+                    {docente.cognome} {docente.nome !== docente.cognome ? docente.nome : ''}
                   </option>
                 ))}
               </select>
@@ -576,7 +576,9 @@ const GestioneOrario = () => {
                 <>
                   <div className={styles.infoItem}>
                     <div className={styles.infoLabel}>Docente</div>
-                    <div className={styles.infoValue}>{docenteSelezionato?.cognome || ''} {docenteSelezionato?.nome || ''}</div>
+                    <div className={styles.infoValue}>
+                      {docenteSelezionato?.cognome} {docenteSelezionato?.nome !== docenteSelezionato?.cognome ? docenteSelezionato?.nome : ''}
+                    </div>
                   </div>
                   <div className={styles.infoItem}>
                     <div className={styles.infoLabel}>Materia</div>
