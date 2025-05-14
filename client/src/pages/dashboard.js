@@ -71,8 +71,7 @@ const Dashboard = () => {
     <div className={styles.dashboardContainer}>
       <header className={styles.header}>
         <div className={styles.logo}>
-          <div className={styles.logoIcon}>OL</div>
-          <h1>Othoca Lab</h1>
+          <img src="/img/logo.png" alt="Logo" className={styles.logoImg} />
         </div>
         <div className={styles.pageTitle}>
           {activeTab === 'dashboard' && "Dashboard"}

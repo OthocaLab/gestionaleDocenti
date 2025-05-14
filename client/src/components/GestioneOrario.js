@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
-import { getAllClassi, getOrarioByClasse, createClasse } from '../services/orarioService';
+import { getAllClassi, getOrarioByClasse, createClasse, getOrarioByDocente } from '../services/orarioService';
+import { getAllDocenti } from '../services/docenteService';
 import styles from '../styles/Orario.module.css';
 import html2canvas from 'html2canvas';
 import jspdf from 'jspdf';
 
 const GestioneOrario = () => {
   const [classi, setClassi] = useState([]);
+  const [docenti, setDocenti] = useState([]);
   const [selectedClasse, setSelectedClasse] = useState('');
+  const [selectedDocente, setSelectedDocente] = useState('');
   const [orario, setOrario] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -19,6 +22,7 @@ const GestioneOrario = () => {
     numeroStudenti: ''
   });
   const [success, setSuccess] = useState('');
+  const [visualizzazione, setVisualizzazione] = useState('classe'); // 'classe' o 'docente'
 
   const giorni = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
   const ore = [
@@ -32,15 +36,18 @@ const GestioneOrario = () => {
 
   useEffect(() => {
     fetchClassi();
+    fetchDocenti();
   }, []);
 
   useEffect(() => {
-    // Seleziona la prima classe di default se ce ne sono
-    if (classi.length > 0 && !selectedClasse) {
+    if (visualizzazione === 'classe' && classi.length > 0 && !selectedClasse) {
       setSelectedClasse(classi[0]._id);
-      fetchOrario(classi[0]._id);
+      fetchOrario(classi[0]._id, 'classe');
+    } else if (visualizzazione === 'docente' && docenti.length > 0 && !selectedDocente) {
+      setSelectedDocente(docenti[0]._id);
+      fetchOrario(docenti[0]._id, 'docente');
     }
-  }, [classi]);
+  }, [classi, docenti, visualizzazione]);
 
   const fetchClassi = async () => {
     try {
@@ -63,14 +70,37 @@ const GestioneOrario = () => {
     }
   };
 
-  const fetchOrario = async (classeId) => {
+  const fetchDocenti = async () => {
     try {
       setLoading(true);
-      const response = await getOrarioByClasse(classeId);
+      const response = await getAllDocenti();
+      // Ordina i docenti per cognome
+      const docentiOrdinati = [...response.data].sort((a, b) => 
+        a.cognome.localeCompare(b.cognome)
+      );
+      setDocenti(docentiOrdinati);
+      setLoading(false);
+    } catch (err) {
+      setError('Errore nel caricamento dei docenti');
+      setLoading(false);
+    }
+  };
+
+  const fetchOrario = async (id, tipo) => {
+    try {
+      setLoading(true);
+      let response;
+      
+      if (tipo === 'classe') {
+        response = await getOrarioByClasse(id);
+      } else if (tipo === 'docente') {
+        response = await getOrarioByDocente(id);
+      }
+      
       setOrario(response.data);
       setLoading(false);
     } catch (err) {
-      setError('Errore nel caricamento dell\'orario');
+      setError(`Errore nel caricamento dell'orario`);
       setLoading(false);
     }
   };
@@ -80,9 +110,33 @@ const GestioneOrario = () => {
     setSelectedClasse(classeId);
     
     if (classeId) {
-      fetchOrario(classeId);
+      fetchOrario(classeId, 'classe');
     } else {
       setOrario([]);
+    }
+  };
+
+  const handleDocenteChange = async (e) => {
+    const docenteId = e.target.value;
+    setSelectedDocente(docenteId);
+    
+    if (docenteId) {
+      fetchOrario(docenteId, 'docente');
+    } else {
+      setOrario([]);
+    }
+  };
+
+  const handleFilterButtonClick = (tipo) => {
+    setVisualizzazione(tipo);
+    setOrario([]);
+    
+    if (tipo === 'classe' && classi.length > 0) {
+      setSelectedClasse(classi[0]._id);
+      fetchOrario(classi[0]._id, 'classe');
+    } else if (tipo === 'docente' && docenti.length > 0) {
+      setSelectedDocente(docenti[0]._id);
+      fetchOrario(docenti[0]._id, 'docente');
     }
   };
 
@@ -155,8 +209,9 @@ const GestioneOrario = () => {
     return luminance > 0.5 ? '#000' : '#fff';
   };
 
-  // Ottieni i dettagli della classe selezionata
+  // Ottieni i dettagli della classe o docente selezionati
   const classeSelezionata = classi.find(c => c._id === selectedClasse);
+  const docenteSelezionato = docenti.find(d => d._id === selectedDocente);
 
   // Funzione per ottenere il colore della materia
   const getColorMateria = (lezione) => {
@@ -222,13 +277,19 @@ const GestioneOrario = () => {
         format: 'a4'
       });
       
-      // Aggiungi intestazione
+      // Aggiungi intestazione in base alla visualizzazione
       pdf.setFontSize(16);
-      pdf.text(`Orario Classe ${classeSelezionata?.anno || ''} ${classeSelezionata?.sezione || ''}`, 14, 15);
+      if (visualizzazione === 'classe') {
+        pdf.text(`Orario Classe ${classeSelezionata?.anno || ''} ${classeSelezionata?.sezione || ''}`, 14, 15);
+        pdf.setFontSize(10);
+        pdf.text(`Aula: ${classeSelezionata?.aula || ''}`, 14, 22);
+        pdf.text(`Indirizzo: ${classeSelezionata?.indirizzo || ''}`, 14, 27);
+      } else {
+        pdf.text(`Orario Docente ${docenteSelezionato?.cognome || ''} ${docenteSelezionato?.nome || ''}`, 14, 15);
+        pdf.setFontSize(10);
+        pdf.text(`Materia: ${docenteSelezionato?.materia || ''}`, 14, 22);
+      }
       
-      pdf.setFontSize(10);
-      pdf.text(`Aula: ${classeSelezionata?.aula || ''}`, 14, 22);
-      pdf.text(`Indirizzo: ${classeSelezionata?.indirizzo || ''}`, 14, 27);
       pdf.text(`Data: ${new Date().toLocaleDateString('it-IT')}`, 14, 32);
       
       // Calcola le dimensioni per adattare l'immagine alla pagina
@@ -238,8 +299,12 @@ const GestioneOrario = () => {
       // Aggiungi l'immagine della tabella
       pdf.addImage(imgData, 'PNG', 14, 40, imgWidth, imgHeight);
       
-      // Salva il PDF
-      pdf.save(`Orario_${classeSelezionata?.anno || ''}${classeSelezionata?.sezione || ''}_${new Date().toISOString().slice(0, 10)}.pdf`);
+      // Salva il PDF con nome appropriato
+      if (visualizzazione === 'classe') {
+        pdf.save(`Orario_${classeSelezionata?.anno || ''}${classeSelezionata?.sezione || ''}_${new Date().toISOString().slice(0, 10)}.pdf`);
+      } else {
+        pdf.save(`Orario_${docenteSelezionato?.cognome || ''}_${docenteSelezionato?.nome || ''}_${new Date().toISOString().slice(0, 10)}.pdf`);
+      }
       
       setLoading(false);
       setSuccess('PDF esportato con successo!');
@@ -301,7 +366,7 @@ const GestioneOrario = () => {
           </div>
           <div className={styles.statContent}>
             <div className={styles.statLabel}>Personale Disponibile</div>
-            <div className={styles.statValue}>5</div>
+            <div className={styles.statValue}>{docenti.length || 0}</div>
           </div>
         </div>
       </div>
@@ -319,8 +384,18 @@ const GestioneOrario = () => {
               />
             </div>
             <div className={styles.filterButtons}>
-              <button className={styles.filterButton}>Docenti</button>
-              <button className={`${styles.filterButton} ${styles.activeFilter}`}>Classe</button>
+              <button 
+                className={`${styles.filterButton} ${visualizzazione === 'docente' ? styles.activeFilter : ''}`}
+                onClick={() => handleFilterButtonClick('docente')}
+              >
+                Docenti
+              </button>
+              <button 
+                className={`${styles.filterButton} ${visualizzazione === 'classe' ? styles.activeFilter : ''}`}
+                onClick={() => handleFilterButtonClick('classe')}
+              >
+                Classe
+              </button>
               <button className={styles.filterButton}>Aule</button>
             </div>
           </div>
@@ -328,30 +403,47 @@ const GestioneOrario = () => {
 
         <div className={styles.classeSelector}>
           <div className={styles.selectWithButton}>
-            <select
-              value={selectedClasse}
-              onChange={handleClasseChange}
-              className={styles.select}
-            >
-              <option value="">-- Seleziona una classe --</option>
-              {classi.map((classe) => (
-                <option key={classe._id} value={classe._id}>
-                  {classe.anno}ª {classe.sezione} - {classe.indirizzo}
-                </option>
-              ))}
-            </select>
-            <button 
-              className={styles.addButton}
-              onClick={() => setShowClasseForm(!showClasseForm)}
-            >
-              {showClasseForm ? 'Annulla' : 'Nuova Classe'}
-            </button>
+            {visualizzazione === 'classe' ? (
+              <select
+                value={selectedClasse}
+                onChange={handleClasseChange}
+                className={styles.select}
+              >
+                <option value="">-- Seleziona una classe --</option>
+                {classi.map((classe) => (
+                  <option key={classe._id} value={classe._id}>
+                    {classe.anno}ª {classe.sezione} - {classe.indirizzo}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <select
+                value={selectedDocente}
+                onChange={handleDocenteChange}
+                className={styles.select}
+              >
+                <option value="">-- Seleziona un docente --</option>
+                {docenti.map((docente) => (
+                  <option key={docente._id} value={docente._id}>
+                    {docente.cognome} {docente.nome !== docente.cognome ? docente.nome : ''}
+                  </option>
+                ))}
+              </select>
+            )}
+            {visualizzazione === 'classe' && (
+              <button 
+                className={styles.addButton}
+                onClick={() => setShowClasseForm(!showClasseForm)}
+              >
+                {showClasseForm ? 'Annulla' : 'Nuova Classe'}
+              </button>
+            )}
           </div>
           
           {error && <div className={styles.errorMessage}>{error}</div>}
           {success && <div className={styles.successMessage}>{success}</div>}
           
-          {showClasseForm && (
+          {showClasseForm && visualizzazione === 'classe' && (
             <div className={styles.formSection}>
               <h4 className={styles.formTitle}>Crea Nuova Classe</h4>
               <form onSubmit={handleClasseFormSubmit} className={styles.classeForm}>
@@ -454,29 +546,50 @@ const GestioneOrario = () => {
             <div className={styles.spinner}></div>
             <div>Caricamento in corso...</div>
           </div>
-        ) : selectedClasse && (
+        ) : (visualizzazione === 'classe' && selectedClasse) || (visualizzazione === 'docente' && selectedDocente) ? (
           <div className={styles.orarioTableWrapper}>
             <div className={styles.classeInfoHeader}>
-              <div className={styles.infoItem}>
-                <div className={styles.infoLabel}>Classe</div>
-                <div className={styles.infoValue}>{classeSelezionata?.anno || ''}</div>
-              </div>
-              <div className={styles.infoItem}>
-                <div className={styles.infoLabel}>Sezione</div>
-                <div className={styles.infoValue}>{classeSelezionata?.sezione || ''}</div>
-              </div>
-              <div className={styles.infoItem}>
-                <div className={styles.infoLabel}>Coordinatore</div>
-                <div className={styles.infoValue}>Docente 1</div>
-              </div>
-              <div className={styles.infoItem}>
-                <div className={styles.infoLabel}>Aula</div>
-                <div className={styles.infoValue}>{classeSelezionata?.aula || ''}</div>
-              </div>
-              <div className={styles.infoItem}>
-                <div className={styles.infoLabel}>Indirizzo</div>
-                <div className={styles.infoValue}>{classeSelezionata?.indirizzo || ''}</div>
-              </div>
+              {visualizzazione === 'classe' ? (
+                <>
+                  <div className={styles.infoItem}>
+                    <div className={styles.infoLabel}>Classe</div>
+                    <div className={styles.infoValue}>{classeSelezionata?.anno || ''}</div>
+                  </div>
+                  <div className={styles.infoItem}>
+                    <div className={styles.infoLabel}>Sezione</div>
+                    <div className={styles.infoValue}>{classeSelezionata?.sezione || ''}</div>
+                  </div>
+                  <div className={styles.infoItem}>
+                    <div className={styles.infoLabel}>Coordinatore</div>
+                    <div className={styles.infoValue}>Docente 1</div>
+                  </div>
+                  <div className={styles.infoItem}>
+                    <div className={styles.infoLabel}>Aula</div>
+                    <div className={styles.infoValue}>{classeSelezionata?.aula || ''}</div>
+                  </div>
+                  <div className={styles.infoItem}>
+                    <div className={styles.infoLabel}>Indirizzo</div>
+                    <div className={styles.infoValue}>{classeSelezionata?.indirizzo || ''}</div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.infoItem}>
+                    <div className={styles.infoLabel}>Docente</div>
+                    <div className={styles.infoValue}>
+                      {docenteSelezionato?.cognome} {docenteSelezionato?.nome !== docenteSelezionato?.cognome ? docenteSelezionato?.nome : ''}
+                    </div>
+                  </div>
+                  <div className={styles.infoItem}>
+                    <div className={styles.infoLabel}>Materia</div>
+                    <div className={styles.infoValue}>{docenteSelezionato?.materia || 'Varie'}</div>
+                  </div>
+                  <div className={styles.infoItem}>
+                    <div className={styles.infoLabel}>Email</div>
+                    <div className={styles.infoValue}>{docenteSelezionato?.email || 'N/D'}</div>
+                  </div>
+                </>
+              )}
               <div className={styles.headerActions}>
                 <button 
                   className={styles.actionButton} 
@@ -522,23 +635,29 @@ const GestioneOrario = () => {
                               <div className={styles.materiaText}>
                                 {lezioni[0].materia?.descrizione || 'Materia non specificata'}
                               </div>
-                              <div className={styles.docenteText}>
-                                {(() => {
-                                  // Controlla se ci sono cognomi duplicati
-                                  const cognomi = lezioni.map(l => l.docente?.cognome || '');
-                                  const hasDuplicates = cognomi.some((cognome, idx) => 
-                                    cognomi.indexOf(cognome) !== idx && cognome !== '');
-                                  
-                                  return lezioni.map((lezione, index) => (
-                                    <span key={lezione.docente._id}>
-                                      {index > 0 ? ', ' : ''}
-                                      {lezione.docente?.cognome || 'N/D'}
-                                      {hasDuplicates && lezione.docente?.nome ? 
-                                        `.${lezione.docente.nome.charAt(0)}` : ''}
-                                    </span>
-                                  ));
-                                })()}
-                              </div>
+                              {visualizzazione === 'classe' ? (
+                                <div className={styles.docenteText}>
+                                  {(() => {
+                                    // Controlla se ci sono cognomi duplicati
+                                    const cognomi = lezioni.map(l => l.docente?.cognome || '');
+                                    const hasDuplicates = cognomi.some((cognome, idx) => 
+                                      cognomi.indexOf(cognome) !== idx && cognome !== '');
+                                    
+                                    return lezioni.map((lezione, index) => (
+                                      <span key={lezione.docente._id}>
+                                        {index > 0 ? ', ' : ''}
+                                        {lezione.docente?.cognome || 'N/D'}
+                                        {hasDuplicates && lezione.docente?.nome ? 
+                                          `.${lezione.docente.nome.charAt(0)}` : ''}
+                                      </span>
+                                    ));
+                                  })()}
+                                </div>
+                              ) : (
+                                <div className={styles.classeText}>
+                                  {lezioni[0].classe ? `${lezioni[0].classe.anno}ª ${lezioni[0].classe.sezione}` : 'Classe N/D'}
+                                </div>
+                              )}
                               <div className={styles.aulaText}>
                                 {lezioni[0].aula ? `Aula: ${lezioni[0].aula}` : 'Aula: N/D'}
                               </div>
@@ -558,7 +677,7 @@ const GestioneOrario = () => {
               </tbody>
             </table>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

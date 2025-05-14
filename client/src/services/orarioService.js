@@ -62,10 +62,33 @@ export const getOrarioByClasse = async (classeId) => {
 
 export const getOrarioByDocente = async (docenteId) => {
   try {
+    console.log(`Making API request to get teacher schedule: ${docenteId}`);
     const response = await axios.get(`${API_URL}/orario/orario/docente/${docenteId}`, getAuthConfig());
+    console.log(`API response status: ${response.status}`);
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: 'Errore nel recupero dell\'orario del docente' };
+    console.error('Error details:', error);
+    
+    if (error.response) {
+      console.error(`API error response (${error.response.status}):`, error.response.data);
+      
+      // Handle specific status codes
+      if (error.response.status === 404) {
+        throw { message: 'Docente non trovato nel sistema' };
+      } else if (error.response.status === 401) {
+        throw { message: 'Sessione scaduta. Effettua di nuovo il login.' };
+      } else if (error.response.status === 403) {
+        throw { message: 'Non hai i permessi necessari per visualizzare questo orario.' };
+      }
+      
+      throw error.response.data || { message: 'Errore nel recupero dell\'orario del docente' };
+    } else if (error.request) {
+      console.error('No response received:', error.request);
+      throw { message: 'Nessuna risposta ricevuta dal server. Verifica la connessione.' };
+    } else {
+      console.error('Request setup error:', error.message);
+      throw { message: `Errore nella richiesta: ${error.message}` };
+    }
   }
 };
 
