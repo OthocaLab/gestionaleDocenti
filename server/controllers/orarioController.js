@@ -140,20 +140,90 @@ exports.getOrarioByDocente = async (req, res) => {
   try {
     const { docenteId } = req.params;
     
-    const docente = await User.findById(docenteId);
-    if (!docente) {
-      return res.status(404).json({
+    // First, try to find the user
+    const user = await User.findById(docenteId);
+    
+    // If user not found or not a docente, try to find directly in Docente model
+    let docente;
+    if (!user) {
+      docente = await Docente.findById(docenteId);
+      if (!docente) {
+        return res.status(404).json({
+          success: false,
+          message: 'Docente non trovato'
+        });
+      }
+    } else if (user.ruolo !== 'docente') {
+      return res.status(400).json({
         success: false,
-        message: 'Docente non trovato'
+        message: 'L\'utente selezionato non è un docente'
       });
     }
 
-    const orari = await OrarioLezioni.find({ docente: docenteId })
-      .populate('materia', 'descrizione coloreMateria');
+    const docenteToUse = docente ? docente._id : docenteId;
+    
+    // Trova tutte le classi e le loro lezioni associate
+    const classi = await ClasseScolastica.find().select('_id anno sezione indirizzo aula orarioLezioni');
+    
+    // Mappa degli ID delle lezioni per classe
+    const lezioniClasseMap = {};
+    classi.forEach(classe => {
+      if (classe.orarioLezioni && classe.orarioLezioni.length > 0) {
+        classe.orarioLezioni.forEach(lezioneId => {
+          if (!lezioniClasseMap[lezioneId.toString()]) {
+            lezioniClasseMap[lezioneId.toString()] = [];
+          }
+          lezioniClasseMap[lezioneId.toString()].push({
+            classeId: classe._id,
+            anno: classe.anno,
+            sezione: classe.sezione,
+            indirizzo: classe.indirizzo,
+            aula: classe.aula
+          });
+        });
+      }
+    });
+
+    // Ottiene le lezioni del docente
+    const orari = await OrarioLezioni.find({ docente: docenteToUse })
+      .populate([
+        { 
+          path: 'docente',
+          select: 'nome cognome codiceDocente',
+          model: 'Docente'
+        },
+        {
+          path: 'materia',
+          select: 'descrizione coloreMateria'
+        }
+      ]);
+
+    // Aggiunge i dati della classe a ciascuna lezione
+    const orariCompleti = orari.map(orario => {
+      const orarioObj = orario.toObject();
+      const classiInfo = lezioniClasseMap[orario._id.toString()];
+      
+      if (classiInfo && classiInfo.length > 0) {
+        // Se ci sono più classi per la stessa lezione, le includiamo tutte
+        orarioObj.classi = classiInfo;
+        // Per retrocompatibilità, usiamo la prima classe anche come proprietà "classe"
+        orarioObj.classe = {
+          id: classiInfo[0].classeId,
+          anno: classiInfo[0].anno,
+          sezione: classiInfo[0].sezione,
+          indirizzo: classiInfo[0].indirizzo,
+          aula: classiInfo[0].aula
+        };
+        // Aggiungiamo anche l'aula come proprietà diretta per renderla più facile da accedere
+        orarioObj.aula = classiInfo[0].aula;
+      }
+      
+      return orarioObj;
+    });
 
     res.status(200).json({
       success: true,
-      data: orari
+      data: orariCompleti
     });
   } catch (error) {
     console.error('Errore nel recupero dell\'orario del docente:', error);
