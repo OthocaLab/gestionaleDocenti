@@ -11,6 +11,13 @@ const ElencoPianificazioneSostituzioni = () => {
   const [view, setView] = useState('calendar'); // 'calendar' o 'list'
   const [filtroDocente, setFiltroDocente] = useState('');
   const [filtroClasse, setFiltroClasse] = useState('');
+  // Nuovi stati per la modifica della sostituzione
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sostituzioneInModifica, setSostituzioneInModifica] = useState(null);
+  const [docentiDisponibili, setDocentiDisponibili] = useState([]);
+  const [docenteSostitutoSelezionato, setDocenteSostitutoSelezionato] = useState('');
+  const [modificaInCorso, setModificaInCorso] = useState(false);
+  const [messaggioModifica, setMessaggioModifica] = useState({ testo: '', tipo: '' });
   
   // Funzione per recuperare tutte le sostituzioni
   const fetchSostituzioni = async () => {
@@ -34,9 +41,12 @@ const ElencoPianificazioneSostituzioni = () => {
           id: sostituzione._id,
           docente: sostituzione.docente.nome + ' ' + sostituzione.docente.cognome,
           docenteSostituto: sostituzione.docenteSostituto.nome + ' ' + sostituzione.docenteSostituto.cognome,
+          docenteSostitutoId: sostituzione.docenteSostituto._id,
+          docenteId: sostituzione.docente._id,
           data: new Date(sostituzione.data),
           ora: sostituzione.ora,
           materia: sostituzione.materia?.descrizione || 'N/D',
+          materiaId: sostituzione.materia?._id || '',
           classe: sostituzione.classe || 'N/D'
         }));
         
@@ -118,6 +128,93 @@ const ElencoPianificazioneSostituzioni = () => {
     const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
                  'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
     return `${mesi[date.getMonth()]} ${date.getFullYear()}`;
+  };
+  
+  // Funzione per aprire il modal e caricare i docenti disponibili
+  const handleModificaSostituzione = async (sostituzione) => {
+    setSostituzioneInModifica(sostituzione);
+    setDocenteSostitutoSelezionato(sostituzione.docenteSostitutoId);
+    setIsModalOpen(true);
+    
+    try {
+      // Converti il giorno della settimana
+      const giornoSettimana = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'][sostituzione.data.getDay()];
+      const giornoApi = { 'Lunedì': 'Lun', 'Martedì': 'Mar', 'Mercoledì': 'Mer', 'Giovedì': 'Gio', 'Venerdì': 'Ven', 'Sabato': 'Sab' }[giornoSettimana] || 'Lun';
+      
+      const response = await axios.get('/api/sostituzioni/docenti-disponibili', {
+        params: {
+          data: sostituzione.data.toISOString(),
+          ora: sostituzione.ora,
+          giorno: giornoApi
+        }
+      });
+      
+      // Aggiungi il docente attuale all'elenco, se non è già presente
+      let docentiList = response.data.data || [];
+      
+      // Verifica se il docente sostituto attuale è già nella lista
+      const docenteAttualePresente = docentiList.some(d => d.id === sostituzione.docenteSostitutoId);
+      
+      if (!docenteAttualePresente) {
+        // Splitta il nome e cognome del docente
+        const nomeCompleto = sostituzione.docenteSostituto.split(' ');
+        const cognome = nomeCompleto.pop();
+        const nome = nomeCompleto.join(' ');
+        
+        docentiList.unshift({
+          id: sostituzione.docenteSostitutoId,
+          nome: nome,
+          cognome: cognome,
+          stato: 'Attuale sostituto'
+        });
+      }
+      
+      setDocentiDisponibili(docentiList);
+    } catch (err) {
+      console.error('Errore nel recupero dei docenti disponibili:', err);
+      setMessaggioModifica({
+        testo: 'Impossibile caricare i docenti disponibili. Riprova più tardi.',
+        tipo: 'errore'
+      });
+    }
+  };
+  
+  // Funzione per salvare la modifica
+  const salvaSostituzione = async () => {
+    if (!sostituzioneInModifica || !docenteSostitutoSelezionato) return;
+    
+    setModificaInCorso(true);
+    setMessaggioModifica({ testo: '', tipo: '' });
+    
+    try {
+      await axios.put(`/api/sostituzioni/${sostituzioneInModifica.id}`, {
+        docenteSostituto: docenteSostitutoSelezionato
+      });
+      
+      setMessaggioModifica({
+        testo: 'Sostituzione aggiornata con successo!',
+        tipo: 'successo'
+      });
+      
+      // Aggiorna la lista delle sostituzioni
+      await fetchSostituzioni();
+      
+      // Chiudi il modal dopo 1 secondo
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setSostituzioneInModifica(null);
+        setDocenteSostitutoSelezionato('');
+        setMessaggioModifica({ testo: '', tipo: '' });
+      }, 1000);
+    } catch (err) {
+      console.error('Errore nell\'aggiornamento della sostituzione:', err);
+      setMessaggioModifica({
+        testo: 'Impossibile aggiornare la sostituzione. Riprova più tardi.',
+        tipo: 'errore'
+      });
+    } finally {
+      setModificaInCorso(false);
+    }
   };
   
   // Renderizza il calendario
@@ -212,8 +309,87 @@ const ElencoPianificazioneSostituzioni = () => {
               <div><strong>Classe:</strong> {sostituzione.classe}</div>
               <div><strong>Materia:</strong> {sostituzione.materia}</div>
             </div>
+            <div className={styles.sostituzioneFooter}>
+              <button 
+                className={styles.modificaButton}
+                onClick={() => handleModificaSostituzione(sostituzione)}
+              >
+                Modifica Sostituto
+              </button>
+            </div>
           </div>
         ))}
+      </div>
+    );
+  };
+
+  // Renderizza il modale per la modifica del sostituto
+  const renderModalModifica = () => {
+    if (!isModalOpen || !sostituzioneInModifica) return null;
+
+    return (
+      <div className={styles.modalOverlay}>
+        <div className={styles.modalContent}>
+          <div className={styles.modalHeader}>
+            <h3>Modifica Sostituzione</h3>
+            <button 
+              className={styles.closeButton}
+              onClick={() => setIsModalOpen(false)}
+            >
+              ×
+            </button>
+          </div>
+          
+          <div className={styles.modalBody}>
+            <div className={styles.modalInfo}>
+              <p><strong>Data:</strong> {formatDate(sostituzioneInModifica.data)}</p>
+              <p><strong>Ora:</strong> {sostituzioneInModifica.ora}ª ora</p>
+              <p><strong>Docente assente:</strong> {sostituzioneInModifica.docente}</p>
+              <p><strong>Classe:</strong> {sostituzioneInModifica.classe}</p>
+              <p><strong>Materia:</strong> {sostituzioneInModifica.materia}</p>
+            </div>
+            
+            <div className={styles.modalForm}>
+              <label htmlFor="docenteSostituto">Seleziona il nuovo sostituto:</label>
+              <select 
+                id="docenteSostituto"
+                value={docenteSostitutoSelezionato}
+                onChange={(e) => setDocenteSostitutoSelezionato(e.target.value)}
+                className={styles.select}
+              >
+                <option value="">Seleziona un docente...</option>
+                {docentiDisponibili.map(docente => (
+                  <option key={docente.id} value={docente.id}>
+                    {docente.nome} {docente.cognome} {docente.stato ? `(${docente.stato})` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {messaggioModifica.testo && (
+              <div className={`${styles.modalMessage} ${styles[messaggioModifica.tipo]}`}>
+                {messaggioModifica.testo}
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.modalFooter}>
+            <button 
+              className={styles.cancelButton}
+              onClick={() => setIsModalOpen(false)}
+              disabled={modificaInCorso}
+            >
+              Annulla
+            </button>
+            <button 
+              className={styles.saveButton}
+              onClick={salvaSostituzione}
+              disabled={!docenteSostitutoSelezionato || modificaInCorso}
+            >
+              {modificaInCorso ? 'Salvataggio...' : 'Salva Modifiche'}
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -294,6 +470,8 @@ const ElencoPianificazioneSostituzioni = () => {
           </div>
         )}
       </div>
+      
+      {renderModalModifica()}
     </div>
   );
 };

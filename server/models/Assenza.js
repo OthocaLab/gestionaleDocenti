@@ -16,8 +16,21 @@ const assenzaSchema = new mongoose.Schema({
   },
   tipoAssenza: {
     type: String,
-    enum: ['malattia', 'permesso', 'ferie', 'altro'],
+    enum: ['malattia', 'permesso', 'ferie', 'altro', 'fuoriclasse'],
     required: true
+  },
+  // Campi per gestire orari specifici
+  orarioSpecifico: {
+    type: Boolean,
+    default: false
+  },
+  orarioEntrata: {
+    type: String,
+    // Formato HH:MM
+  },
+  orarioUscita: {
+    type: String,
+    // Formato HH:MM
   },
   note: {
     type: String

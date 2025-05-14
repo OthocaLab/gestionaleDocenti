@@ -217,6 +217,188 @@
   gap: 5px;
 }
 
+.sostituzioneFooter {
+  padding: 0 15px 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modificaButton {
+  background-color: #FD025C;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.modificaButton:hover {
+  background-color: #d10149;
+  transform: translateY(-2px);
+}
+
+.modificaButton:active {
+  transform: translateY(0);
+}
+
+/* Stili per il modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: modalAppear 0.3s ease;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  color: #333;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: #333;
+}
+
+.modalBody {
+  padding: 20px;
+}
+
+.modalInfo {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+}
+
+.modalInfo p {
+  margin: 5px 0;
+}
+
+.modalForm {
+  margin-bottom: 20px;
+}
+
+.modalForm label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.modalMessage {
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.successo {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #52c41a;
+}
+
+.errore {
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #ff4d4f;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+}
+
+.cancelButton, .saveButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.cancelButton {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #d9d9d9;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background-color: #e8e8e8;
+}
+
+.saveButton {
+  background-color: #FD025C;
+  color: white;
+}
+
+.saveButton:hover:not(:disabled) {
+  background-color: #d10149;
+}
+
+.cancelButton:disabled, .saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .noResults {
   text-align: center;
   padding: 30px;

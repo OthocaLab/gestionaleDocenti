@@ -18,6 +18,10 @@ const InserimentoAssenze = () => {
   const [note, setNote] = useState('');
   const [giustificata, setGiustificata] = useState(false);
   const [documentazione, setDocumentazione] = useState('');
+  // Nuovi stati per gli orari
+  const [orarioSpecifico, setOrarioSpecifico] = useState(false);
+  const [orarioEntrata, setOrarioEntrata] = useState('');
+  const [orarioUscita, setOrarioUscita] = useState('');
   
   // Stati per gestire loading e messaggi
   const [isSearching, setIsSearching] = useState(false);
@@ -89,7 +93,11 @@ const InserimentoAssenze = () => {
         note,
         giustificata,
         documentazione,
-        registrataDa: user._id // Aggiungiamo l'utente che registra l'assenza
+        registrataDa: user._id, // Aggiungiamo l'utente che registra l'assenza
+        // Aggiungiamo i nuovi campi
+        orarioSpecifico,
+        orarioEntrata: orarioSpecifico ? orarioEntrata : null,
+        orarioUscita: orarioSpecifico ? orarioUscita : null
       };
       
       const response = await axios.post('/api/assenze', assenzaData, {
@@ -112,6 +120,9 @@ const InserimentoAssenze = () => {
       setNote('');
       setGiustificata(false);
       setDocumentazione('');
+      setOrarioSpecifico(false);
+      setOrarioEntrata('');
+      setOrarioUscita('');
       
     } catch (error) {
       console.error('Errore nella registrazione dell\'assenza:', error);
@@ -259,6 +270,7 @@ const InserimentoAssenze = () => {
                       <option value="malattia">Malattia</option>
                       <option value="permesso">Permesso</option>
                       <option value="ferie">Ferie</option>
+                      <option value="fuoriclasse">Fuoriclasse</option>
                       <option value="altro">Altro</option>
                     </select>
                   </div>
@@ -282,6 +294,56 @@ const InserimentoAssenze = () => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Nuova sezione per orari specifici */}
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <span className={styles.labelIcon}>🕒</span>
+                    Orario Specifico
+                  </label>
+                  <div className={styles.checkboxContainer}>
+                    <input
+                      type="checkbox"
+                      id="orarioSpecifico"
+                      className={styles.checkbox}
+                      checked={orarioSpecifico}
+                      onChange={(e) => setOrarioSpecifico(e.target.checked)}
+                    />
+                    <label htmlFor="orarioSpecifico" className={styles.checkboxLabel}>
+                      Specifica orari di entrata/uscita
+                    </label>
+                  </div>
+                </div>
+                
+                {orarioSpecifico && (
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>
+                        <span className={styles.labelIcon}>⏰</span>
+                        Orario Entrata
+                      </label>
+                      <input
+                        type="time"
+                        className={styles.input}
+                        value={orarioEntrata}
+                        onChange={(e) => setOrarioEntrata(e.target.value)}
+                      />
+                    </div>
+                    
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>
+                        <span className={styles.labelIcon}>⏰</span>
+                        Orario Uscita
+                      </label>
+                      <input
+                        type="time"
+                        className={styles.input}
+                        value={orarioUscita}
+                        onChange={(e) => setOrarioUscita(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
                 
                 <div className={styles.formGroup}>
                   <label className={styles.label}>

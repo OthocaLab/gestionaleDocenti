@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import ElencoAssenze from './ElencoAssenze';
 import InserimentoAssenze from './InserimentoAssenze';
 import DettaglioAssenza from './DettaglioAssenza';
+import ModificaAssenze from './ModificaAssenze';
 import styles from '../styles/Dashboard.module.css';
 
 const GestioneAssenze = () => {
@@ -17,6 +18,9 @@ const GestioneAssenze = () => {
     } else if (tab === 'dettaglioAssenza' && id) {
       setActiveView('dettaglio');
       setAssenzaId(id);
+    } else if (tab === 'modificaAssenza' && id) {
+      setActiveView('modifica');
+      setAssenzaId(id);
     } else {
       setActiveView('elenco');
     }
@@ -26,7 +30,8 @@ const GestioneAssenze = () => {
     <div className={styles.componentContainer}>
       {activeView === 'elenco' && <ElencoAssenze />}
       {activeView === 'inserisci' && <InserimentoAssenze />}
-      {activeView === 'dettaglio' && <DettaglioAssenza assenzaId={assenzaId} />}
+      {activeView === 'dettaglio' && <DettaglioAssenza />}
+      {activeView === 'modifica' && <ModificaAssenze />}
     </div>
   );
 };

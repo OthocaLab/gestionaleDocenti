@@ -29,7 +29,9 @@ const Dashboard = () => {
   // Set active tab based on query parameter
   useEffect(() => {
     if (router.query.tab) {
-      if (router.query.tab === 'inserisciAssenze' || router.query.tab === 'dettaglioAssenza') {
+      if (router.query.tab === 'inserisciAssenze' || 
+          router.query.tab === 'dettaglioAssenza' || 
+          router.query.tab === 'modificaAssenza') {
         setActiveTab('assenze');
       } else {
         setActiveTab(router.query.tab);

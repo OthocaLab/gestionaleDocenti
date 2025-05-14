@@ -65,6 +65,34 @@ const ElencoAssenze = () => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     return new Date(dateString).toLocaleDateString('it-IT', options);
   };
+
+  // Funzione per modificare un'assenza
+  const handleEdit = (assenzaId) => {
+    router.push(`/dashboard?tab=modificaAssenza&id=${assenzaId}`);
+  };
+  
+  // Funzione per eliminare un'assenza
+  const handleDelete = async (assenzaId) => {
+    if (!confirm('Sei sicuro di voler eliminare questa assenza?')) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`/api/assenze/${assenzaId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      // Rimuove l'assenza dall'elenco locale senza ricaricare
+      setAssenze(prevAssenze => prevAssenze.filter(assenza => assenza._id !== assenzaId));
+      
+      alert('Assenza eliminata con successo');
+    } catch (err) {
+      console.error('Errore nell\'eliminazione dell\'assenza:', err);
+      alert('Impossibile eliminare l\'assenza. Riprova più tardi.');
+    }
+  };
   
   return (
     <div className={styles.componentContainer}>
@@ -82,6 +110,7 @@ const ElencoAssenze = () => {
             <option value="malattia">Malattia</option>
             <option value="permesso">Permesso</option>
             <option value="ferie">Ferie</option>
+            <option value="fuoriclasse">Fuoriclasse</option>
             <option value="altro">Altro</option>
           </select>
         </div>
@@ -131,6 +160,7 @@ const ElencoAssenze = () => {
                 <th>Tipo</th>
                 <th>Data Inizio</th>
                 <th>Data Fine</th>
+                <th>Orario</th>
                 <th>Giustificata</th>
                 <th>Azioni</th>
               </tr>
@@ -146,14 +176,38 @@ const ElencoAssenze = () => {
                   </td>
                   <td>{formatDate(assenza.dataInizio)}</td>
                   <td>{formatDate(assenza.dataFine)}</td>
+                  <td>
+                    {assenza.orarioSpecifico ? (
+                      <>
+                        {assenza.orarioEntrata && <div>Entrata: {assenza.orarioEntrata}</div>}
+                        {assenza.orarioUscita && <div>Uscita: {assenza.orarioUscita}</div>}
+                      </>
+                    ) : (
+                      <span>Intero giorno</span>
+                    )}
+                  </td>
                   <td>{assenza.giustificata ? 'Sì' : 'No'}</td>
                   <td>
-                    <button 
-                      className={styles.actionButtonSmall}
-                      onClick={() => router.push(`/dashboard?tab=dettaglioAssenza&id=${assenza._id}`)}
-                    >
-                      Dettagli
-                    </button>
+                    <div className={styles.actionButtonsRow}>
+                      <button 
+                        className={`${styles.actionButtonSmall} ${styles.editButton}`}
+                        onClick={() => router.push(`/dashboard?tab=dettaglioAssenza&id=${assenza._id}`)}
+                      >
+                        Dettagli
+                      </button>
+                      <button 
+                        className={`${styles.actionButtonSmall} ${styles.editButton}`}
+                        onClick={() => handleEdit(assenza._id)}
+                      >
+                        Modifica
+                      </button>
+                      <button 
+                        className={`${styles.actionButtonSmall} ${styles.deleteButton}`}
+                        onClick={() => handleDelete(assenza._id)}
+                      >
+                        Elimina
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

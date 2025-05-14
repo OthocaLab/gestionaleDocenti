@@ -16,7 +16,7 @@ const assenzaValidation = [
   check('docente', 'L\'ID del docente è obbligatorio').not().isEmpty(),
   check('dataInizio', 'La data di inizio è obbligatoria').not().isEmpty(),
   check('dataFine', 'La data di fine è obbligatoria').not().isEmpty(),
-  check('tipoAssenza', 'Il tipo di assenza è obbligatorio').isIn(['malattia', 'permesso', 'ferie', 'altro'])
+  check('tipoAssenza', 'Il tipo di assenza è obbligatorio').isIn(['malattia', 'permesso', 'ferie', 'altro', 'fuoriclasse'])
 ];
 
 // Rotta per l'autocomplete dei docenti
