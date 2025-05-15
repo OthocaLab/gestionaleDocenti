@@ -44,6 +44,9 @@ router.get('/orario/classe/:classeId', protect, orarioController.getOrarioByClas
 router.get('/orario/docente/:docenteId', protect, orarioController.getOrarioByDocente);
 router.post('/orario', protect, authorize('admin', 'vicepresidenza'), orarioValidation, orarioController.createOrarioLezione);
 
+// Rotta per ottenere docenti disponibili per sostituzioni
+router.get('/docenti-disponibili', protect, orarioController.getDocentiDisponibiliSostituzioni);
+
 // Rotta di test per gli upload
 router.post('/test-upload', upload.single('file'), orarioController.testFileUpload);
 

@@ -92,6 +92,19 @@ export const getOrarioByDocente = async (docenteId) => {
   }
 };
 
+export const getDocentiDisponibili = async (giorno, ora) => {
+  try {
+    const response = await axios.get(`${API_URL}/orario/docenti-disponibili?giorno=${giorno}&ora=${ora}`, getAuthConfig());
+    return response.data;
+  } catch (error) {
+    console.error('Errore nel recupero dei docenti disponibili:', error);
+    if (error.response?.status === 401) {
+      throw { message: 'Sessione scaduta. Effettua nuovamente il login.' };
+    }
+    throw error.response?.data || { message: 'Errore nel recupero dei docenti disponibili' };
+  }
+};
+
 export const createOrarioLezione = async (orarioData) => {
   try {
     const response = await axios.post(`${API_URL}/orario/orario`, orarioData, getAuthConfig());

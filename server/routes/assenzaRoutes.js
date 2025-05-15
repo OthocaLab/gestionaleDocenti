@@ -19,6 +19,9 @@ const assenzaValidation = [
   check('tipoAssenza', 'Il tipo di assenza è obbligatorio').isIn(['malattia', 'permesso', 'ferie', 'altro', 'fuoriclasse'])
 ];
 
+// Rotta per ottenere i docenti assenti per una data specifica
+router.get('/docenti-per-data', assenzaController.getDocentiPerData);
+
 // Rotta per l'autocomplete dei docenti
 router.get('/autocomplete', authorizeRoles, assenzaController.autocompleteDocenti);
 
