@@ -148,38 +148,80 @@ exports.getAssenzeDaCoprire = async (req, res) => {
           
           // Se non c'è già una sostituzione, aggiungi all'elenco delle assenze da coprire
           if (!sostituzione) {
-            // Formatta il nome della classe
-            let classeFormatted = 'N/D';
-            if (lezione.classe) {
-              if (lezione.classe.anno && lezione.classe.sezione) {
-                classeFormatted = `${lezione.classe.anno}${lezione.classe.sezione}`;
-                if (lezione.classe.indirizzo) {
-                  classeFormatted += ` - ${lezione.classe.indirizzo}`;
-                }
-              } else {
-                classeFormatted = lezione.classe._id ? lezione.classe._id.toString() : 'N/D';
-              }
+            // Controlla se l'assenza ha un orario specifico
+            let includiLezione = true;
+            
+            if (assenza.orarioSpecifico) {
+              // Mappatura delle ore scolastiche (adattabile alle specifiche della scuola)
+              const mappingOreInizio = {
+                1: "08:00", 2: "09:00", 3: "10:00", 4: "11:00", 
+                5: "12:00", 6: "13:00", 7: "14:00", 8: "15:00"
+              };
+              const mappingOreFine = {
+                1: "08:50", 2: "09:50", 3: "10:50", 4: "11:50", 
+                5: "12:50", 6: "13:50", 7: "14:50", 8: "15:50"
+              };
+              
+              // Funzione per convertire orari in minuti per facilitare il confronto
+              const orarioInMinuti = (orario) => {
+                const [ore, minuti] = orario.split(':').map(Number);
+                return ore * 60 + minuti;
+              };
+              
+              // Ottieni gli orari di inizio e fine della lezione corrente in minuti
+              const inizioLezioneMinuti = orarioInMinuti(mappingOreInizio[lezione.ora]);
+              const fineLezioneMinuti = orarioInMinuti(mappingOreFine[lezione.ora]);
+              
+              // Orari di assenza in minuti (usa valori predefiniti se non specificati)
+              const entrataMinuti = assenza.orarioEntrata ? orarioInMinuti(assenza.orarioEntrata) : 0;
+              const uscitaMinuti = assenza.orarioUscita ? orarioInMinuti(assenza.orarioUscita) : 24 * 60 - 1;
+              
+              // Verifica se c'è sovrapposizione tra l'orario della lezione e l'orario dell'assenza
+              // Una lezione deve essere inclusa se anche solo parzialmente si sovrappone all'orario di assenza
+              includiLezione = (
+                // La lezione inizia durante l'assenza
+                (inizioLezioneMinuti >= entrataMinuti && inizioLezioneMinuti < uscitaMinuti) ||
+                // La lezione finisce durante l'assenza
+                (fineLezioneMinuti > entrataMinuti && fineLezioneMinuti <= uscitaMinuti) ||
+                // La lezione contiene completamente l'assenza
+                (inizioLezioneMinuti <= entrataMinuti && fineLezioneMinuti >= uscitaMinuti)
+              );
             }
+            
+            if (includiLezione) {
+              // Formatta il nome della classe
+              let classeFormatted = 'N/D';
+              if (lezione.classe) {
+                if (lezione.classe.anno && lezione.classe.sezione) {
+                  classeFormatted = `${lezione.classe.anno}${lezione.classe.sezione}`;
+                  if (lezione.classe.indirizzo) {
+                    classeFormatted += ` - ${lezione.classe.indirizzo}`;
+                  }
+                } else {
+                  classeFormatted = lezione.classe._id ? lezione.classe._id.toString() : 'N/D';
+                }
+              }
 
-            assenzeDaCoprire.push({
-              id: `${assenza._id}-${lezione._id}`, // ID composto per identificazione univoca
-              assenzaId: assenza._id.toString(),
-              docente: {
-                id: docenteId.toString(),
-                nome: assenza.docente.nome,
-                cognome: assenza.docente.cognome
-              },
-              data: new Date(currentDate),
-              giorno: giornoStr,
-              ora: lezione.ora,
-              materia: {
-                _id: lezione.materia._id.toString(),
-                descrizione: lezione.materia.descrizione || 'N/D',
-                codiceMateria: lezione.materia.codiceMateria || 'N/D'
-              },
-              classe: classeFormatted,
-              aula: lezione.aula || 'N/D'
-            });
+              assenzeDaCoprire.push({
+                id: `${assenza._id}-${lezione._id}`, // ID composto per identificazione univoca
+                assenzaId: assenza._id.toString(),
+                docente: {
+                  id: docenteId.toString(),
+                  nome: assenza.docente.nome,
+                  cognome: assenza.docente.cognome
+                },
+                data: new Date(currentDate),
+                giorno: giornoStr,
+                ora: lezione.ora,
+                materia: {
+                  _id: lezione.materia._id.toString(),
+                  descrizione: lezione.materia.descrizione || 'N/D',
+                  codiceMateria: lezione.materia.codiceMateria || 'N/D'
+                },
+                classe: classeFormatted,
+                aula: lezione.aula || 'N/D'
+              });
+            }
           }
         }
       }

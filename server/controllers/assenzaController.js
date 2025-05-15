@@ -125,6 +125,10 @@ exports.deleteAssenza = async (req, res) => {
       });
     }
 
+    // Elimina tutte le sostituzioni associate a questa assenza
+    const Sostituzione = require('../models/Sostituzione');
+    await Sostituzione.deleteMany({ assenza: assenza._id });
+
     await assenza.deleteOne();
 
     res.status(200).json({
