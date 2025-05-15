@@ -46,15 +46,33 @@ exports.getSostituzioni = async (req, res) => {
       .populate('materia', 'codiceMateria descrizione')
       .sort({ data: 1, ora: 1 });
 
+    // Log per debug
+    if (!sostituzioni || sostituzioni.length === 0) {
+      console.warn('Nessuna sostituzione trovata per il filtro:', filtro);
+    }
+
+    // Controllo dati nulli
+    const sostituzioniPulite = sostituzioni.filter(s =>
+      s.docente && s.docenteSostituto && s.assenza && s.materia
+    );
+
+    if (sostituzioniPulite.length !== sostituzioni.length) {
+      const sostNull = sostituzioni.filter(s => !s.docente || !s.docenteSostituto || !s.assenza || !s.materia);
+      console.warn('Alcune sostituzioni hanno riferimenti nulli:', sostNull.map(s => s._id));
+    }
+
     res.status(200).json({
       success: true,
-      count: sostituzioni.length,
-      data: sostituzioni
+      count: sostituzioniPulite.length,
+      data: sostituzioniPulite
     });
   } catch (error) {
-    console.error('Errore nel recupero delle sostituzioni:', error);
-    res.status(500).json({
+    console.error('Errore nel recupero delle sostituzioni:', error, error.stack);
+    // Risposta "safe" per evitare crash lato frontend
+    res.status(200).json({
       success: false,
+      count: 0,
+      data: [],
       message: 'Errore nel recupero delle sostituzioni',
       error: process.env.NODE_ENV === 'development' ? error.message : {}
     });
