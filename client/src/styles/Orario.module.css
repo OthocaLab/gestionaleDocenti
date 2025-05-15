@@ -1,4 +1,3 @@
-
 .pageHeader {
   display: flex;
   justify-content: space-between;
@@ -129,11 +128,28 @@
 }
 
 .select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  margin-left: 10px;
-  min-width: 250px;
+  padding: 10px 16px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #f7f7fa;
+  color: #222;
+  font-size: 16px;
+  font-weight: 500;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  min-width: 90px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.select:focus {
+  border-color: #971645;
+  box-shadow: 0 0 0 2px #f3e6ee;
+  background: #fff;
+}
+
+.select:hover {
+  border-color: #971645;
+  background: #f3e6ee;
 }
 
 .orarioTable {
@@ -311,14 +327,16 @@
   border: 1px solid #ddd;
 }
 
-.submitButton {
-  padding: 10px 15px;
-  background-color: #971645;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
+.submitButton, .cancelButton {
+  min-width: 160px;
+  height: 44px;
+  font-size: 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
 }
 
 .submitButton:disabled {
@@ -648,15 +666,6 @@
   margin-bottom: 15px;
 }
 
-.select {
-  padding: 8px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  width: 100%;
-  max-width: 400px;
-  font-size: 14px;
-}
-
 .orarioTableWrapper {
   margin-top: 20px;
   border: 1px solid #f0f0f0;
@@ -931,33 +940,51 @@
 /* Styles for the tabs in the import section */
 .tabsContainer {
   margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 0 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  position: static;
+  top: unset;
+  background-color: unset;
+  z-index: unset;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.tabButton {
+  padding: 10px 20px;
+  margin-right: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+}
+
+.tabButton:hover {
+  background-color: #f8f8f8;
+  border-color: #ccc;
+  color: #444;
+}
+
+.tabButton.activeTab {
+  background-color: #971645;
+  color: white;
+  border-color: #971645;
 }
 
 .tabs {
   display: flex;
   gap: 5px;
   border-bottom: 1px solid #e0e0e0;
-}
-
-.tabs button {
-  padding: 10px 20px;
-  background-color: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  font-size: 14px;
-  color: #555;
-  transition: all 0.2s;
-}
-
-.tabs button:hover {
-  color: #971645;
-}
-
-.tabs button.activeTab {
-  color: #971645;
-  border-bottom-color: #971645;
-  font-weight: 500;
 }
 
 .jsonExample {
@@ -1092,8 +1119,10 @@
 .formActions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 5px;
+  align-items: center;
+  gap: 16px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .classiList {
@@ -1202,4 +1231,26 @@
   .addButton, .submitButton {
     width: 100%;
   }
+}
+
+.cancelButton {
+  padding: 10px 20px;
+  border: 2px solid #971645;
+  background: transparent;
+  color: #971645;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  min-width: 140px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cancelButton:hover {
+  background: #f3e6ee;
+  color: #7d1238;
+  border-color: #7d1238;
 }
