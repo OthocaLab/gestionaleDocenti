@@ -33,6 +33,14 @@ const DashboardHome = () => {
     }
   }, [selectedDate]);
 
+  // Aggiorna il conteggio delle assenze in base ai docenti assenti per la data selezionata
+  useEffect(() => {
+    setStatistiche(prev => ({
+      ...prev,
+      totaleAssenze: docentiAssenti.length
+    }));
+  }, [docentiAssenti]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
