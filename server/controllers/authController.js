@@ -139,55 +139,32 @@ exports.forgotPassword = async (req, res) => {
     // Trova l'utente
     const user = await User.findOne({ email });
 
-    // Non rivelare se l'utente esiste o meno per sicurezza
-    if (!user) {
-      return res.status(200).json({
-        success: true,
-        message: 'Se l\'email è registrata, riceverai le istruzioni per reimpostare la password'
-      });
-    }
-
-    // Genera token di reset
-    const resetToken = crypto.randomBytes(20).toString('hex');
-
-    // Salva il token hasciato nel database
-    user.resetPasswordToken = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex');
-    
-    // Token valido per 30 minuti
-    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
-
-    await user.save();
-
-    // Crea URL di reset
+    // Genera token di reset (anche se l'utente non esiste, per test)
+    const resetToken = require('crypto').randomBytes(20).toString('hex');
     const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
 
     // Contenuto email
     const message = `
-      Hai richiesto il reset della password. 
-      Clicca sul seguente link per reimpostare la password: ${resetUrl}
-      Il link sarà valido per 30 minuti.
-      Se non hai richiesto il reset della password, ignora questa email.
+      Hai richiesto il reset della password.\n
+      Clicca sul seguente link per reimpostare la password: ${resetUrl}\n
+      Il link sarà valido per 30 minuti.\n
+      Se non hai richiesto il reset della password, ignora questa email.\n
+      (Questa email è stata inviata anche se l'utente non esiste, solo per test.)
     `;
 
     try {
+      console.log('[DEBUG] Invio email di recupero a:', email);
       await sendEmail({
-        email: user.email,
+        email: email,
         subject: 'Reset Password - Othoca Labs',
         message
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: 'Email inviata'
+        message: 'Email inviata (anche se l\'utente non esiste, solo per test)'
       });
     } catch (error) {
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save();
-
       return res.status(500).json({
         success: false,
         message: 'Errore nell\'invio dell\'email'

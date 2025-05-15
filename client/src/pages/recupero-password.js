@@ -17,12 +17,14 @@ export default function RecuperoPassword() {
     setMessage('');
 
     try {
-      const response = await axios.post('/api/auth/forgot-password', { email });
+      const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+      console.log('Risposta invio email:', response.data);
       setMessage('Se l\'email è registrata, riceverai le istruzioni per reimpostare la password.');
       setTimeout(() => {
         router.push('/login');
       }, 3000);
     } catch (error) {
+      console.error('Errore invio email:', error.response?.data || error);
       setError(error.response?.data?.message || 'Si è verificato un errore durante l\'invio della richiesta');
     } finally {
       setLoading(false);
