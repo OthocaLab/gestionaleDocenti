@@ -386,15 +386,17 @@
 }
 
 .statLabel {
-  color: #666;
   font-size: 14px;
-  margin-bottom: 4px;
+  color: #666;
+  margin: 0;
 }
 
 .statValue {
-  font-size: 24px;
-  font-weight: bold;
-  color: #1a1a1a;
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  line-height: 1;
 }
 
 .statCard:hover {
@@ -1253,4 +1255,74 @@
   background: #f3e6ee;
   color: #7d1238;
   border-color: #7d1238;
+}
+
+/* Stili filtri aggiornati */
+.filterContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #f7f7fa;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  align-items: center;
+}
+
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  flex: 1;
+}
+
+.filterLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.filterInput, .rangeInput {
+  padding: 10px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.filterInput:focus, .rangeInput:focus {
+  border-color: #971645;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(151, 22, 69, 0.1);
+}
+
+.rangeInputs {
+  display: flex;
+  gap: 10px;
+}
+
+.rangeInput {
+  width: calc(50% - 5px);
+}
+
+@media (max-width: 768px) {
+  .filterRow {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .filterItem {
+    width: 100%;
+  }
 }
