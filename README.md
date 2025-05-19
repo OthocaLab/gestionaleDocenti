@@ -73,6 +73,10 @@ git clone https://github.com/OthocaLab/gestionaleDocenti
 cd gestionaleDocenti
 ```
 
+### Collegamento SMTP
+- **Attivazione 2fa**: [2FA](https://myaccount.google.com/security)
+- **Creazione SMTP_PASSWORD**: [SMTP_PASSWORD](https://myaccount.google.com/apppasswords)
+
 ## 🔧 Configurazione
 
 ### Backend

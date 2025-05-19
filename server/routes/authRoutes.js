@@ -34,4 +34,10 @@ router.post('/forgot-password', authController.forgotPassword);
 // Route per il reset della password
 router.put('/reset-password/:resetToken', authController.resetPassword);
 
+// Route per inviare il codice di verifica email
+router.post('/send-verification-code', protect, authController.sendVerificationCode);
+
+// Route per verificare il codice di verifica
+router.post('/verify-email-code', protect, authController.verifyEmailCode);
+
 module.exports = router;

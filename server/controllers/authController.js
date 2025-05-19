@@ -230,3 +230,84 @@ exports.resetPassword = async (req, res) => {
     });
   }
 };
+
+// Invia codice di verifica email
+exports.sendVerificationCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Controlla se l'email appartiene all'utente corrente
+    const user = await User.findById(req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utente non trovato'
+      });
+    }
+
+    // Per ora utilizziamo un codice fisso di 6 cifre
+    const verificationCode = '123456';
+
+    // Messaggio email
+    const message = `
+      Il tuo codice di verifica è: ${verificationCode}\n
+      Inserisci questo codice nella pagina delle impostazioni per verificare il tuo indirizzo email.\n
+      Il codice sarà valido per 10 minuti.
+    `;
+
+    try {
+      console.log('[DEBUG] Invio codice di verifica a:', email);
+      await sendEmail({
+        email: email,
+        subject: 'Codice di Verifica - Othoca Labs',
+        message
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Codice di verifica inviato con successo'
+      });
+    } catch (error) {
+      console.error('[ERROR] Errore nell\'invio dell\'email:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Errore nell\'invio dell\'email'
+      });
+    }
+  } catch (error) {
+    console.error('Errore durante l\'invio del codice di verifica:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante l\'invio del codice di verifica',
+      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    });
+  }
+};
+
+// Verifica il codice di verifica
+exports.verifyEmailCode = async (req, res) => {
+  try {
+    const { code } = req.body;
+
+    // Per ora, verifichiamo solo se il codice è uguale a quello fisso
+    if (code === '123456') {
+      return res.status(200).json({
+        success: true,
+        message: 'Codice di verifica corretto'
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Codice di verifica non valido'
+      });
+    }
+  } catch (error) {
+    console.error('Errore durante la verifica del codice:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante la verifica del codice',
+      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    });
+  }
+};

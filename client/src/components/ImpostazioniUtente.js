@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/ImpostazioniUtente.module.css';
+import { sendVerificationCode, verifyEmailCode } from '../services/authService';
 
 const ImpostazioniUtente = () => {
   const { user } = useContext(AuthContext);
@@ -68,32 +69,38 @@ const ImpostazioniUtente = () => {
     return re.test(password);
   };
 
-  // Invia codice di verifica (simulato)
-  const inviaCodiceDiVerifica = () => {
-    // Genera un codice casuale di 6 cifre
-    const codice = Math.floor(100000 + Math.random() * 900000).toString();
-    setCodiceGenerato(codice);
-    setCodiceInviato(true);
-    
-    // Impostiamo il messaggio di stato invece di usare un alert
-    setMessaggioStato(`Un codice di verifica è stato inviato all'indirizzo email ${email}. Controlla la tua casella di posta.`);
-    
-    // In un ambiente reale, qui ci sarebbe una chiamata API per inviare l'email
-    // Esempio: 
-    // api.sendVerificationEmail(email, codice);
-    
-    console.log("Codice generato:", codice); // Solo per debug, da rimuovere in produzione
+  // Invia codice di verifica (utilizzo API reale)
+  const inviaCodiceDiVerifica = async () => {
+    try {
+      // Chiamata al servizio per inviare il codice di verifica
+      await sendVerificationCode(email);
+      setCodiceInviato(true);
+      setMessaggioStato(`Un codice di verifica è stato inviato all'indirizzo email ${email}. Controlla la tua casella di posta.`);
+    } catch (error) {
+      console.error("Errore durante l'invio del codice:", error);
+      setMessaggioStato(`Errore durante l'invio del codice: ${error.message || 'Si è verificato un errore'}`);
+    }
   };
 
-  // Verifica codice
-  const verificaCodice = () => {
-    if (codiceDiVerifica === codiceGenerato) {
+  // Verifica del codice
+  const verificaCodice = async () => {
+    if (!codiceDiVerifica) {
+      setErroriInput({...erroriInput, codiceDiVerifica: 'Inserisci il codice di verifica'});
+      return;
+    }
+
+    try {
+      // Chiamata al servizio per verificare il codice
+      await verifyEmailCode(codiceDiVerifica);
       setCodiceVerificato(true);
-      setErroriInput({...erroriInput, codiceDiVerifica: null});
-      setMessaggioStato('Codice verificato correttamente!');
-    } else {
-      setErroriInput({...erroriInput, codiceDiVerifica: 'Codice di verifica non valido'});
-      setMessaggioStato('');
+      setMessaggioStato('Codice verificato con successo! Ora puoi impostare una nuova password.');
+      setErroriInput({...erroriInput, codiceDiVerifica: undefined});
+    } catch (error) {
+      console.error("Errore durante la verifica del codice:", error);
+      setErroriInput({
+        ...erroriInput, 
+        codiceDiVerifica: error.message || 'Codice non valido'
+      });
     }
   };
 
