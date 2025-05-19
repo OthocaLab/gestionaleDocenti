@@ -83,6 +83,7 @@ const Dashboard = () => {
           {activeTab === 'importa' && "Importa Dati"}
           {activeTab === 'report' && "Report"}
           {activeTab === 'assenze' && "Gestione Assenze"}
+          {activeTab === 'recupero' && "Gestione Recupero Ore"}
          
         </div>
         <div className={styles.userInfo}>
