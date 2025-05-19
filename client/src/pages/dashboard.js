@@ -13,6 +13,7 @@ import ImportaDati from '../components/ImportaDati';
 import GestioneDidattica from '../components/GestioneDidattica';
 import GestioneSostituzioni from '../components/GestioneSostituzioni';
 import ElencoPianificazioneSostituzioni from '../components/ElencoPianificazioneSostituzioni';
+import ImpostazioniUtente from '../components/ImpostazioniUtente';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
@@ -84,6 +85,7 @@ const Dashboard = () => {
           {activeTab === 'report' && "Report"}
           {activeTab === 'assenze' && "Gestione Assenze"}
           {activeTab === 'recupero' && "Gestione Recupero Ore"}
+          {activeTab === 'impostazioni' && "Impostazioni Utente"}
          
         </div>
         <div className={styles.userInfo}>
@@ -182,6 +184,13 @@ const Dashboard = () => {
               </a>
             </li>
            
+            <li>
+              <a href="#" className={activeTab === 'impostazioni' ? styles.active : ''} onClick={() => setActiveTab('impostazioni')}>
+                <span className={styles.icon}>⚙️</span>
+                <span className={styles.label}>Impostazioni Utente</span>
+              </a>
+            </li>
+            
             <li className={styles.logoutItem}>
               <a href="#" onClick={handleLogout}>
                 <span className={styles.icon}>🚪</span>
@@ -247,6 +256,12 @@ const Dashboard = () => {
           {activeTab === 'didattica' && (
             <div>
               <GestioneDidattica />
+            </div>
+          )}
+
+          {activeTab === 'impostazioni' && (
+            <div>
+              <ImpostazioniUtente />
             </div>
           )}
         </main>
