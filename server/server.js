@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const { connectRedis } = require('./utils/redis'); // Importa connectRedis
 const materiaRoutes = require('./routes/materiaRoutes');
 const classeInsegnamentoRoutes = require('./routes/classeInsegnamentoRoutes');
 const classeRoutes = require('./routes/classeRoutes'); // Added import for classeRoutes
@@ -112,6 +113,9 @@ process.on('unhandledRejection', (reason, promise) => {
   // In produzione, potresti voler riavviare il server con PM2 o simile
   // Oppure inviare una notifica al team di sviluppo
 });
+
+// Inizializza la connessione a Redis
+connectRedis();
 
 // Connessione al database
 mongoose

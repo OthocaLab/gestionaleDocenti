@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/ImpostazioniUtente.module.css';
-import { sendVerificationCode, verifyEmailCode } from '../services/authService';
+import { sendVerificationCode, verifyEmailCode, changePassword } from '../services/authService';
 
 const ImpostazioniUtente = () => {
   const { user } = useContext(AuthContext);
@@ -129,7 +129,7 @@ const ImpostazioniUtente = () => {
   };
 
   // Gestione della sottomissione del form per il cambio password
-  const handleSubmitCambioPassword = (e) => {
+  const handleSubmitCambioPassword = async (e) => {
     e.preventDefault();
     const errori = {};
 
@@ -150,15 +150,26 @@ const ImpostazioniUtente = () => {
       return;
     }
 
-    // Qui l'implementazione del cambio password
-    setMessaggioStato('Password aggiornata con successo!');
-    setErroriInput({});
-    setPasswordCorrente('');
-    setNuovaPassword('');
-    setConfermaPassword('');
-    setCodiceInviato(false);
-    setCodiceVerificato(false);
-    setCodiceDiVerifica('');
+    try {
+      // Chiamata API per il cambio password
+      const response = await changePassword(passwordCorrente, nuovaPassword);
+      
+      setMessaggioStato('Password aggiornata con successo!');
+      setErroriInput({});
+      setPasswordCorrente('');
+      setNuovaPassword('');
+      setConfermaPassword('');
+      setCodiceInviato(false);
+      setCodiceVerificato(false);
+      setCodiceDiVerifica('');
+    } catch (error) {
+      console.error('Errore nel cambio password:', error);
+      setMessaggioStato('');
+      setErroriInput({
+        ...erroriInput,
+        generale: error.message || 'Si è verificato un errore durante il cambio password'
+      });
+    }
   };
 
   // Aggiunta di una funzione per gestire il salvataggio delle notifiche
@@ -309,6 +320,12 @@ const ImpostazioniUtente = () => {
               />
               {erroriInput.passwordCorrente && <span className={styles.errorMessage}>{erroriInput.passwordCorrente}</span>}
             </div>
+            
+            {erroriInput.generale && (
+              <div className={styles.errorMessage}>
+                {erroriInput.generale}
+              </div>
+            )}
             
             {messaggioStato && (
               <div className={`${styles.messaggioStato} ${codiceVerificato ? styles.messaggioSuccesso : ''}`}>

@@ -62,6 +62,25 @@ export const resetPassword = async (resetToken, password) => {
   }
 };
 
+// Funzione per il cambio password
+export const changePassword = async (currentPassword, newPassword) => {
+  try {
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+    const response = await axios.post(`${API_URL}/auth/change-password`, { 
+      currentPassword, 
+      newPassword 
+    }, config);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Errore durante il cambio password' };
+  }
+};
+
 // Funzione per inviare il codice di verifica dell'email
 export const sendVerificationCode = async (email) => {
   try {

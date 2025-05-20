@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
+const { storeVerificationCode, getVerificationCode, deleteVerificationCode } = require('../utils/redis');
 
 // Registrazione utente
 exports.register = async (req, res) => {
@@ -231,6 +232,54 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+// Genera un codice numerico a 6 cifre
+const generateSixDigitCode = () => {
+  // Genera un numero casuale a 6 cifre (100000-999999)
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+// Cambio password
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    // Trova l'utente con la password
+    const user = await User.findById(req.user.id).select('+password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utente non trovato'
+      });
+    }
+
+    // Verifica la password corrente
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Password corrente non valida'
+      });
+    }
+
+    // Imposta la nuova password
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password aggiornata con successo'
+    });
+  } catch (error) {
+    console.error('Errore durante il cambio password:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante il cambio password',
+      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    });
+  }
+};
+
 // Invia codice di verifica email
 exports.sendVerificationCode = async (req, res) => {
   try {
@@ -246,8 +295,18 @@ exports.sendVerificationCode = async (req, res) => {
       });
     }
 
-    // Per ora utilizziamo un codice fisso di 6 cifre
-    const verificationCode = '123456';
+    // Genera un codice numerico a 6 cifre
+    const verificationCode = generateSixDigitCode();
+    
+    // Crea un JWT per il codice di verifica
+    const codeToken = jwt.sign(
+      { userId: user._id, code: verificationCode },
+      process.env.JWT_SECRET,
+      { expiresIn: '10m' } // Il token scade in 10 minuti
+    );
+
+    // Salva il codice in Redis
+    await storeVerificationCode(user._id.toString(), verificationCode);
 
     // Messaggio email
     const message = `
@@ -289,9 +348,23 @@ exports.sendVerificationCode = async (req, res) => {
 exports.verifyEmailCode = async (req, res) => {
   try {
     const { code } = req.body;
+    const userId = req.user.id;
 
-    // Per ora, verifichiamo solo se il codice è uguale a quello fisso
-    if (code === '123456') {
+    // Recupera il codice da Redis
+    const storedCode = await getVerificationCode(userId);
+
+    if (!storedCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Codice scaduto o non valido. Richiedi un nuovo codice.'
+      });
+    }
+
+    // Verifica se il codice corrisponde
+    if (code === storedCode) {
+      // Codice valido, elimina da Redis
+      await deleteVerificationCode(userId);
+      
       return res.status(200).json({
         success: true,
         message: 'Codice di verifica corretto'

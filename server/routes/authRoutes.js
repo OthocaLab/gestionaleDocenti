@@ -40,4 +40,7 @@ router.post('/send-verification-code', protect, authController.sendVerificationC
 // Route per verificare il codice di verifica
 router.post('/verify-email-code', protect, authController.verifyEmailCode);
 
+// Route per il cambio password
+router.post('/change-password', protect, authController.changePassword);
+
 module.exports = router;
