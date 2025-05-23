@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { useRouter } from 'next/router';
 import styles from '../styles/GestioneSostituzioni.module.css';
 
 const GestioneSostituzioni = () => {
+  const router = useRouter();
   const { token } = useContext(AuthContext);
   const [assenze, setAssenze] = useState([]);
   const [sostituti, setSostituti] = useState([]);
@@ -11,12 +13,31 @@ const GestioneSostituzioni = () => {
   const [selectedAssenza, setSelectedAssenza] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  const handleClosePopup = () => {
+    setShouldRedirect(true);
+    setShowErrorPopup(false);
+  };
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.replace('/dashboard');
+    }
+  }, [shouldRedirect, router]);
 
   // Funzioni per le chiamate API
   const fetchAssenzeDaCoprire = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/sostituzioni/assenze-da-coprire');
+      const response = await axios.get('/api/sostituzioni/assenze-da-coprire').catch(err => {
+        if (err.response?.status === 403) {
+          throw { status: 403, message: err.response.data.message };
+        }
+        throw err;
+      });
       
       if (response.data && response.data.data) {
         // Formatta i dati per la visualizzazione
@@ -36,17 +57,18 @@ const GestioneSostituzioni = () => {
         
         setAssenze(formattedAssenze);
         setError(null);
+        setShowErrorPopup(false);
       } else {
         setAssenze([]);
         setError('Dati non validi ricevuti dal server');
       }
     } catch (err) {
-      console.error('Errore nel recupero delle assenze:', err);
-      if (err.response && err.response.status === 401) {
-        setError('Sessione scaduta. Effettua nuovamente l\'accesso.');
-      } else {
-        setError('Impossibile caricare le assenze. Riprova più tardi.');
+      if (err.status === 403) {
+        setErrorMessage(err.message || 'Il ruolo docente non è autorizzato ad accedere a questa risorsa');
+        setShowErrorPopup(true);
+        return;
       }
+      setError('Impossibile caricare le assenze. Riprova più tardi.');
     } finally {
       setLoading(false);
     }
@@ -158,6 +180,11 @@ const GestioneSostituzioni = () => {
     }
   }, [selectedAssenza]);
 
+  // Debug useEffect per monitorare i cambiamenti degli stati
+  useEffect(() => {
+    console.log('Stato del popup:', { showErrorPopup, errorMessage });
+  }, [showErrorPopup, errorMessage]);
+
   const handleSelectAssenza = (assenza) => {
     setSelectedAssenza(assenza);
   };
@@ -180,7 +207,68 @@ const GestioneSostituzioni = () => {
   const giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
   const ore = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
-  // Finché non ci sono dati o in caso di errore, visualizza lo stato corrispondente
+  // Renderizza prima il popup, poi il resto del contenuto
+  if (showErrorPopup) {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: '#fff',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 9999,
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '30px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+          maxWidth: '400px',
+          width: '90%',
+          textAlign: 'center',
+        }}>
+          <h3 style={{ 
+            color: '#dc3545', 
+            marginBottom: '15px',
+            fontSize: '1.5em',
+            fontWeight: '600'
+          }}>
+            Errore di Autorizzazione
+          </h3>
+          <p style={{ 
+            margin: '15px 0', 
+            fontSize: '1.1em',
+            color: '#333',
+            lineHeight: '1.4'
+          }}>
+            {errorMessage}
+          </p>
+          <button 
+            onClick={handleClosePopup}
+            style={{
+              marginTop: '20px',
+              padding: '12px 30px',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '1em',
+              fontWeight: '500',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            Chiudi
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return <div className={styles.loading}>Caricamento...</div>;
   }
@@ -189,13 +277,9 @@ const GestioneSostituzioni = () => {
     return <div className={styles.error}>{error}</div>;
   }
 
-  // Se non ci sono assenze da coprire
-  if (assenze.length === 0) {
-    return <div className={styles.noAssenze}>Non ci sono assenze da coprire in questo momento.</div>;
-  }
-
   return (
     <div className={styles.container}>
+      {/* Resto del contenuto del componente */}
       <div className={styles.columnLayout}>
         {/* Colonna sinistra - Elenco Assenze */}
         <div className={styles.leftColumn}>

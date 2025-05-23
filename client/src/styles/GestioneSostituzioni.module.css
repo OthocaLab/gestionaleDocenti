@@ -327,4 +327,59 @@ td.selected {
   color: #4caf50;
   font-style: italic;
   margin-top: 3px;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popupContent {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+.popupContent h3 {
+  margin-top: 0;
+  color: #dc3545;
+  font-size: 1.4em;
+  margin-bottom: 15px;
+}
+
+.popupContent p {
+  margin: 15px 0;
+  font-size: 1.1em;
+  color: #333;
+  line-height: 1.4;
+}
+
+.popupContent button {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.popupContent button:hover {
+  background-color: #c82333;
 } 

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import styles from '../styles/ElencoPianificazioneSostituzioni.module.css';
 
 const ElencoPianificazioneSostituzioni = () => {
+  const router = useRouter();
   const [sostituzioni, setSostituzioni] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,7 +20,21 @@ const ElencoPianificazioneSostituzioni = () => {
   const [docenteSostitutoSelezionato, setDocenteSostitutoSelezionato] = useState('');
   const [modificaInCorso, setModificaInCorso] = useState(false);
   const [messaggioModifica, setMessaggioModifica] = useState({ testo: '', tipo: '' });
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [shouldRedirect, setShouldRedirect] = useState(false);
   
+  const handleClosePopup = () => {
+    setShouldRedirect(true);
+    setShowErrorPopup(false);
+  };
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.replace('/dashboard');
+    }
+  }, [shouldRedirect, router]);
+
   // Funzione per recuperare tutte le sostituzioni
   const fetchSostituzioni = async () => {
     try {
@@ -33,6 +49,11 @@ const ElencoPianificazioneSostituzioni = () => {
           dataInizio: start.toISOString(),
           dataFine: end.toISOString()
         }
+      }).catch(err => {
+        if (err.response?.status === 403) {
+          throw { status: 403, message: err.response.data.message };
+        }
+        throw err;
       });
       
       if (response.data && response.data.data) {
@@ -51,13 +72,17 @@ const ElencoPianificazioneSostituzioni = () => {
         }));
         
         setSostituzioni(formattedSostituzioni);
+        setError(null);
+        setShowErrorPopup(false);
       } else {
         setSostituzioni([]);
       }
-      
-      setError(null);
     } catch (err) {
-      console.error('Errore nel recupero delle sostituzioni:', err);
+      if (err.status === 403) {
+        setErrorMessage(err.message || 'Il ruolo docente non è autorizzato ad accedere a questa risorsa');
+        setShowErrorPopup(true);
+        return;
+      }
       setError('Impossibile caricare le sostituzioni. Riprova più tardi.');
     } finally {
       setLoading(false);
@@ -393,6 +418,67 @@ const ElencoPianificazioneSostituzioni = () => {
       </div>
     );
   };
+  
+  if (showErrorPopup) {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: '#fff',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 9999,
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '30px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+          maxWidth: '400px',
+          width: '90%',
+          textAlign: 'center',
+        }}>
+          <h3 style={{ 
+            color: '#dc3545', 
+            marginBottom: '15px',
+            fontSize: '1.5em',
+            fontWeight: '600'
+          }}>
+            Errore di Autorizzazione
+          </h3>
+          <p style={{ 
+            margin: '15px 0', 
+            fontSize: '1.1em',
+            color: '#333',
+            lineHeight: '1.4'
+          }}>
+            {errorMessage}
+          </p>
+          <button 
+            onClick={handleClosePopup}
+            style={{
+              marginTop: '20px',
+              padding: '12px 30px',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '1em',
+              fontWeight: '500',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            Chiudi
+          </button>
+        </div>
+      </div>
+    );
+  }
   
   if (loading) {
     return <div className={styles.loading}>Caricamento...</div>;
