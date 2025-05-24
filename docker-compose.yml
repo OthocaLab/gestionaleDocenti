@@ -6,26 +6,29 @@ services:
       context: ./client
       dockerfile: Dockerfile
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:5000
-      - NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
-      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:5000/api
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:5000/api
+      - NODE_ENV=production
     ports:
       - "3000:3000"
-    depends_on:
-      - backend
     volumes:
       - ./client:/app
       - /app/node_modules
       - /app/.next
+    networks:
+      - app-network
+    depends_on:
+      - backend
 
   backend:
     build:
       context: ./server
       dockerfile: Dockerfile
+    container_name: backend
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - PORT=5000
-      - MONGODB_URI=mongodb://host.docker.internal:27017/othocalab
+      - MONGODB_URI=mongodb://host.docker.internal:27017/gestionale-docenti
     env_file:
       - ./server/.env
     ports:
@@ -33,8 +36,11 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
+    networks:
+      - app-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-volumes:
-  node_modules:
+networks:
+  app-network:
+    driver: bridge
