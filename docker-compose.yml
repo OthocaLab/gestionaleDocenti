@@ -6,10 +6,13 @@ services:
       context: ./client
       dockerfile: Dockerfile
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:5000/api
-      - NEXT_PUBLIC_BACKEND_URL=http://localhost:5000/api
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
       - NODE_ENV=development
-    network_mode: "host"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
     volumes:
       - ./client:/app
       - /app/node_modules
@@ -22,13 +25,16 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=5000
-      - MONGODB_URI=mongodb://localhost:27017/gestionale-docenti
+      - MONGODB_URI=mongodb://host.docker.internal:27017/othocalab
     env_file:
       - ./server/.env
-    network_mode: "host"
+    ports:
+      - "5000:5000"
     volumes:
       - ./server:/app
       - /app/node_modules
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   node_modules:
