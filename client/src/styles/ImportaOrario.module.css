@@ -1,0 +1,328 @@
+/* Stili per il componente ImportaOrario */
+.importContainer {
+  margin: 20px 0;
+  /*max-width: 800px;*/
+}
+
+.tabContent {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tabContent h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 24px 0;
+}
+
+/* Form di importazione */
+.importForm {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.fileInput {
+  margin-bottom: 20px;
+}
+
+.fileInput label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.fileInput input[type="file"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #fff;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+}
+
+.fileInput input[type="file"]:hover {
+  border-color: #971645;
+}
+
+.fileInput input[type="file"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Pulsante di importazione */
+.importButton {
+  background-color: #971645;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 160px;
+}
+
+.importButton:hover {
+  background-color: #7d1238;
+}
+
+.importButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Messaggi di stato */
+.successMessage {
+  background-color: #d4efdf;
+  color: #27ae60;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  font-size: 14px;
+  border-left: 4px solid #27ae60;
+}
+
+.errorMessage {
+  background-color: #fadbd8;
+  color: #e74c3c;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  font-size: 14px;
+  border-left: 4px solid #e74c3c;
+}
+
+/* Stato dell'importazione */
+.importStatus {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.importStatus h4 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.statusInfo {
+  margin-top: 10px;
+}
+
+.statusInfo p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.statusInfo p strong {
+  color: #333;
+}
+
+/* Barra di progresso */
+.progressBar {
+  width: 100%;
+  height: 24px;
+  background-color: #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 12px 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #971645, #c41e3a);
+  border-radius: 12px;
+  transition: width 0.5s ease;
+  position: relative;
+  min-width: 2px;
+}
+
+.progressFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 20px 20px;
+  animation: progressMove 1s linear infinite;
+}
+
+@keyframes progressMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 20px;
+  }
+}
+
+/* Lista errori */
+.errorList {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+}
+
+.errorList p {
+  margin: 0 0 10px 0;
+  font-weight: 500;
+  color: #721c24;
+  font-size: 14px;
+}
+
+.errorList ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.errorList li {
+  margin: 4px 0;
+  color: #721c24;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Istruzioni */
+.instructions {
+  margin-top: 24px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+.instructions h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.instructions pre {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .importContainer {
+    margin: 10px;
+  }
+  
+  .tabContent {
+    padding: 16px;
+  }
+  
+  .tabContent h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  
+  .importForm {
+    padding: 16px;
+  }
+  
+  .importButton {
+    width: 100%;
+    padding: 14px;
+  }
+  
+  .statusInfo p {
+    font-size: 13px;
+  }
+  
+  .instructions {
+    padding: 16px;
+  }
+  
+  .instructions pre {
+    font-size: 12px;
+    padding: 12px;
+  }
+}
+
+/* Animazioni */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.importStatus {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.successMessage,
+.errorMessage {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Stati di caricamento */
+.importButton:disabled {
+  position: relative;
+  overflow: hidden;
+}
+
+.importButton:disabled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+} 

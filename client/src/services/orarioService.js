@@ -152,7 +152,8 @@ export const importOrario = async (fileObject) => {
     const apiUrl = serverUrl.endsWith('/api') ? serverUrl : `${serverUrl}/api`;
     console.log('API URL:', apiUrl);
     
-    const fullUrl = `${apiUrl}/orario/import`;
+    // Usa il nuovo endpoint di importazione
+    const fullUrl = `${apiUrl}/import/orari`;
     console.log('Full request URL:', fullUrl);
     
     // Use the real import endpoint that saves to MongoDB with gestione errori e retry
@@ -218,5 +219,16 @@ export const importaClassiEsempio = async (datiEsempio) => {
     return response;
   } catch (error) {
     throw error;
+  }
+};
+
+// Funzione per monitorare lo stato dell'importazione
+export const getImportStatus = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/import/status`, getAuthConfig());
+    return response.data;
+  } catch (error) {
+    console.error('Errore nel recupero dello stato importazione:', error);
+    throw error.response?.data || { message: 'Errore nel recupero dello stato importazione' };
   }
 };

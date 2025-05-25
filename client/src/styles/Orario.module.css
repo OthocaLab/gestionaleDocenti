@@ -1215,6 +1215,15 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .filterRow {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .filterItem {
+    width: 100%;
+  }
+  
   .formRow {
     flex-direction: column;
     gap: 10px;
@@ -1282,6 +1291,7 @@
   flex-direction: column;
   min-width: 180px;
   flex: 1;
+  margin-bottom: 10px;
 }
 
 .filterLabel {
@@ -1325,4 +1335,95 @@
   .filterItem {
     width: 100%;
   }
+}
+
+/* Stili per il monitoraggio dello stato dell'importazione */
+.importStatus {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.statusInfo {
+  margin-top: 10px;
+}
+
+.statusInfo p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 10px 0;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #971645, #c41e3a);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progressFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 20px 20px;
+  animation: move 1s linear infinite;
+}
+
+@keyframes move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 20px;
+  }
+}
+
+.errorList {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
+
+.errorList p {
+  margin: 0 0 10px 0;
+  font-weight: 500;
+  color: #721c24;
+}
+
+.errorList ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.errorList li {
+  margin: 5px 0;
+  color: #721c24;
+  font-size: 13px;
 }

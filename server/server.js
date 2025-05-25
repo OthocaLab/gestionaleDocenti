@@ -19,12 +19,23 @@ const userRoutes = require('./routes/userRoutes');
 const orarioRoutes = require('./routes/orarioRoutes');
 const docenteRoutes = require('./routes/docenteRoutes');
 const assenzaRoutes = require('./routes/assenzaRoutes'); // Nuova route per le assenze
+const importRoutes = require('./routes/importRoutes'); // Nuova route per l'importazione
 
 // Inizializza l'app Express
 const app = express();
 
 // Trust proxy - IMPORTANTE per funzionare dietro Nginx
 app.set('trust proxy', 1);
+
+// Aumenta i timeout per le operazioni di importazione
+app.use((req, res, next) => {
+  // Aumenta il timeout per le route di importazione
+  if (req.path.includes('/import')) {
+    req.setTimeout(300000); // 5 minuti
+    res.setTimeout(300000); // 5 minuti
+  }
+  next();
+});
 
 // Use HOST and PORT from .env
 const port = process.env.PORT || 5000;
@@ -116,6 +127,7 @@ app.use('/api/materie', materiaRoutes);
 app.use('/api/classi', classeRoutes);
 app.use('/api/classi-insegnamento', classeInsegnamentoRoutes);
 app.use('/api/sostituzioni', sostituzioneRoutes); // Added new route for sostituzioni
+app.use('/api/import', importRoutes); // Nuova route per l'importazione
 
 // Route di base
 app.get('/', (req, res) => {

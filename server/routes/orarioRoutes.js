@@ -1,8 +1,7 @@
 const express = require('express');
 const { check } = require('express-validator');
 const orarioController = require('../controllers/orarioController');
-const { protect, authorize, debugAuth } = require('../middleware/auth');
-const { upload, uploadWithErrorHandling } = require('../middleware/uploadMiddleware');
+const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -46,17 +45,5 @@ router.post('/orario', protect, authorize('admin', 'vicepresidenza'), orarioVali
 
 // Rotta per ottenere docenti disponibili per sostituzioni
 router.get('/docenti-disponibili', protect, orarioController.getDocentiDisponibiliSostituzioni);
-
-// Rotta di test per gli upload
-router.post('/test-upload', upload.single('file'), orarioController.testFileUpload);
-
-// Rotta di importazione
-router.post('/import', 
-  debugAuth,  // Debug middleware per controllare l'autenticazione
-  protect,  // Richiede autenticazione
-  authorize('admin', 'vicepresidenza'),  // Richiede autorizzazione
-  uploadWithErrorHandling('file'),  // Gestisce l'upload con miglior gestione degli errori
-  orarioController.importaOrari
-);
 
 module.exports = router;
