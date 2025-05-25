@@ -3,7 +3,7 @@ const nextConfig = {
     reactStrictMode: true,
     pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
     
-    // Fix for cross-origin requests
+    // Configure allowed dev origins for cross-origin requests
     allowedDevOrigins: process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS 
       ? process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS.split(',').map(origin => origin.trim())
       : [
@@ -14,20 +14,6 @@ const nextConfig = {
           '172.26.10.221:3000',
           '3.121.230.179:3000'
         ],
-    
-    // Add experimental features for better CORS handling
-    experimental: {
-      allowedDevOrigins: process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS 
-        ? process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS.split(',').map(origin => origin.trim())
-        : [
-            'localhost:3000',
-            '127.0.0.1:3000',
-            'gestionaledocenti.ddns.net',
-            '3.121.230.179',
-            '172.26.10.221:3000',
-            '3.121.230.179:3000'
-          ]
-    },
     
     async rewrites() {
       return [
