@@ -23,22 +23,53 @@ const assenzaRoutes = require('./routes/assenzaRoutes'); // Nuova route per le a
 // Inizializza l'app Express
 const app = express();
 
-// Use PORT from .env, fallback to 5000 if not specified
+// Use HOST and PORT from .env
 const port = process.env.PORT || 5000;
+const host = process.env.HOST || 'localhost';
 
 // Middleware
 app.use(morgan('dev')); // Logging
-app.use(cors({
-  origin: '*', // Consenti richieste da qualsiasi origine per debugging
-  credentials: true
-}));
+
+// CORS configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Get allowed origins from environment variable
+    const allowedOrigins = process.env.ALLOWED_ORIGINS 
+      ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+      : ['http://localhost:3000']; // fallback default
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 
 // Aumenta il limite di dimensione per le richieste
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Disabilita Helmet temporaneamente per debug
-// app.use(helmet());
+// Security headers with Helmet
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+  crossOriginEmbedderPolicy: false
+}));
 
 // Imposta il limite di memoria per NodeJS
 if (process.env.NODE_ENV === 'production') {
@@ -119,8 +150,9 @@ mongoose
   .then(() => {
     console.log('Connessione al database MongoDB stabilita con successo');
     // Avvia il server
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+    app.listen(port, host, () => {
+      console.log(`Server is running on ${host}:${port}`);
+      console.log(`Allowed CORS origins: ${process.env.ALLOWED_ORIGINS || 'http://localhost:3000'}`);
     });
   })
   .catch((err) => {
