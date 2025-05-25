@@ -54,6 +54,14 @@ NEXT_PUBLIC_API_DESTINATION=http://localhost:5000/api
 NEXT_PUBLIC_ALLOWED_DEV_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 
 # ===========================================
+# CONFIGURAZIONE MONGO EXPRESS
+# ===========================================
+
+# Mongo Express Web UI (porta 8081)
+MONGO_EXPRESS_USERNAME=admin
+MONGO_EXPRESS_PASSWORD=admin123
+
+# ===========================================
 # CONFIGURAZIONE DOCKER (se utilizzato)
 # ===========================================
 

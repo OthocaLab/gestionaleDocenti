@@ -53,6 +53,14 @@ NEXT_PUBLIC_API_DESTINATION=https://gestionaledocenti.ddns.net:5000/api
 NEXT_PUBLIC_ALLOWED_DEV_ORIGINS=https://gestionaledocenti.ddns.net,http://gestionaledocenti.ddns.net,https://gestionaledocenti.ddns.net:3000,http://gestionaledocenti.ddns.net:3000
 
 # ===========================================
+# CONFIGURAZIONE MONGO EXPRESS
+# ===========================================
+
+# Mongo Express Web UI (porta 8081)
+MONGO_EXPRESS_USERNAME=admin
+MONGO_EXPRESS_PASSWORD=change_this_secure_password_123
+
+# ===========================================
 # CONFIGURAZIONE DOCKER
 # ===========================================
 
@@ -70,5 +78,6 @@ DOCKER_NETWORK=host
 # ✅ NEXT_PUBLIC_API_URL configurato con gestionaledocenti.ddns.net
 # ✅ HOST impostato su 0.0.0.0 per Docker
 # ✅ NODE_ENV impostato su production
+# ✅ MONGO_EXPRESS_PASSWORD cambiato con password sicura
 #
 # =========================================== 
