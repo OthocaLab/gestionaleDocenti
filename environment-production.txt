@@ -58,7 +58,7 @@ NEXT_PUBLIC_ALLOWED_DEV_ORIGINS=https://gestionaledocenti.ddns.net,http://gestio
 
 # Mongo Express Web UI (porta 8081)
 MONGO_EXPRESS_USERNAME=admin
-MONGO_EXPRESS_PASSWORD=change_this_secure_password_123
+MONGO_EXPRESS_PASSWORD=admin123
 
 # ===========================================
 # CONFIGURAZIONE DOCKER
