@@ -1,12 +1,21 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 
 export default function NotFound() {
-  const router = useRouter();
-  
   useEffect(() => {
-    router.push('/login');
-  }, [router]);
+    // Reindirizza solo nel browser
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+  }, []);
   
-  return null;
+  return (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '100vh' 
+    }}>
+      <p>Reindirizzamento...</p>
+    </div>
+  );
 }

@@ -23,7 +23,8 @@ const Register = () => {
   
   // Reindirizza alla dashboard se l'utente è già autenticato
   useEffect(() => {
-    if (isAuthenticated) {
+    // Verifica se siamo nel browser prima di usare il router
+    if (typeof window !== 'undefined' && isAuthenticated) {
       router.push('/dashboard');
     }
   }, [isAuthenticated, router]);
@@ -198,3 +199,10 @@ const Register = () => {
 };
 
 export default Register;
+
+// Forza server-side rendering per questa pagina
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}

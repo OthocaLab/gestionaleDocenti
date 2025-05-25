@@ -21,7 +21,9 @@ export default function RecuperoPassword() {
       console.log('Risposta invio email:', response);
       setMessage('Se l\'email è registrata, riceverai le istruzioni per reimpostare la password.');
       setTimeout(() => {
-        router.push('/login');
+        if (typeof window !== 'undefined') {
+          router.push('/login');
+        }
       }, 3000);
     } catch (error) {
       console.error('Errore invio email:', error);

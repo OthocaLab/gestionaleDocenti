@@ -8,7 +8,8 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 const DettaglioAssenza = () => {
   const { user, isAuthenticated, isLoading } = useContext(AuthContext);
   const router = useRouter();
-  const { id } = router.query;
+  // Verifica se siamo nel browser prima di usare router.query
+  const { id } = typeof window !== 'undefined' ? router.query : {};
   
   const [assenza, setAssenza] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,14 +24,16 @@ const DettaglioAssenza = () => {
   
   // Reindirizza se l'utente non ha i permessi
   useEffect(() => {
-    if (!isLoading && isAuthenticated && !hasPermission()) {
+    // Verifica se siamo nel browser prima di usare il router
+    if (typeof window !== 'undefined' && !isLoading && isAuthenticated && !hasPermission()) {
       router.push('/dashboard');
     }
   }, [isLoading, isAuthenticated, user, router]);
   
   // Carica i dettagli dell'assenza
   useEffect(() => {
-    if (id && isAuthenticated && hasPermission()) {
+    // Verifica se siamo nel browser prima di procedere
+    if (typeof window !== 'undefined' && id && isAuthenticated && hasPermission()) {
       fetchAssenza();
     }
   }, [id, isAuthenticated]);
@@ -92,7 +95,10 @@ const DettaglioAssenza = () => {
         }
       });
       
-      router.push('/elenco-assenze');
+      // Verifica se siamo nel browser prima di usare il router
+      if (typeof window !== 'undefined') {
+        router.push('/elenco-assenze');
+      }
     } catch (err) {
       console.error('Errore nell\'eliminazione dell\'assenza:', err);
       setMessage({
@@ -127,7 +133,12 @@ const DettaglioAssenza = () => {
         <div className={styles.actionButtons}>
           <button 
             className={styles.actionButton}
-            onClick={() => router.push('/elenco-assenze')}
+            onClick={() => {
+              // Verifica se siamo nel browser prima di usare il router
+              if (typeof window !== 'undefined') {
+                router.push('/elenco-assenze');
+              }
+            }}
           >
             Torna all'Elenco
           </button>
@@ -247,3 +258,10 @@ const DettaglioAssenza = () => {
 };
 
 export default DettaglioAssenza;
+
+// Disabilita la generazione statica per questa pagina dinamica
+export async function getServerSideProps(context) {
+  return {
+    props: {}, // Passa props vuote al componente
+  };
+}

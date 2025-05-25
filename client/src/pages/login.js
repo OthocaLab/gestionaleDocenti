@@ -18,14 +18,16 @@ const Login = () => {
   
   // Controlla se l'utente è stato appena registrato
   useEffect(() => {
-    if (router.query.registered) {
+    // Verifica se siamo nel browser prima di usare router.query
+    if (typeof window !== 'undefined' && router.query.registered) {
       setSuccessMessage('Registrazione completata con successo! Ora puoi accedere.');
     }
   }, [router.query]);
   
   // Reindirizza alla dashboard se l'utente è già autenticato
   useEffect(() => {
-    if (isAuthenticated) {
+    // Verifica se siamo nel browser prima di usare il router
+    if (typeof window !== 'undefined' && isAuthenticated) {
       router.push('/dashboard');
     }
   }, [isAuthenticated, router]);
@@ -47,8 +49,10 @@ const Login = () => {
       // Salva il token e i dati utente
       login(data.token, data.user);
       
-      // Reindirizza alla dashboard
-      router.push('/dashboard');
+      // Reindirizza alla dashboard solo se siamo nel browser
+      if (typeof window !== 'undefined') {
+        router.push('/dashboard');
+      }
     } catch (err) {
       setError(err.message);
     } finally {

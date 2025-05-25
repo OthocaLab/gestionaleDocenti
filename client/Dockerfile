@@ -20,11 +20,8 @@ ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 ENV NEXT_PUBLIC_API_DESTINATION=$NEXT_PUBLIC_API_DESTINATION
 ENV NODE_ENV=$NODE_ENV
 
-# Build the application for production
-RUN npm run build
-
 # Expose the port
 EXPOSE 3000
 
-# Start production server
-CMD ["npm", "run", "start"] 
+# Use dev server in development, build in production
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then npm run build && npm run start; else npm run dev; fi"] 

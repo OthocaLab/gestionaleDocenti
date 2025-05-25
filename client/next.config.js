@@ -3,16 +3,9 @@ const nextConfig = {
     reactStrictMode: true,
     pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
     
-    // Disable HMR in production
-    webpack: (config, { dev, isServer }) => {
-      if (!dev && !isServer) {
-        // Disable HMR in production
-        config.optimization.splitChunks = {
-          chunks: 'all',
-        };
-      }
-      return config;
-    },
+    // Disable static generation completely
+    output: 'standalone',
+    trailingSlash: false,
     
     // Configure allowed dev origins for cross-origin requests (Next.js 15)
     allowedDevOrigins: process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS 
