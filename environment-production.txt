@@ -1,0 +1,75 @@
+# ===========================================
+# CONFIGURAZIONE PRODUZIONE OTHOCA LABS
+# ===========================================
+# Template per l'ambiente di produzione
+#
+# ISTRUZIONI:
+# 1. Copia questo contenuto in un file chiamato .env nella root del progetto
+# 2. Modifica TUTTI i valori con quelli reali di produzione
+# 3. Assicurati che il file .env non sia mai committato
+
+# ===========================================
+# CONFIGURAZIONE GENERALE
+# ===========================================
+NODE_ENV=production
+
+# ===========================================
+# CONFIGURAZIONE BACKEND (SERVER)
+# ===========================================
+
+# Server Configuration
+PORT=5000
+HOST=0.0.0.0
+
+# Database Configuration (IMPORTANTE: Usa il tuo database di produzione)
+MONGODB_URI=mongodb://your-production-db-host:27017/gestionale-docenti
+
+# JWT Configuration (IMPORTANTE: Cambia con una chiave sicura)
+JWT_SECRET=your_super_secure_jwt_secret_for_production_min_32_chars
+JWT_EXPIRE=30d
+
+# CORS Configuration (IMPORTANTE: Inserisci i domini di produzione)
+ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+
+# Email Configuration (SMTP)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=your_production_email@gmail.com
+SMTP_PASSWORD=your_production_app_password
+EMAIL_FROM=Othoca Labs <noreply@yourdomain.com>
+USE_GMAIL_APP_PASSWORD=true
+
+# ===========================================
+# CONFIGURAZIONE FRONTEND (NEXT.JS)
+# ===========================================
+
+# API Configuration (IMPORTANTE: Usa gli URL di produzione)
+NEXT_PUBLIC_API_URL=https://yourdomain.com/api
+NEXT_PUBLIC_BACKEND_URL=https://yourdomain.com/api
+NEXT_PUBLIC_API_DESTINATION=https://yourdomain.com/api
+
+# Production Origins
+NEXT_PUBLIC_ALLOWED_DEV_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+
+# ===========================================
+# CONFIGURAZIONE DOCKER (se utilizzato)
+# ===========================================
+
+# Docker Network
+DOCKER_NETWORK=bridge
+
+# ===========================================
+# CHECKLIST PRODUZIONE
+# ===========================================
+# 
+# ✅ JWT_SECRET cambiato con valore sicuro (min 32 caratteri)
+# ✅ MONGODB_URI aggiornato con database di produzione
+# ✅ ALLOWED_ORIGINS configurato con domini reali
+# ✅ SMTP_USER e SMTP_PASSWORD configurati per produzione
+# ✅ EMAIL_FROM aggiornato con dominio reale
+# ✅ NEXT_PUBLIC_API_URL aggiornato con URL di produzione
+# ✅ HOST impostato su 0.0.0.0 per Docker
+# ✅ NODE_ENV impostato su production
+#
+# =========================================== 

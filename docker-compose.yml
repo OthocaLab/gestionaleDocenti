@@ -5,10 +5,14 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+    env_file:
+      - .env
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:5000/api
-      - NEXT_PUBLIC_BACKEND_URL=http://localhost:5000/api
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+      - NEXT_PUBLIC_API_DESTINATION=${NEXT_PUBLIC_API_DESTINATION}
+      - NEXT_PUBLIC_ALLOWED_DEV_ORIGINS=${NEXT_PUBLIC_ALLOWED_DEV_ORIGINS}
     network_mode: "host"
     restart: always
     volumes:
@@ -20,10 +24,23 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=development
-      - PORT=5000
-      - MONGODB_URI=mongodb://127.0.0.1:27017/gestionale-docenti
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - HOST=${HOST}
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE=${JWT_EXPIRE}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_SECURE=${SMTP_SECURE}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - USE_GMAIL_APP_PASSWORD=${USE_GMAIL_APP_PASSWORD}
     network_mode: "host"
     restart: always
     volumes:

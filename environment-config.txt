@@ -1,0 +1,77 @@
+# ===========================================
+# CONFIGURAZIONE UNIFICATA OTHOCA LABS
+# ===========================================
+# Questo file contiene tutte le variabili d'ambiente
+# per frontend (Next.js) e backend (Node.js/Express)
+#
+# ISTRUZIONI:
+# 1. Copia questo contenuto in un file chiamato .env nella root del progetto
+# 2. Modifica i valori secondo le tue necessità
+# 3. Non committare mai il file .env (è già nel .gitignore)
+
+# ===========================================
+# CONFIGURAZIONE GENERALE
+# ===========================================
+NODE_ENV=development
+
+# ===========================================
+# CONFIGURAZIONE BACKEND (SERVER)
+# ===========================================
+
+# Server Configuration
+PORT=5000
+HOST=localhost
+
+# Database Configuration
+MONGODB_URI=mongodb://127.0.0.1:27017/gestionale-docenti
+
+# JWT Configuration
+JWT_SECRET=othoca_labs_super_secret_key_2024_change_in_production
+JWT_EXPIRE=30d
+
+# CORS Configuration
+ALLOWED_ORIGINS=http://localhost:3000,https://gestionaledocenti.ddns.net,http://gestionaledocenti.ddns.net
+
+# Email Configuration (SMTP)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password_here
+EMAIL_FROM=Othoca Labs <noreply@othocalabs.it>
+USE_GMAIL_APP_PASSWORD=true
+
+# ===========================================
+# CONFIGURAZIONE FRONTEND (NEXT.JS)
+# ===========================================
+
+# API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000/api
+NEXT_PUBLIC_API_DESTINATION=http://localhost:5000/api
+
+# Development Origins
+NEXT_PUBLIC_ALLOWED_DEV_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+
+# ===========================================
+# CONFIGURAZIONE DOCKER (se utilizzato)
+# ===========================================
+
+# Docker Network
+DOCKER_NETWORK=host
+
+# ===========================================
+# NOTE PER LA CONFIGURAZIONE
+# ===========================================
+# 
+# 1. SMTP_PASSWORD: Deve essere una "Password per app" di Gmail
+#    - Attiva la 2FA: https://myaccount.google.com/security
+#    - Crea password app: https://myaccount.google.com/apppasswords
+#
+# 2. JWT_SECRET: Cambia questo valore in produzione con una chiave sicura
+#
+# 3. MONGODB_URI: Modifica l'URI se usi un database remoto
+#
+# 4. Per produzione, cambia NODE_ENV=production e aggiorna gli URL
+#
+# =========================================== 

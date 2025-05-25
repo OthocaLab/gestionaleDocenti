@@ -79,34 +79,61 @@ cd gestionaleDocenti
 
 ## 🔧 Configurazione
 
-### Backend
-```bash
-# Navigare nella cartella del server
-cd server
+### 🚀 Configurazione Rapida (Consigliata)
 
-# Installare le dipendenze
+```bash
+# 1. Esegui lo script di configurazione automatica
+./setup-env.sh
+
+# 2. Modifica il file .env con i tuoi dati
+nano .env
+
+# 3. Installa le dipendenze
 npm install
+cd server && npm install
+cd ../client && npm install
 ```
 
-Creare un file `.env` nella cartella server:
-```
-NODE_ENV=development
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/othoca-labs
-JWT_SECRET=il_tuo_jwt_secret_sicuro
-JWT_EXPIRE=30d
-EMAIL_SERVICE=gmail
-EMAIL_USERNAME=tua_email@gmail.com
-EMAIL_PASSWORD=tua_password_app
-EMAIL_FROM=noreply@othocalabs.it
-```
+### ⚙️ Configurazione Manuale
 
-### Frontend
+#### Passo 1: Configurazione Ambiente
+Copia il contenuto del file `environment-config.txt` in un nuovo file `.env` nella root del progetto:
+
 ```bash
-# Navigare nella cartella del client utilizzando un secondo terminale (Ctrl + Shift + ò)
-cd client
+cp environment-config.txt .env
+```
 
-# Installare le dipendenze
+#### Passo 2: Personalizza le Variabili
+Modifica il file `.env` con i tuoi dati:
+
+```env
+# Configurazione Database
+MONGODB_URI=mongodb://127.0.0.1:27017/gestionale-docenti
+
+# Configurazione JWT (IMPORTANTE: Cambia in produzione)
+JWT_SECRET=othoca_labs_super_secret_key_2024_change_in_production
+
+# Configurazione Email SMTP
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password_here
+EMAIL_FROM=Othoca Labs <noreply@othocalabs.it>
+
+# Configurazione API
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+#### Passo 3: Installazione Dipendenze
+
+```bash
+# Dipendenze root (se presenti)
+npm install
+
+# Dipendenze backend
+cd server
+npm install
+
+# Dipendenze frontend
+cd ../client
 npm install
 ```
 
@@ -138,7 +165,6 @@ othoca-labs/
 │   │   ├── pages/           # Pagine Next.js
 │   │   ├── styles/          # File CSS
 │   │   └── utils/           # Utility functions
-│   ├── .env.local           # Variabili d'ambiente frontend
 │   └── next.config.js       # Configurazione Next.js
 │
 ├── server/                  # Backend Node.js/Express
@@ -148,10 +174,14 @@ othoca-labs/
 │   ├── models/              # Modelli Mongoose
 │   ├── routes/              # Route API
 │   ├── utils/               # Utility functions
-│   ├── .env                 # Variabili d'ambiente backend
 │   └── server.js            # Entry point del server
 │
-└── README.md                # Documentazione del progetto
+├── .env                     # 🔧 Variabili d'ambiente UNIFICATE
+├── environment-config.txt   # 📋 Template configurazione sviluppo
+├── environment-production.txt # 🚀 Template configurazione produzione
+├── setup-env.sh            # 🛠️ Script configurazione automatica
+├── docker-compose.yml       # 🐳 Configurazione Docker
+└── README.md                # 📖 Documentazione del progetto
 ```
 
 
