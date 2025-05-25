@@ -3,7 +3,7 @@ const nextConfig = {
     reactStrictMode: true,
     pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
     
-    // Configure allowed dev origins for cross-origin requests
+    // Configure allowed dev origins for cross-origin requests (Next.js 15)
     allowedDevOrigins: process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS 
       ? process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS.split(',').map(origin => origin.trim())
       : [
