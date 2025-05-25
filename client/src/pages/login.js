@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AuthContext } from '../context/AuthContext';
+import { login as authLogin } from '../services/authService';
 import styles from '../styles/Login.module.css';
 
 const Login = () => {
@@ -40,19 +41,8 @@ const Login = () => {
         throw new Error('Inserisci email e password');
       }
       
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Errore durante il login');
-      }
+      // Usa authService invece di fetch diretto
+      const data = await authLogin(email, password);
       
       // Salva il token e i dati utente
       login(data.token, data.user);

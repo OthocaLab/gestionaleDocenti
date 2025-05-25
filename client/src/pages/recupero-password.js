@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styles from '../styles/Login.module.css';
-import axios from 'axios';
 import { useRouter } from 'next/router';
+import { forgotPassword } from '../services/authService';
 
 export default function RecuperoPassword() {
   const [email, setEmail] = useState('');
@@ -17,15 +17,15 @@ export default function RecuperoPassword() {
     setMessage('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
-      console.log('Risposta invio email:', response.data);
+      const response = await forgotPassword(email);
+      console.log('Risposta invio email:', response);
       setMessage('Se l\'email è registrata, riceverai le istruzioni per reimpostare la password.');
       setTimeout(() => {
         router.push('/login');
       }, 3000);
     } catch (error) {
-      console.error('Errore invio email:', error.response?.data || error);
-      setError(error.response?.data?.message || 'Si è verificato un errore durante l\'invio della richiesta');
+      console.error('Errore invio email:', error);
+      setError(error.message || 'Si è verificato un errore durante l\'invio della richiesta');
     } finally {
       setLoading(false);
     }

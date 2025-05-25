@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AuthContext } from '../context/AuthContext';
+import { register as authRegister } from '../services/authService';
 import styles from '../styles/Register.module.css';
 
 const Register = () => {
@@ -55,24 +56,13 @@ const Register = () => {
         throw new Error('La password deve contenere almeno 8 caratteri');
       }
       
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nome: formData.nome,
-          cognome: formData.cognome,
-          email: formData.email,
-          password: formData.password
-        }),
+      // Usa authService invece di fetch diretto
+      const data = await authRegister({
+        nome: formData.nome,
+        cognome: formData.cognome,
+        email: formData.email,
+        password: formData.password
       });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Errore durante la registrazione');
-      }
       
       // Registrazione completata con successo
       setSuccessMessage('Registrazione completata con successo! Verrai reindirizzato alla pagina di login...');
