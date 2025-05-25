@@ -3,6 +3,17 @@ const nextConfig = {
     reactStrictMode: true,
     pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
     
+    // Disable HMR in production
+    webpack: (config, { dev, isServer }) => {
+      if (!dev && !isServer) {
+        // Disable HMR in production
+        config.optimization.splitChunks = {
+          chunks: 'all',
+        };
+      }
+      return config;
+    },
+    
     // Configure allowed dev origins for cross-origin requests (Next.js 15)
     allowedDevOrigins: process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS 
       ? process.env.NEXT_PUBLIC_ALLOWED_DEV_ORIGINS.split(',').map(origin => origin.trim())
@@ -37,7 +48,12 @@ const nextConfig = {
           ]
         }
       ]
-    }
+    },
+    
+    // Production optimizations
+    poweredByHeader: false,
+    generateEtags: false,
+    compress: true,
   }
   
   module.exports = nextConfig;
