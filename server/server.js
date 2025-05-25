@@ -23,6 +23,9 @@ const assenzaRoutes = require('./routes/assenzaRoutes'); // Nuova route per le a
 // Inizializza l'app Express
 const app = express();
 
+// Trust proxy - IMPORTANTE per funzionare dietro Nginx
+app.set('trust proxy', 1);
+
 // Use HOST and PORT from .env
 const port = process.env.PORT || 5000;
 const host = process.env.HOST || 'localhost';
@@ -41,9 +44,14 @@ const corsOptions = {
       ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
       : ['http://localhost:3000']; // fallback default
     
+    console.log(`[CORS] Checking origin: ${origin}`);
+    console.log(`[CORS] Allowed origins: ${allowedOrigins.join(', ')}`);
+    
     if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log(`[CORS] Origin ${origin} allowed`);
       callback(null, true);
     } else {
+      console.log(`[CORS] Origin ${origin} NOT allowed`);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -86,7 +94,13 @@ const limiter = rateLimit({
   max: 100, // limite di 100 richieste per IP
   standardHeaders: true,
   legacyHeaders: false,
-  message: 'Troppe richieste da questo IP, riprova più tardi'
+  message: 'Troppe richieste da questo IP, riprova più tardi',
+  // Configurazione per funzionare dietro proxy
+  trustProxy: true,
+  // Usa l'IP reale dal proxy
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'unknown';
+  }
 });
 
 // Applica il rate limiter alle route di autenticazione
