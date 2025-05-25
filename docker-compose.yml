@@ -5,6 +5,11 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+        - NEXT_PUBLIC_API_DESTINATION=${NEXT_PUBLIC_API_DESTINATION}
+        - NODE_ENV=${NODE_ENV}
     env_file:
       - .env
     environment:
