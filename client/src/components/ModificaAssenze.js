@@ -26,6 +26,7 @@ const ModificaAssenze = () => {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [dateError, setDateError] = useState('');
   
   // Carica i dati dell'assenza
   useEffect(() => {
@@ -75,9 +76,43 @@ const ModificaAssenze = () => {
     }
   };
   
+  // Funzione per validare le date
+  const validateDates = (inizio, fine) => {
+    if (inizio && fine) {
+      const dataInizioDate = new Date(inizio);
+      const dataFineDate = new Date(fine);
+      
+      if (dataFineDate < dataInizioDate) {
+        setDateError('La data di fine non può essere precedente alla data di inizio');
+        return false;
+      }
+    }
+    setDateError('');
+    return true;
+  };
+  
+  // Gestori per i cambiamenti delle date
+  const handleDataInizioChange = (e) => {
+    const newDataInizio = e.target.value;
+    setDataInizio(newDataInizio);
+    validateDates(newDataInizio, dataFine);
+  };
+  
+  const handleDataFineChange = (e) => {
+    const newDataFine = e.target.value;
+    setDataFine(newDataFine);
+    validateDates(dataInizio, newDataFine);
+  };
+  
   // Funzione per inviare il form
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validazione delle date
+    if (!validateDates(dataInizio, dataFine)) {
+      setMessage({ type: 'error', text: 'Controlla le date inserite' });
+      return;
+    }
     
     setIsSubmitting(true);
     setMessage({ type: '', text: '' });
@@ -186,7 +221,7 @@ const ModificaAssenze = () => {
                     type="date"
                     className={styles.input}
                     value={dataInizio}
-                    onChange={(e) => setDataInizio(e.target.value)}
+                    onChange={handleDataInizioChange}
                     required
                   />
                 </div>
@@ -198,11 +233,17 @@ const ModificaAssenze = () => {
                   </label>
                   <input
                     type="date"
-                    className={styles.input}
+                    className={`${styles.input} ${dateError ? styles.inputError : ''}`}
                     value={dataFine}
-                    onChange={(e) => setDataFine(e.target.value)}
+                    onChange={handleDataFineChange}
                     required
                   />
+                  {dateError && (
+                    <div className={styles.dateError}>
+                      <span className={styles.errorIcon}>⚠</span>
+                      {dateError}
+                    </div>
+                  )}
                 </div>
               </div>
               
@@ -339,7 +380,7 @@ const ModificaAssenze = () => {
               <button
                 type="submit"
                 className={styles.submitButton}
-                disabled={isSubmitting}
+                disabled={isSubmitting || dateError}
               >
                 <span className={styles.buttonIcon}>{isSubmitting ? '⏳' : '✓'}</span>
                 {isSubmitting ? 'Aggiornamento in corso...' : 'Aggiorna Assenza'}
