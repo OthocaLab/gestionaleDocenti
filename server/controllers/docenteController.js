@@ -33,8 +33,52 @@ exports.getAllDocenti = async (req, res) => {
       docenti = await Docente.find().populate('classiInsegnamento');
     }
     
-    const docentiFormattati = docenti.map(doc => {
+    const docentiFormattati = await Promise.all(docenti.map(async (doc) => {
       const docente = doc.toObject();
+      
+      // CASO 1: Controlla se il docente ha già lezioni dal JSON importato (se presente)
+      if (docente.lezioni && Array.isArray(docente.lezioni) && docente.lezioni.length > 0) {
+        // Le lezioni sono già nel formato corretto dal JSON
+      } else {
+        // CASO 2: Recupera le lezioni dal database OrarioLezioni
+        const lezioni = await OrarioLezioni.find({ docente: docente._id })
+          .populate('materia', 'descrizione codiceMateria')
+          .lean();
+        
+        // Per ogni lezione, trova la classe corrispondente
+        const lezioniConClasse = await Promise.all(lezioni.map(async (lezione) => {
+          let classeInfo = '';
+          
+          if (lezione.classe) {
+            // Se la lezione ha un riferimento diretto alla classe
+            const ClasseScolastica = require('../models/ClasseScolastica');
+            const classe = await ClasseScolastica.findById(lezione.classe).lean();
+            if (classe) {
+              classeInfo = `${classe.anno}${classe.sezione}`;
+            }
+          } else {
+            // Se non ha riferimento diretto, cerca nelle classi che hanno questa lezione nell'orario
+            const ClasseScolastica = require('../models/ClasseScolastica');
+            const classeConLezione = await ClasseScolastica.findOne({ 
+              orarioLezioni: lezione._id 
+            }).lean();
+            if (classeConLezione) {
+              classeInfo = `${classeConLezione.anno}${classeConLezione.sezione}`;
+            }
+          }
+          
+          return {
+            giorno: lezione.giornoSettimana,
+            ora: lezione.oraInizio,
+            classe: classeInfo,
+            aula: lezione.aula || '',
+            materia: lezione.materia ? lezione.materia.codiceMateria || lezione.materia.descrizione : ''
+          };
+        }));
+        
+        // Aggiungi le lezioni al docente
+        docente.lezioni = lezioniConClasse;
+      }
       
       if (docente.classiInsegnamento && docente.classiInsegnamento.length > 0) {
         const primaClasse = docente.classiInsegnamento[0];
@@ -48,7 +92,7 @@ exports.getAllDocenti = async (req, res) => {
       }
       
       return docente;
-    });
+    }));
     
     // Se è stata usata la query codiceMateria, restituisci in formato standard
     if (codiceMateria) {
@@ -318,6 +362,93 @@ exports.creaDocentiDisp = async (req, res) => {
       message: 'Errore nella creazione dei docenti DISP',
       error: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+};
+
+// Funzione temporanea per testare l'aggiornamento dei docenti con lezioni di esempio
+exports.aggiornaDocenteConLezioniEsempio = async (req, res) => {
+  try {
+    // Trova il docente CASCIU per testare
+    const docente = await Docente.findOne({ 
+      $or: [
+        { cognome: { $regex: /CASCIU/i } },
+        { codiceDocente: 'CASCIU' }
+      ]
+    });
+    
+    if (!docente) {
+      return res.status(404).json({
+        success: false,
+        message: 'Docente CASCIU non trovato'
+      });
+    }
+    
+    // Dati di esempio per CASCIU
+    const lezioniEsempio = [
+      {
+        "giorno": "LU",
+        "ora": "11:15",
+        "classe": "5M",
+        "aula": "C02",
+        "materia": "MAT"
+      },
+      {
+        "giorno": "LU",
+        "ora": "12:15",
+        "classe": "2M",
+        "aula": "C06",
+        "materia": "MAT"
+      },
+      {
+        "giorno": "MA",
+        "ora": "8:15",
+        "classe": "4M",
+        "aula": "C08",
+        "materia": "MAT"
+      },
+      {
+        "giorno": "MA",
+        "ora": "10:15",
+        "classe": "2M",
+        "aula": "C06",
+        "materia": "MAT"
+      },
+      {
+        "giorno": "MA",
+        "ora": "11:15",
+        "classe": "",
+        "aula": "",
+        "materia": "DISP"
+      },
+      {
+        "giorno": "MA",
+        "ora": "12:15",
+        "classe": "5M",
+        "aula": "C02",
+        "materia": "MAT"
+      }
+    ];
+    
+    // Aggiorna il docente con le lezioni di esempio
+    docente.lezioni = lezioniEsempio;
+    await docente.save();
+    
+    res.status(200).json({
+      success: true,
+      message: `Docente ${docente.cognome} aggiornato con successo`,
+      data: {
+        id: docente._id,
+        cognome: docente.cognome,
+        lezioni: docente.lezioni
+      }
+    });
+  } catch (error) {
+    console.error('Errore aggiornamento docente:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Errore nell\'aggiornamento del docente',
+      error: error.message
     });
   }
 };

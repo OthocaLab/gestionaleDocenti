@@ -41,7 +41,14 @@ const docenteSchema = new mongoose.Schema({
     type: String,
     unique: true,
     sparse: true
-  }
+  },
+  lezioni: [{
+    giorno: String,    // es. "LU", "MA", "ME", etc.
+    ora: String,       // es. "8:15", "9:15", etc.
+    classe: String,    // es. "5M", "2A", etc.
+    aula: String,      // es. "C02", "P06", etc.
+    materia: String    // es. "MAT", "DISP", etc.
+  }]
 });
 
 module.exports = mongoose.model('Docente', docenteSchema);

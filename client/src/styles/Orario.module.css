@@ -374,65 +374,53 @@
   transition: transform 0.2s;
 }
 
-.statIcon {
-  font-size: 24px;
-  margin-right: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.statContent {
-  flex: 1;
-}
-
-.statLabel {
-  font-size: 14px;
-  color: #666;
-  margin: 0;
-}
-
-.statValue {
-  font-size: 32px;
-  font-weight: 700;
-  color: #333;
-  margin: 0;
-  line-height: 1;
-}
-
 .statCard:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .statIconWrapper {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  background: #f0f2f5;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #971645 0%, #b71c4c 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 15px;
+  margin-right: 18px;
+  flex-shrink: 0;
 }
 
 .statIcon {
-  font-size: 24px;
+  font-size: 26px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .statContent {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .statValue {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
   color: #1a1a1a;
+  line-height: 1;
 }
 
 .statLabel {
   color: #666;
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .docentiPanel {

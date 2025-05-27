@@ -21,11 +21,55 @@ const GestioneDocenti = () => {
   const [classiDisponibili, setClassiDisponibili] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [currentDocenteId, setCurrentDocenteId] = useState(null);
+  const [statistiche, setStatistiche] = useState({
+    docentiTotali: 0,
+    oreDaRecupero: 0,
+    docentiConMateria: 0,
+    docentiDisponibili: 0
+  });
   
   useEffect(() => {
     fetchDocenti();
     fetchClassiInsegnamento();
   }, []);
+
+  useEffect(() => {
+    if (docenti.length > 0) {
+      const stats = {
+        docentiTotali: docenti.length,
+        oreDaRecupero: docenti.reduce((total, doc) => {
+          const ore = parseInt(doc.oreRecupero) || 0;
+          return total + ore;
+        }, 0),
+        docentiConMateria: docenti.filter(d => {
+          // Se il docente ha lezioni, controlla se almeno una non è DISP
+          if (d.lezioni && Array.isArray(d.lezioni)) {
+            return d.lezioni.some(lezione => 
+              lezione.materia && 
+              lezione.materia !== 'DISP'
+            );
+          }
+          // Fallback al vecchio sistema per retrocompatibilità
+          return d.materia && 
+                 d.materia !== 'N/D' && 
+                 d.materia !== 'DISP';
+        }).length,
+        docentiDisponibili: docenti.filter(d => {
+          // Se il docente ha lezioni, controlla se almeno una è DISP
+          if (d.lezioni && Array.isArray(d.lezioni)) {
+            return d.stato === 'attivo' && 
+                   d.lezioni.some(lezione => 
+                     lezione.materia === 'DISP'
+                   );
+          }
+          // Fallback al vecchio sistema per retrocompatibilità
+          return d.stato === 'attivo' && 
+                 d.materia === 'DISP';
+        }).length
+      };
+      setStatistiche(stats);
+    }
+  }, [docenti]);
 
   const fetchDocenti = async () => {
     try {
@@ -197,22 +241,38 @@ const GestioneDocenti = () => {
   
     // Applica filtro classe
     if (filters.classe) {
-      filtered = filtered.filter(docente => 
-        docente.classiInsegnamento && docente.classiInsegnamento.some(classe => 
+      filtered = filtered.filter(docente => {
+        // Se il docente ha lezioni, cerca nelle classi delle lezioni
+        if (docente.lezioni && Array.isArray(docente.lezioni)) {
+          return docente.lezioni.some(lezione => 
+            lezione.classe && 
+            lezione.classe.toLowerCase().includes(filters.classe.toLowerCase())
+          );
+        }
+        // Fallback ai classiInsegnamento tradizionali
+        return docente.classiInsegnamento && docente.classiInsegnamento.some(classe => 
           typeof classe === 'object' && classe.nome && 
           classe.nome.toLowerCase().includes(filters.classe.toLowerCase())
-        )
-      );
+        );
+      });
     }
   
     // Applica filtro materia
     if (filters.materia) {
-      filtered = filtered.filter(docente => 
-        docente.classiInsegnamento && docente.classiInsegnamento.some(classe => 
+      filtered = filtered.filter(docente => {
+        // Se il docente ha lezioni, cerca nelle materie delle lezioni
+        if (docente.lezioni && Array.isArray(docente.lezioni)) {
+          return docente.lezioni.some(lezione => 
+            lezione.materia && 
+            lezione.materia.toLowerCase().includes(filters.materia.toLowerCase())
+          );
+        }
+        // Fallback ai classiInsegnamento tradizionali
+        return docente.classiInsegnamento && docente.classiInsegnamento.some(classe => 
           typeof classe === 'object' && classe.materia && classe.materia.descrizione &&
           classe.materia.descrizione.toLowerCase().includes(filters.materia.toLowerCase())
-        )
-      );
+        );
+      });
     }
   
     setFilteredDocenti(filtered);
@@ -228,8 +288,18 @@ const GestioneDocenti = () => {
             <span className={styles.statIcon}>👨‍🏫</span>
           </div>
           <div className={styles.statContent}>
-            <h3 className={styles.statValue}>{docenti.length || 0}</h3>
+            <h3 className={styles.statValue}>{statistiche.docentiTotali}</h3>
             <p className={styles.statLabel}>Docenti Totali</p>
+          </div>
+        </div>
+        
+        <div className={styles.statCard}>
+          <div className={styles.statIconWrapper}>
+            <span className={styles.statIcon}>⏱️</span>
+          </div>
+          <div className={styles.statContent}>
+            <h3 className={styles.statValue}>{statistiche.oreDaRecupero}</h3>
+            <p className={styles.statLabel}>Ore da Recuperare</p>
           </div>
         </div>
         
@@ -238,20 +308,8 @@ const GestioneDocenti = () => {
             <span className={styles.statIcon}>📚</span>
           </div>
           <div className={styles.statContent}>
-            <h3 className={styles.statValue}>
-              {docenti.reduce((total, docente) => total + (docente.oreSettimanali || 0), 0)}
-            </h3>
-            <p className={styles.statLabel}>Ore Settimanali</p>
-          </div>
-        </div>
-        
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper}>
-            <span className={styles.statIcon}>📋</span>
-          </div>
-          <div className={styles.statContent}>
-            <h3 className={styles.statValue}>{docenti.filter(d => d.attivo).length || 0}</h3>
-            <p className={styles.statLabel}>Docenti Attivi</p>
+            <h3 className={styles.statValue}>{statistiche.docentiConMateria}</h3>
+            <p className={styles.statLabel}>Docenti con Materia</p>
           </div>
         </div>
         
@@ -260,7 +318,7 @@ const GestioneDocenti = () => {
             <span className={styles.statIcon}>👥</span>
           </div>
           <div className={styles.statContent}>
-            <h3 className={styles.statValue}>{docenti.filter(d => d.disponibile).length || 0}</h3>
+            <h3 className={styles.statValue}>{statistiche.docentiDisponibili}</h3>
             <p className={styles.statLabel}>Docenti Disponibili</p>
           </div>
         </div>
@@ -538,19 +596,28 @@ const GestioneDocenti = () => {
                       <td>{docente.email}</td>
                       <td>{docente.telefono || '-'}</td>
                       <td>
-                        {docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
-                          ? docente.classiInsegnamento.map(classe => 
-                              typeof classe === 'object' ? classe.nome : '-'
-                            ).join(', ')
-                          : '-'
+                        {docente.lezioni && docente.lezioni.length > 0 
+                          ? (() => {
+                              const classi = [...new Set(docente.lezioni.map(lezione => lezione.classe).filter(Boolean))];
+                              return classi.length > 0 ? classi.join(', ') : 'N/D';
+                            })()
+                          : (docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
+                              ? docente.classiInsegnamento.map(classe => 
+                                  typeof classe === 'object' ? (classe.nome || classe.codiceClasse || 'N/D') : classe
+                                ).join(', ')
+                              : 'N/D'
+                            )
                         }
                       </td>
                       <td>
-                        {docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
-                          ? docente.classiInsegnamento.map(classe => 
-                              typeof classe === 'object' && classe.materia ? classe.materia.descrizione : '-'
-                            ).filter((value, index, self) => self.indexOf(value) === index).join(', ')
-                          : '-'
+                        {docente.lezioni && docente.lezioni.length > 0 
+                          ? [...new Set(docente.lezioni.map(lezione => lezione.materia).filter(m => m && m !== 'DISP'))].join(', ') || 'DISP'
+                          : (docente.classiInsegnamento && docente.classiInsegnamento.length > 0 
+                              ? docente.classiInsegnamento.map(classe => 
+                                  typeof classe === 'object' && classe.materia ? classe.materia.descrizione : '-'
+                                ).filter((value, index, self) => self.indexOf(value) === index).join(', ')
+                              : '-'
+                            )
                         }
                       </td>
                       <td>{docente.oreRecupero || 0} ore</td>

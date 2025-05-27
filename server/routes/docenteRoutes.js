@@ -32,4 +32,7 @@ router.post('/sostituzione', docenteController.registraSostituzione);
 // POST /api/docenti/crea-disp - Crea docenti con codice DISP per test
 router.post('/crea-disp', docenteController.creaDocentiDisp);
 
+// POST /api/docenti/test-lezioni - Endpoint temporaneo per testare l'aggiornamento con lezioni
+router.post('/test-lezioni', docenteController.aggiornaDocenteConLezioniEsempio);
+
 module.exports = router;
