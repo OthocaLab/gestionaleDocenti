@@ -20,7 +20,7 @@ const DashboardHome = () => {
   ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('presenti');
+  const [activeTab, setActiveTab] = useState('assenti');
   const [showCalendario, setShowCalendario] = useState(false);
 
   useEffect(() => {
@@ -167,16 +167,16 @@ const DashboardHome = () => {
         <div className={styles.docentiSection}>
           <div className={styles.tabsContainer}>
             <button 
-              className={`${styles.tabButton} ${activeTab === 'presenti' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('presenti')}
-            >
-              Elenco docenti presenti
-            </button>
-            <button 
               className={`${styles.tabButton} ${activeTab === 'assenti' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('assenti')}
             >
               Elenco docenti assenti
+            </button>
+            <button 
+              className={`${styles.tabButton} ${activeTab === 'presenti' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('presenti')}
+            >
+              Elenco docenti presenti
             </button>
             <button 
               className={`${styles.tabButton} ${activeTab === 'materia' ? styles.activeTab : ''}`}
