@@ -41,9 +41,10 @@ const GestioneSostituzioni = () => {
       
       if (response.data && response.data.data) {
         // Formatta i dati per la visualizzazione
-        const formattedAssenze = response.data.data.map(assenza => ({
+        const formattedAssenze = response.data.data.map((assenza, index) => ({
           id: assenza.id,
           assenzaId: assenza.assenzaId,
+          uniqueKey: `${assenza.id}-${assenza.assenzaId}-${index}`, // Chiave unica per React
           docente: {
             id: assenza.docente.id,
             nome: `${assenza.docente.nome} ${assenza.docente.cognome}`
@@ -287,7 +288,7 @@ const GestioneSostituzioni = () => {
           <div className={styles.assenzeList}>
             {assenze.map((assenza) => (
               <div 
-                key={assenza.id} 
+                key={assenza.uniqueKey} 
                 className={`${styles.assenzaCard} ${selectedAssenza?.id === assenza.id ? styles.selected : ''}`}
                 onClick={() => handleSelectAssenza(assenza)}
               >
@@ -329,8 +330,8 @@ const GestioneSostituzioni = () => {
                 <h3>Docenti Disponibili</h3>
                 {sostituti.length > 0 ? (
                   <div className={styles.sostitutiList}>
-                    {sostituti.map((sostituto) => (
-                      <div key={sostituto.id} className={styles.sostitutoCard}>
+                    {sostituti.map((sostituto, index) => (
+                      <div key={`${sostituto.id}-${index}`} className={styles.sostitutoCard}>
                         <div className={styles.sostitutoInfo}>
                           <p className={styles.sostitutoNome}>{sostituto.nome} {sostituto.cognome}</p>
                           <p className={`${styles.sostitutoStato} ${
