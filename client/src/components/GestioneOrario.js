@@ -4,6 +4,7 @@ import { getAllDocenti } from '../services/docenteService';
 import styles from '../styles/Orario.module.css';
 import html2canvas from 'html2canvas';
 import jspdf from 'jspdf';
+import axios from 'axios';
 
 const GestioneOrario = () => {
   const [classi, setClassi] = useState([]);
@@ -23,6 +24,12 @@ const GestioneOrario = () => {
   });
   const [success, setSuccess] = useState('');
   const [visualizzazione, setVisualizzazione] = useState('classe'); // 'classe' o 'docente'
+
+  // Stati per la ricerca docenti
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   const giorni = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
   const ore = [
@@ -48,6 +55,19 @@ const GestioneOrario = () => {
       fetchOrario(docenti[0]._id, 'docente');
     }
   }, [classi, docenti, visualizzazione]);
+
+  // Debounce per la ricerca docenti
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (searchQuery.length >= 3) {
+        searchDocenti();
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+    
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
 
   const fetchClassi = async () => {
     try {
@@ -103,6 +123,55 @@ const GestioneOrario = () => {
       setError(`Errore nel caricamento dell'orario`);
       setLoading(false);
     }
+  };
+
+  // Funzione per cercare i docenti
+  const searchDocenti = async () => {
+    if (searchQuery.length < 3) return;
+    
+    setIsSearching(true);
+    try {
+      const response = await axios.get(`/api/assenze/autocomplete?query=${searchQuery}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      setSearchResults(response.data.data);
+    } catch (error) {
+      console.error('Errore nella ricerca dei docenti:', error);
+      setError('Errore nella ricerca dei docenti');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Funzione per selezionare un docente dalla ricerca
+  const handleSelectDocenteFromSearch = (docente) => {
+    setSelectedDocente(docente._id);
+    setSearchQuery('');
+    setSearchResults([]);
+    setShowSearchModal(false);
+    
+    // Cambia visualizzazione a docente se non è già selezionata
+    if (visualizzazione !== 'docente') {
+      setVisualizzazione('docente');
+    }
+    
+    // Carica l'orario del docente selezionato
+    fetchOrario(docente._id, 'docente');
+  };
+
+  // Funzione per gestire il click sulla barra di ricerca
+  const handleSearchClick = () => {
+    setShowSearchModal(true);
+  };
+
+  // Funzione per chiudere la modal di ricerca
+  const closeSearchModal = () => {
+    setShowSearchModal(false);
+    setSearchQuery('');
+    setSearchResults([]);
   };
 
   const handleClasseChange = async (e) => {
@@ -379,8 +448,10 @@ const GestioneOrario = () => {
               <div className={styles.searchIcon}>🔍</div>
               <input 
                 type="text" 
-                placeholder="Cerca in base a Indirizzo, Classe..." 
+                placeholder="Cerca docente per nome, cognome o email..." 
                 className={styles.searchInput}
+                onClick={handleSearchClick}
+                readOnly
               />
             </div>
             <div className={styles.filterButtons}>
@@ -679,6 +750,68 @@ const GestioneOrario = () => {
           </div>
         ) : null}
       </div>
+
+      {/* Modal di ricerca docenti */}
+      {showSearchModal && (
+        <div className={styles.modalOverlay} onClick={closeSearchModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3>Ricerca Docente</h3>
+              <button className={styles.closeButton} onClick={closeSearchModal}>✕</button>
+            </div>
+            
+            <div className={styles.modalBody}>
+              <div className={styles.searchContainer}>
+                <input
+                  type="text"
+                  className={styles.modalSearchInput}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Inizia a digitare (minimo 3 caratteri)..."
+                  autoFocus
+                />
+                <span className={styles.searchIcon}>🔍</span>
+                
+                {isSearching && (
+                  <div className={styles.searchingIndicator}>
+                    <div className={styles.spinner}></div>
+                    <span>Ricerca...</span>
+                  </div>
+                )}
+                
+                {searchResults.length > 0 && (
+                  <div className={styles.searchResults}>
+                    {searchResults.map((docente) => (
+                      <div
+                        key={docente._id}
+                        className={styles.searchResultItem}
+                        onClick={() => handleSelectDocenteFromSearch(docente)}
+                      >
+                        <div className={styles.docenteAvatar}>
+                          {docente.nome.charAt(0)}{docente.cognome.charAt(0)}
+                        </div>
+                        <div className={styles.docenteInfo}>
+                          <div className={styles.docenteName}>{docente.nome} {docente.cognome}</div>
+                          <div className={styles.docenteEmail}>{docente.email}</div>
+                          {docente.codiceFiscale && (
+                            <div className={styles.docenteCodice}>CF: {docente.codiceFiscale}</div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {searchQuery.length >= 3 && !isSearching && searchResults.length === 0 && (
+                  <div className={styles.noResults}>
+                    Nessun docente trovato per "{searchQuery}"
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
