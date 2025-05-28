@@ -16,7 +16,7 @@ const ImportStatusSchema = new mongoose.Schema({
   currentStep: { type: String, default: '' },
   totalTeachers: { type: Number, default: 0 },
   processedTeachers: { type: Number, default: 0 },
-  errors: [String],
+  errorMessages: [String],
   startTime: { type: Date, default: Date.now },
   endTime: Date,
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
@@ -61,7 +61,7 @@ exports.getImportStatus = async (req, res) => {
         currentStep: dbStatus.currentStep,
         totalTeachers: dbStatus.totalTeachers,
         processedTeachers: dbStatus.processedTeachers,
-        errors: dbStatus.errors,
+        errors: dbStatus.errorMessages,
         startTime: dbStatus.startTime,
         endTime: dbStatus.endTime,
         sessionId: dbStatus.sessionId
@@ -229,7 +229,7 @@ async function updateImportStatus(sessionId, updates) {
     // Aggiorna il database
     await ImportStatus.findOneAndUpdate(
       { sessionId: sessionId },
-      { $set: updates, $push: updates.errors ? { errors: { $each: updates.errors } } : {} },
+      { $set: updates, $push: updates.errors ? { errorMessages: { $each: updates.errors } } : {} },
       { new: true }
     );
     
