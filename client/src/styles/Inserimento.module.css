@@ -894,3 +894,61 @@
   margin-right: 0.5rem;
   font-size: 1rem;
 }
+
+/* Stili per la sezione ore da recuperare */
+.oreRecuperoContainer {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #FD025C;
+}
+
+.subLabel {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.numberInput {
+  width: 80px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.numberInput:focus {
+  border-color: #FD025C;
+  box-shadow: 0 0 0 2px rgba(253, 2, 92, 0.1);
+  outline: none;
+}
+
+.helpText {
+  display: block;
+  color: #666;
+  font-size: 0.8rem;
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  margin-right: 0.5rem;
+  accent-color: #FD025C;
+}
+
+.checkboxLabel {
+  font-weight: normal;
+  margin-bottom: 0;
+  color: #666;
+  cursor: pointer;
+}

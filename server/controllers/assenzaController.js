@@ -52,6 +52,39 @@ exports.getAssenza = async (req, res) => {
   }
 };
 
+// Funzione helper per notificare aggiornamenti ai contatori
+const notifyCounterUpdate = async (docenteId) => {
+  try {
+    // Calcola statistiche aggiornate per il docente
+    const docente = await Docente.findById(docenteId);
+    if (!docente) return;
+    
+    // Conta le assenze del docente
+    const totalAssenze = await Assenza.countDocuments({ docente: docenteId });
+    
+    // Prepara dati per broadcast (se hai WebSocket implementato)
+    const updateData = {
+      type: 'COUNTER_UPDATE',
+      docenteId: docenteId,
+      data: {
+        oreRecupero: docente.oreRecupero,
+        totalAssenze: totalAssenze,
+        timestamp: new Date()
+      }
+    };
+    
+    // Log per debug
+    console.log(`📊 Contatori aggiornati per docente ${docente.nome} ${docente.cognome}:`, updateData.data);
+    
+    // TODO: Implementare WebSocket broadcast se necessario
+    // io.emit('counterUpdate', updateData);
+    
+    return updateData;
+  } catch (error) {
+    console.error('Errore nella notifica degli aggiornamenti:', error);
+  }
+};
+
 // Crea una nuova assenza
 exports.createAssenza = async (req, res) => {
   try {
@@ -66,11 +99,44 @@ exports.createAssenza = async (req, res) => {
     // Aggiungi l'utente che registra l'assenza
     req.body.registrataDa = req.user.id;
 
+    // Estrai i dati per le ore da recuperare
+    const { aggiungiOreRecupero, numeroOreRecupero, docente: docenteId } = req.body;
+
     const assenza = await Assenza.create(req.body);
+
+    // Se richiesto, aggiorna le ore da recuperare del docente
+    if (aggiungiOreRecupero && numeroOreRecupero > 0) {
+      try {
+        const docente = await Docente.findById(docenteId);
+        if (docente) {
+          docente.oreRecupero = (docente.oreRecupero || 0) + numeroOreRecupero;
+          await docente.save();
+          
+          console.log(`✅ Aggiunte ${numeroOreRecupero} ore da recuperare al docente ${docente.nome} ${docente.cognome}. Totale: ${docente.oreRecupero}`);
+          
+          // Notifica l'aggiornamento dei contatori
+          await notifyCounterUpdate(docenteId);
+        }
+      } catch (oreError) {
+        console.error('Errore nell\'aggiornamento delle ore da recuperare:', oreError);
+        // Non interrompiamo il processo se l'aggiornamento delle ore fallisce
+      }
+    } else {
+      // Anche se non aggiungiamo ore, notifichiamo l'aggiornamento per le assenze
+      await notifyCounterUpdate(docenteId);
+    }
+
+    // Popola i dati per la risposta
+    const assenzaPopulated = await Assenza.findById(assenza._id)
+      .populate('docente', 'nome cognome email oreRecupero')
+      .populate('registrataDa', 'nome cognome');
 
     res.status(201).json({
       success: true,
-      data: assenza
+      data: assenzaPopulated,
+      message: aggiungiOreRecupero && numeroOreRecupero > 0 
+        ? `Assenza registrata e aggiunte ${numeroOreRecupero} ore da recuperare` 
+        : 'Assenza registrata con successo'
     });
   } catch (error) {
     console.error('Errore nella creazione dell\'assenza:', error);
@@ -285,6 +351,86 @@ exports.autocompleteDocenti = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Errore nella ricerca dei docenti',
+      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    });
+  }
+};
+
+// Ottieni statistiche e contatori aggiornati
+exports.getStatistiche = async (req, res) => {
+  try {
+    const { docenteId } = req.query;
+    
+    if (docenteId) {
+      // Statistiche per un docente specifico
+      const docente = await Docente.findById(docenteId);
+      if (!docente) {
+        return res.status(404).json({
+          success: false,
+          message: 'Docente non trovato'
+        });
+      }
+      
+      const totalAssenze = await Assenza.countDocuments({ docente: docenteId });
+      const assenzeGiustificate = await Assenza.countDocuments({ 
+        docente: docenteId, 
+        giustificata: true 
+      });
+      
+      return res.status(200).json({
+        success: true,
+        data: {
+          docente: {
+            _id: docente._id,
+            nome: docente.nome,
+            cognome: docente.cognome,
+            oreRecupero: docente.oreRecupero || 0
+          },
+          statistiche: {
+            totalAssenze,
+            assenzeGiustificate,
+            assenzeNonGiustificate: totalAssenze - assenzeGiustificate
+          }
+        }
+      });
+    }
+    
+    // Statistiche generali
+    const totalDocenti = await Docente.countDocuments({ stato: 'attivo' });
+    const docentiConOreRecupero = await Docente.countDocuments({ 
+      stato: 'attivo',
+      oreRecupero: { $gt: 0 } 
+    });
+    const totalAssenze = await Assenza.countDocuments();
+    const assenzeGiustificate = await Assenza.countDocuments({ giustificata: true });
+    
+    // Top 5 docenti con più ore da recuperare
+    const topDocentiRecupero = await Docente.find({ 
+      stato: 'attivo',
+      oreRecupero: { $gt: 0 } 
+    })
+    .sort({ oreRecupero: -1 })
+    .limit(5)
+    .select('nome cognome oreRecupero');
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        statistiche: {
+          totalDocenti,
+          docentiConOreRecupero,
+          totalAssenze,
+          assenzeGiustificate,
+          assenzeNonGiustificate: totalAssenze - assenzeGiustificate
+        },
+        topDocentiRecupero
+      }
+    });
+  } catch (error) {
+    console.error('Errore nel recupero delle statistiche:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nel recupero delle statistiche',
       error: process.env.NODE_ENV === 'development' ? error.message : {}
     });
   }

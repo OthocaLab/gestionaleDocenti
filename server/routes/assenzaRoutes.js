@@ -22,6 +22,9 @@ const assenzaValidation = [
 // Rotta per ottenere i docenti assenti per una data specifica
 router.get('/docenti-per-data', assenzaController.getDocentiPerData);
 
+// Rotta per le statistiche e contatori
+router.get('/statistiche', authorizeRoles, assenzaController.getStatistiche);
+
 // Rotta per l'autocomplete dei docenti
 router.get('/autocomplete', authorizeRoles, assenzaController.autocompleteDocenti);
 

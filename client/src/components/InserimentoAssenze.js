@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import styles from '../styles/Inserimento.module.css';
+import { emitCounterUpdate } from '../hooks/useCounterUpdates';
 
 const InserimentoAssenze = () => {
   const { user, isAuthenticated } = useContext(AuthContext);
@@ -22,6 +23,9 @@ const InserimentoAssenze = () => {
   const [orarioSpecifico, setOrarioSpecifico] = useState(false);
   const [orarioEntrata, setOrarioEntrata] = useState('');
   const [orarioUscita, setOrarioUscita] = useState('');
+  // Nuovo stato per ore da recuperare
+  const [aggiungiOreRecupero, setAggiungiOreRecupero] = useState(false);
+  const [numeroOreRecupero, setNumeroOreRecupero] = useState(1);
   
   // Stati per gestire loading e messaggi
   const [isSearching, setIsSearching] = useState(false);
@@ -132,7 +136,10 @@ const InserimentoAssenze = () => {
         // Aggiungiamo i nuovi campi
         orarioSpecifico,
         orarioEntrata: orarioSpecifico ? orarioEntrata : null,
-        orarioUscita: orarioSpecifico ? orarioUscita : null
+        orarioUscita: orarioSpecifico ? orarioUscita : null,
+        // Aggiungiamo i campi per le ore da recuperare
+        aggiungiOreRecupero,
+        numeroOreRecupero: aggiungiOreRecupero ? numeroOreRecupero : 0
       };
       
       const response = await axios.post('/api/assenze', assenzaData, {
@@ -143,7 +150,7 @@ const InserimentoAssenze = () => {
       
       setMessage({
         type: 'success',
-        text: 'Assenza registrata con successo'
+        text: `Assenza registrata con successo${aggiungiOreRecupero ? ` e aggiunte ${numeroOreRecupero} ore da recuperare` : ''}`
       });
       
       // Reset del form
@@ -158,6 +165,16 @@ const InserimentoAssenze = () => {
       setOrarioSpecifico(false);
       setOrarioEntrata('');
       setOrarioUscita('');
+      setAggiungiOreRecupero(false);
+      setNumeroOreRecupero(1);
+      
+      // Emetti evento per aggiornare i contatori nell'applicazione
+      emitCounterUpdate({
+        type: 'ASSENZA_CREATED',
+        docenteId: selectedDocente._id,
+        oreAggiunte: aggiungiOreRecupero ? numeroOreRecupero : 0,
+        timestamp: new Date()
+      });
       
     } catch (error) {
       console.error('Errore nella registrazione dell\'assenza:', error);
@@ -334,6 +351,45 @@ const InserimentoAssenze = () => {
                       </label>
                     </div>
                   </div>
+                </div>
+
+                {/* Nuova sezione per ore da recuperare */}
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <span className={styles.labelIcon}>⏰</span>
+                    Ore da Recuperare
+                  </label>
+                  <div className={styles.checkboxContainer}>
+                    <input
+                      type="checkbox"
+                      id="aggiungiOreRecupero"
+                      className={styles.checkbox}
+                      checked={aggiungiOreRecupero}
+                      onChange={(e) => setAggiungiOreRecupero(e.target.checked)}
+                    />
+                    <label htmlFor="aggiungiOreRecupero" className={styles.checkboxLabel}>
+                      Aggiungere ore da recuperare al docente
+                    </label>
+                  </div>
+                  
+                  {aggiungiOreRecupero && (
+                    <div className={styles.oreRecuperoContainer}>
+                      <label className={styles.subLabel}>
+                        Numero di ore da aggiungere:
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="40"
+                        className={styles.numberInput}
+                        value={numeroOreRecupero}
+                        onChange={(e) => setNumeroOreRecupero(parseInt(e.target.value) || 1)}
+                      />
+                      <small className={styles.helpText}>
+                        Le ore verranno aggiunte al contatore del docente e saranno visibili nei report
+                      </small>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Nuova sezione per orari specifici */}
