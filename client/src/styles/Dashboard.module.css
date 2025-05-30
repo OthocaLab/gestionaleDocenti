@@ -71,10 +71,19 @@
   font-size: 20px;
 }
 
+.userMenuContainer {
+  position: relative;
+}
+
 .userAvatar {
   width: 40px;
   height: 40px;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.userAvatar:hover {
+  transform: scale(1.05);
 }
 
 .avatarCircle {
@@ -88,6 +97,81 @@
   justify-content: center;
   font-weight: bold;
   font-size: 16px;
+}
+
+.userDropdownMenu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 220px;
+  z-index: 1000;
+  border: 1px solid #e1e5e9;
+  overflow: hidden;
+  animation: dropdownSlide 0.2s ease-out;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.userMenuHeader {
+  padding: 16px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.userMenuName {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.userMenuRole {
+  font-size: 12px;
+  color: #666;
+  text-transform: capitalize;
+}
+
+.userMenuDivider {
+  height: 1px;
+  background-color: #e1e5e9;
+}
+
+.userMenuItem {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #555;
+  font-size: 14px;
+}
+
+.userMenuItem:hover {
+  background-color: #f5f7fa;
+  color: #e91e63;
+}
+
+.userMenuItem:last-child:hover {
+  color: #e74c3c;
+}
+
+.userMenuIcon {
+  margin-right: 12px;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
 }
 
 .content {
