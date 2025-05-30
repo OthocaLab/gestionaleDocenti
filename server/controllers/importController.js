@@ -433,10 +433,11 @@ async function processDocente(professore, stats) {
       telefono: professore.telefono || '',
       stato: professore.stato || 'attivo',
       classiInsegnamento: [],
-      oreRecupero: 0
+      oreRecupero: 0,
+      docenteSostegno: professore.docenteSostegno || false
     };
     
-    console.log(`📝 Dati docente: ${codiceDocente}`);
+    console.log(`📝 Dati docente: ${codiceDocente} - Sostegno: ${docenteData.docenteSostegno ? 'Sì' : 'No'}`);
     
     // Gestione delle classi di insegnamento
     if (professore.classiInsegnamento && Array.isArray(professore.classiInsegnamento)) {
@@ -497,15 +498,19 @@ async function processDocente(professore, stats) {
       if (professore.stato) {
         existingDocente.stato = docenteData.stato;
       }
+      // Aggiorna il campo docenteSostegno se specificato nel JSON
+      if (professore.docenteSostegno !== undefined) {
+        existingDocente.docenteSostegno = docenteData.docenteSostegno;
+      }
       
       docente = await existingDocente.save();
       stats.updatedTeachers++;
-      console.log(`✅ Docente aggiornato: ${docente.nome} ${docente.cognome}`);
+      console.log(`✅ Docente aggiornato: ${docente.nome} ${docente.cognome} - Sostegno: ${docente.docenteSostegno ? 'Sì' : 'No'}`);
     } else {
       console.log(`➕ Creazione nuovo docente`);
       docente = await Docente.create(docenteData);
       stats.insertedTeachers++;
-      console.log(`✅ Nuovo docente creato: ${docente.nome} ${docente.cognome}`);
+      console.log(`✅ Nuovo docente creato: ${docente.nome} ${docente.cognome} - Sostegno: ${docente.docenteSostegno ? 'Sì' : 'No'}`);
     }
     
     // Rimuovi gli orari esistenti per il docente

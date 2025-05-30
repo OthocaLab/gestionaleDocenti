@@ -159,6 +159,53 @@ exports.getDocentiRecupero = async (req, res) => {
   }
 };
 
+// Ottieni docenti di sostegno
+exports.getDocentiSostegno = async (req, res) => {
+  try {
+    const { stato } = req.query;
+    
+    let query = { docenteSostegno: true };
+    
+    // Filtra per stato se specificato
+    if (stato) {
+      query.stato = stato;
+    }
+    
+    const docenti = await Docente.find(query).populate('classiInsegnamento');
+    
+    const docentiFormattati = docenti.map(doc => {
+      const docente = doc.toObject();
+      
+      if (docente.classiInsegnamento && docente.classiInsegnamento.length > 0) {
+        const primaClasse = docente.classiInsegnamento[0];
+        docente.classeInsegnamento = primaClasse.codiceClasse || 'N/D';
+        docente.materia = primaClasse.descrizione || 'N/D';
+        docente.codiceMateria = primaClasse.codiceMateria || 'N/D';
+      } else {
+        docente.classeInsegnamento = 'N/D';
+        docente.materia = 'N/D';
+        docente.codiceMateria = 'N/D';
+      }
+      
+      return docente;
+    });
+    
+    res.status(200).json({
+      success: true,
+      count: docentiFormattati.length,
+      data: docentiFormattati
+    });
+  } catch (error) {
+    console.error('Errore getDocentiSostegno:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Errore nel recupero dei docenti di sostegno',
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+};
+
 // Registra sostituzione per un docente
 exports.registraSostituzione = async (req, res) => {
   try {

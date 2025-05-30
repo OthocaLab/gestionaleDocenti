@@ -222,6 +222,11 @@ const ImportaOrario = () => {
   "orari": [
     {
       "professore": "ARDU",
+      "nome": "Mario",
+      "cognome": "Arduini", 
+      "email": "mario.arduini@scuola.it",
+      "telefono": "123456789",
+      "docenteSostegno": false,
       "lezioni": [
         {
           "giorno": "LU",
@@ -233,10 +238,28 @@ const ImportaOrario = () => {
         ...
       ]
     },
+    {
+      "professore": "SOST01",
+      "nome": "Anna",
+      "cognome": "Sostegno",
+      "email": "anna.sostegno@scuola.it",
+      "docenteSostegno": true,
+      "lezioni": [
+        {
+          "giorno": "LU", 
+          "ora": "8:15",
+          "classe": "1A",
+          "aula": "S01",
+          "materia": "SOST"
+        },
+        ...
+      ]
+    },
     ...
   ]
 }`}
           </pre>
+          <p><strong>Nota:</strong> Il campo <code>docenteSostegno</code> (booleano) è opzionale e indica se il docente è un docente di sostegno. Se non specificato, il valore predefinito è <code>false</code>.</p>
         </div>
       </div>
     </div>

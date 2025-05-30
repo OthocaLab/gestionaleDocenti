@@ -41,6 +41,10 @@ const docenteSchema = new mongoose.Schema({
     type: String,
     unique: true,
     sparse: true
+  },
+  docenteSostegno: {
+    type: Boolean,
+    default: false
   }
 });
 

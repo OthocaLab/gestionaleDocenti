@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const docenteController = require('../controllers/docenteController');
 
+// GET /api/docenti/sostegno - Ottieni tutti i docenti di sostegno
+router.get('/sostegno', docenteController.getDocentiSostegno);
+
 // GET /api/docenti - Ottieni tutti i docenti
 router.get('/', docenteController.getAllDocenti);
 
