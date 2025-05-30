@@ -2,9 +2,11 @@ import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/ImpostazioniUtente.module.css';
 import { sendVerificationCode, verifyEmailCode } from '../services/authService';
+import { useUserProfile } from '../hooks/useUserProfile';
 
 const ImpostazioniUtente = () => {
-  const { user } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext);
+  const { updateProfile, isLoading: isUpdating } = useUserProfile();
   const [activeSection, setActiveSection] = useState('informazioniPersonali');
   
   // Stati per le informazioni personali
@@ -105,7 +107,7 @@ const ImpostazioniUtente = () => {
   };
 
   // Gestione della sottomissione del form delle informazioni personali
-  const handleSubmitInformazioniPersonali = (e) => {
+  const handleSubmitInformazioniPersonali = async (e) => {
     e.preventDefault();
     const errori = {};
 
@@ -118,14 +120,29 @@ const ImpostazioniUtente = () => {
       errori.email = 'Inserisci un\'email valida';
     }
 
+    // Validazione telefono (se fornito)
+    if (telefono && !/^(\+39\s?)?((3\d{2}|0\d{1,4})\s?\d{6,8})$/.test(telefono)) {
+      errori.telefono = 'Inserisci un numero di telefono valido (es. +39 333 1234567 o 333 1234567)';
+    }
+
     if (Object.keys(errori).length > 0) {
       setErroriInput(errori);
       return;
     }
 
-    // Qui l'implementazione dell'aggiornamento dei dati utente
-    setMessaggioStato('Informazioni personali aggiornate con successo!');
-    setErroriInput({});
+    const result = await updateProfile({
+      nome,
+      cognome,
+      email,
+      telefono
+    });
+
+    if (result.success) {
+      setMessaggioStato('Informazioni personali aggiornate con successo!');
+      setErroriInput({});
+    } else {
+      setErroriInput({ general: result.error });
+    }
   };
 
   // Gestione della sottomissione del form per il cambio password
@@ -278,9 +295,16 @@ const ImpostazioniUtente = () => {
                 value={telefono}
                 onChange={(e) => setTelefono(e.target.value)}
                 className={styles.input}
+                placeholder="es. +39 333 1234567 o 333 1234567"
               />
               {erroriInput.telefono && <span className={styles.errorMessage}>{erroriInput.telefono}</span>}
             </div>
+            
+            {erroriInput.general && (
+              <div className={`${styles.messaggioStato} ${styles.messaggioErrore}`}>
+                {erroriInput.general}
+              </div>
+            )}
             
             {activeSection === 'informazioniPersonali' && messaggioStato && (
               <div className={`${styles.messaggioStato} ${styles.messaggioSuccesso}`}>
@@ -288,8 +312,8 @@ const ImpostazioniUtente = () => {
               </div>
             )}
             
-            <button type="submit" className={styles.submitButton}>
-              Salva Modifiche
+            <button type="submit" className={styles.submitButton} disabled={isUpdating}>
+              {isUpdating ? 'Salvataggio...' : 'Salva Modifiche'}
             </button>
           </form>
         )}

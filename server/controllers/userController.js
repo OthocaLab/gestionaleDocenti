@@ -50,7 +50,7 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { nome, cognome, email, password, ruolo, materie, classi } = req.body;
+    const { nome, cognome, email, password, ruolo, telefono, materie, classi } = req.body;
 
     // Verifica se l'utente esiste già
     let user = await User.findOne({ email });
@@ -68,6 +68,7 @@ exports.registerUser = async (req, res) => {
       email,
       password,
       ruolo: ruolo || 'docente',
+      telefono,
       materie: materie || [],
       classi: classi || []
     });
@@ -126,7 +127,7 @@ exports.updateUser = async (req, res) => {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { nome, cognome, email, materie, classi } = req.body;
+    const { nome, cognome, email, telefono, materie, classi } = req.body;
 
     // Crea l'oggetto con i campi da aggiornare
     const updateFields = {};
@@ -143,6 +144,7 @@ exports.updateUser = async (req, res) => {
       }
       updateFields.email = email;
     }
+    if (telefono !== undefined) updateFields.telefono = telefono; // Accetta anche stringa vuota per rimuovere il telefono
     if (materie) updateFields.materie = materie;
     if (classi) updateFields.classi = classi;
 
@@ -183,7 +185,7 @@ exports.updateUserById = async (req, res) => {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { nome, cognome, email, ruolo, materie, classi } = req.body;
+    const { nome, cognome, email, ruolo, telefono, materie, classi } = req.body;
 
     // Crea l'oggetto con i campi da aggiornare
     const updateFields = {};
@@ -201,6 +203,7 @@ exports.updateUserById = async (req, res) => {
       updateFields.email = email;
     }
     if (ruolo) updateFields.ruolo = ruolo;
+    if (telefono !== undefined) updateFields.telefono = telefono; // Accetta anche stringa vuota per rimuovere il telefono
     if (materie) updateFields.materie = materie;
     if (classi) updateFields.classi = classi;
 

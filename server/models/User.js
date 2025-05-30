@@ -19,6 +19,18 @@ const UserSchema = new mongoose.Schema({
       'Inserisci un indirizzo email valido'
     ]
   },
+  telefono: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        // Se il telefono è fornito, deve essere valido
+        // Accetta numeri di telefono italiani con/senza prefisso internazionale
+        if (!v) return true; // Campo opzionale
+        return /^(\+39\s?)?((3\d{2}|0\d{1,4})\s?\d{6,8})$/.test(v);
+      },
+      message: 'Inserisci un numero di telefono valido (es. +39 333 1234567 o 333 1234567)'
+    }
+  },
   password: {
     type: String,
     required: [true, 'La password è obbligatoria'],

@@ -108,6 +108,12 @@
   border-left-color: #2ecc71;
 }
 
+.messaggioErrore {
+  background-color: #fdeaea;
+  color: #e74c3c;
+  border-left-color: #e74c3c;
+}
+
 /* Stile per i bottoni */
 .submitButton {
   background-color: #e91e63;
