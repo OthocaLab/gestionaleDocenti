@@ -1,70 +1,109 @@
 .dashboardHome {
   padding: 20px;
   width: 100%;
+  background-color: transparent;
 }
 
 .statsContainer {
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
+  gap: 20px;
 }
 
 .statCard {
   background-color: #fff;
   border-radius: 8px;
-  padding: 15px;
+  padding: 20px;
   width: 30%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.statCard h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .statValue {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
-  margin-top: 10px;
+  margin: 0;
   color: #3a86ff;
 }
 
 .mainContent {
   display: flex;
-  gap: 20px;
+  gap: 30px;
 }
 
 .docentiSection {
   flex: 3;
   background-color: #fff;
   border-radius: 8px;
-  padding: 20px;
+  padding: 25px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
 }
 
 .comunicazioniSection {
   flex: 1;
   background-color: #fff;
   border-radius: 8px;
-  padding: 20px;
+  padding: 25px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.comunicazioniSection h2 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #3a86ff;
+  padding-bottom: 10px;
 }
 
 .tabsContainer {
   display: flex;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   border-bottom: 1px solid #e0e0e0;
+  gap: 5px;
 }
 
 .tabButton {
-  padding: 10px 15px;
+  padding: 12px 20px;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
   color: #666;
   position: relative;
+  transition: all 0.3s ease;
+  border-radius: 6px 6px 0 0;
+}
+
+.tabButton:hover {
+  color: #3a86ff;
+  background-color: #f8f9fa;
 }
 
 .activeTab {
   color: #3a86ff;
-  font-weight: bold;
+  font-weight: 600;
+  background-color: #f8f9fa;
 }
 
 .activeTab::after {
@@ -73,58 +112,16 @@
   bottom: -1px;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 3px;
   background-color: #3a86ff;
-}
-
-.tableContainer {
-  overflow-x: auto;
-}
-
-.docenteTable {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.docenteTable th,
-.docenteTable td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.docenteTable th {
-  font-weight: 500;
-  color: #666;
-}
-
-.actionButton {
-  background: none;
-  border: 1px solid #e0e0e0;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.comunicazioniList {
-  list-style-type: none;
-  padding: 0;
-}
-
-.comunicazioniList li {
-  padding: 10px 0;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .dateContainer {
   margin-bottom: 20px;
   padding: 15px;
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
   border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 .selectedDate {
@@ -137,19 +134,238 @@
 .selectedDate span {
   font-weight: 600;
   color: #333;
+  font-size: 14px;
 }
 
 .calendarToggle {
-  background-color: #1976d2;
+  background-color: #3a86ff;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 8px 16px;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .calendarToggle:hover {
-  background-color: #1565c0;
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.docenteTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.docenteTable th,
+.docenteTable td {
+  padding: 15px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.docenteTable th {
+  font-weight: 600;
+  color: #333;
+  background-color: #f8f9fa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+}
+
+.docenteTable td {
+  color: #555;
+}
+
+.docenteTable tr:hover {
+  background-color: #f8f9fa;
+}
+
+.actionButton {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.actionButton:hover {
+  background-color: #3a86ff;
+  color: white;
+  border-color: #3a86ff;
+}
+
+.comunicazioniList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comunicazioniList li {
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.comunicazioniList li:last-child {
+  border-bottom: none;
+}
+
+.errorMessage {
+  color: #dc3545;
+  text-align: center;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* DARK MODE STYLES - COMPLETO E PROFESSIONALE */
+:global(body.dark-mode) .dashboardHome {
+  background-color: transparent;
+}
+
+:global(body.dark-mode) .statsContainer {
+  gap: 20px;
+}
+
+:global(body.dark-mode) .statCard {
+  background-color: #2d2d2d;
+  border: 1px solid #404040;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark-mode) .statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border-color: #505050;
+}
+
+:global(body.dark-mode) .statCard h3 {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .statValue {
+  color: #64b5f6;
+}
+
+:global(body.dark-mode) .docentiSection,
+:global(body.dark-mode) .comunicazioniSection {
+  background-color: #2d2d2d;
+  border: 1px solid #404040;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark-mode) .comunicazioniSection h2 {
+  color: #e0e0e0;
+  border-bottom: 2px solid #64b5f6;
+}
+
+:global(body.dark-mode) .tabsContainer {
+  border-bottom: 1px solid #404040;
+}
+
+:global(body.dark-mode) .tabButton {
+  color: #b0b0b0;
+}
+
+:global(body.dark-mode) .tabButton:hover {
+  color: #64b5f6;
+  background-color: #3a3a3a;
+}
+
+:global(body.dark-mode) .activeTab {
+  color: #64b5f6;
+  background-color: #3a3a3a;
+}
+
+:global(body.dark-mode) .activeTab::after {
+  background-color: #64b5f6;
+}
+
+:global(body.dark-mode) .dateContainer {
+  background-color: #3a3a3a;
+  border: 1px solid #505050;
+}
+
+:global(body.dark-mode) .selectedDate span {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .calendarToggle {
+  background-color: #64b5f6;
+  color: #1a1a1a;
+}
+
+:global(body.dark-mode) .calendarToggle:hover {
+  background-color: #42a5f5;
+}
+
+:global(body.dark-mode) .tableContainer {
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .docenteTable {
+  background-color: #2d2d2d;
+}
+
+:global(body.dark-mode) .docenteTable th {
+  color: #e0e0e0;
+  background-color: #3a3a3a;
+  border-bottom: 1px solid #505050;
+}
+
+:global(body.dark-mode) .docenteTable td {
+  color: #d0d0d0;
+  border-bottom: 1px solid #404040;
+}
+
+:global(body.dark-mode) .docenteTable tr:hover {
+  background-color: #3a3a3a;
+}
+
+:global(body.dark-mode) .docenteTable tr:hover td {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .actionButton {
+  background: #3a3a3a;
+  border: 1px solid #505050;
+  color: #b0b0b0;
+}
+
+:global(body.dark-mode) .actionButton:hover {
+  background-color: #64b5f6;
+  color: #1a1a1a;
+  border-color: #64b5f6;
+}
+
+:global(body.dark-mode) .comunicazioniList li {
+  border-bottom: 1px solid #404040;
+  color: #d0d0d0;
+}
+
+:global(body.dark-mode) .comunicazioniList li:last-child {
+  border-bottom: none;
+}
+
+:global(body.dark-mode) .errorMessage {
+  color: #ff6b6b;
 }

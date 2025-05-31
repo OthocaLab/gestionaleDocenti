@@ -952,3 +952,348 @@
   color: #666;
   cursor: pointer;
 }
+
+/* DARK MODE STYLES - COMPLETO */
+:global(body.dark-mode) .componentContainer {
+  background-color: transparent;
+}
+
+:global(body.dark-mode) .cardContainer {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+:global(body.dark-mode) .title {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .headerActions {
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .backButton {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .backButton:hover {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .searchSection {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .sectionTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .searchContainer {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .searchInput {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .searchInput:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.3);
+}
+
+:global(body.dark-mode) .searchResults {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+:global(body.dark-mode) .searchResultItem {
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .searchResultItem:hover {
+  background-color: #2a2a2a;
+}
+
+:global(body.dark-mode) .docenteAvatar {
+  background: linear-gradient(135deg, #f48fb1, #f06292);
+  color: #121212;
+}
+
+:global(body.dark-mode) .docenteName {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .docenteEmail,
+:global(body.dark-mode) .docenteCodice,
+:global(body.dark-mode) .classeText {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .noResults {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .selectedDocenteCard {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .selectedDocenteInfo h3 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .selectedDocenteInfo p {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .formSection {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .label {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .input,
+:global(body.dark-mode) .select,
+:global(body.dark-mode) .textarea {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .input:focus,
+:global(body.dark-mode) .select:focus,
+:global(body.dark-mode) .textarea:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.3);
+}
+
+:global(body.dark-mode) .checkboxLabel {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .submitButton {
+  background-color: #64b5f6;
+  color: #121212;
+}
+
+:global(body.dark-mode) .submitButton:hover {
+  background-color: #42a5f5;
+}
+
+:global(body.dark-mode) .submitButton:disabled {
+  background-color: #333333;
+  color: #666666;
+}
+
+:global(body.dark-mode) .cancelButton {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .cancelButton:hover {
+  background-color: #333333;
+}
+
+:global(body.dark-mode) .actionButton,
+:global(body.dark-mode) .actionButtonSmall {
+  background-color: #64b5f6;
+  color: #121212;
+}
+
+:global(body.dark-mode) .actionButton:hover,
+:global(body.dark-mode) .actionButtonSmall:hover {
+  background-color: #42a5f5;
+}
+
+:global(body.dark-mode) .detailsButton,
+:global(body.dark-mode) .editButton {
+  background-color: #64b5f6;
+  color: #121212;
+}
+
+:global(body.dark-mode) .detailsButton:hover,
+:global(body.dark-mode) .editButton:hover {
+  background-color: #42a5f5;
+  box-shadow: 0 4px 8px rgba(100, 181, 246, 0.3);
+}
+
+:global(body.dark-mode) .deleteButton {
+  background-color: #ff6b6b;
+  color: #121212;
+}
+
+:global(body.dark-mode) .deleteButton:hover {
+  background-color: #ff5252;
+  box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+}
+
+:global(body.dark-mode) .filterContainer {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .filterGroup label {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .tableContainer {
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table {
+  background-color: #1e1e1e;
+}
+
+:global(body.dark-mode) .table th {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table td {
+  color: #e0e0e0;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table tr:hover {
+  background-color: #2a2a2a;
+}
+
+:global(body.dark-mode) .errorMessage {
+  background-color: #3d2626;
+  color: #ff6b6b;
+  border: 1px solid #5a3a3a;
+}
+
+:global(body.dark-mode) .successMessage {
+  background-color: #2c4a2c;
+  color: #66bb6a;
+  border: 1px solid #4a6741;
+}
+
+:global(body.dark-mode) .loadingContainer {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .errorContainer {
+  background-color: #3d2626;
+  color: #ff6b6b;
+  border: 1px solid #5a3a3a;
+}
+
+:global(body.dark-mode) .detailCard {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+:global(body.dark-mode) .detailSection {
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .detailGrid {
+  background-color: transparent;
+}
+
+:global(body.dark-mode) .detailGroup {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .detailLabel {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .detailValue {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .badge {
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .badgeSuccess {
+  background-color: #2c4a2c;
+  color: #66bb6a;
+  border-color: #4a6741;
+}
+
+:global(body.dark-mode) .badgeWarning {
+  background-color: #4a3a2c;
+  color: #ffa726;
+  border-color: #6a4a2c;
+}
+
+:global(body.dark-mode) .badgeMalattia {
+  background-color: #2c3a4a;
+  color: #64b5f6;
+  border-color: #3a4a6a;
+}
+
+:global(body.dark-mode) .badgePermesso {
+  background-color: #2c4a4a;
+  color: #4dd0e1;
+  border-color: #3a5a5a;
+}
+
+:global(body.dark-mode) .badgeFerie {
+  background-color: #3a4a2c;
+  color: #81c784;
+  border-color: #4a5a3a;
+}
+
+:global(body.dark-mode) .badgeAltro {
+  background-color: #333333;
+  color: #cccccc;
+  border-color: #444444;
+}
+
+:global(body.dark-mode) .documentLink {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .documentLink:hover {
+  background-color: #333333;
+  color: #64b5f6;
+}
+
+:global(body.dark-mode) .subsectionTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .inputError {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2) !important;
+}
+
+:global(body.dark-mode) .dateError {
+  background-color: #3d2626;
+  color: #ff6b6b;
+  border-left: 3px solid #ff6b6b;
+}
+
+:global(body.dark-mode) .oreRecuperoContainer {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  border-left: 4px solid #64b5f6;
+}
+
+:global(body.dark-mode) .subLabel {
+  color: #cccccc;
+}

@@ -4,6 +4,7 @@
     align-items: center;
     min-height: 100vh;
     background-color: #f5f5f5;
+    transition: background-color 0.3s ease;
   }
   
   .registerCard {
@@ -13,6 +14,8 @@
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
   }
   
   .registerLogo {
@@ -27,6 +30,8 @@
     margin-bottom: 1.5rem;
     color: #333;
     font-size: 1.25rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
   }
   
   .formGroup {
@@ -47,6 +52,7 @@
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: #333;
+    transition: color 0.3s ease;
   }
   
   .formGroup input {
@@ -55,12 +61,25 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    background-color: #fff;
+    color: #333;
+    transition: all 0.3s ease;
+  }
+
+  .formGroup input:focus {
+    border-color: #FD025C;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(253, 2, 92, 0.2);
   }
   
   .errorMessage {
     color: #e53e3e;
     margin-bottom: 1rem;
     font-size: 0.875rem;
+    padding: 0.75rem;
+    background-color: #fdeaea;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
   }
   
   .registerButton {
@@ -72,27 +91,37 @@
     border-radius: 4px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    font-weight: 500;
   }
   
   .registerButton:hover {
     background-color: #770932;
+    transform: translateY(-1px);
   }
   
   .registerButton:disabled {
     background-color: #a0aec0;
     cursor: not-allowed;
+    transform: none;
   }
   
   .registerFooter {
     margin-top: 2rem;
     text-align: center;
     font-size: 0.875rem;
+    color: #666;
+    transition: color 0.3s ease;
   }
   
   .registerFooter a {
     color: #3182ce;
     text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .registerFooter a:hover {
+    color: #2c5282;
   }
   
   .successMessage {
@@ -104,4 +133,73 @@
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 1rem;
+    font-weight: 500;
   }
+
+/* DARK MODE STYLES */
+:global(body.dark-mode) .registerContainer {
+  background: linear-gradient(135deg, #121212, #1e1e1e);
+}
+
+:global(body.dark-mode) .registerCard {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+:global(body.dark-mode) .registerTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .formGroup label {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .formGroup input {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .formGroup input:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .registerButton {
+  background: linear-gradient(135deg, #f48fb1, #f06292);
+  color: #121212;
+}
+
+:global(body.dark-mode) .registerButton:hover {
+  background: linear-gradient(135deg, #f06292, #ec407a);
+}
+
+:global(body.dark-mode) .registerButton:disabled {
+  background-color: #333333;
+  color: #666666;
+}
+
+:global(body.dark-mode) .registerFooter {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .registerFooter a {
+  color: #f48fb1;
+}
+
+:global(body.dark-mode) .registerFooter a:hover {
+  color: #f06292;
+}
+
+:global(body.dark-mode) .errorMessage {
+  background-color: #3d2626;
+  color: #ff6b6b;
+  border: 1px solid #5a3a3a;
+}
+
+:global(body.dark-mode) .successMessage {
+  background-color: #2c4a2c;
+  color: #66bb6a;
+  border: 1px solid #4a6741;
+}

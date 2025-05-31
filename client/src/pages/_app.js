@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { AuthProvider, AuthContext } from '../context/AuthContext';
+import { ThemeProvider } from '../context/ThemeContext';
 import setupAxiosInterceptors from '../utils/axiosConfig';
 import '../styles/globals.css';
 
@@ -16,11 +17,13 @@ const AxiosInterceptor = ({ children }) => {
 
 function MyApp({ Component, pageProps }) {
   return (
-    <AuthProvider>
-      <AxiosInterceptor>
-        <Component {...pageProps} />
-      </AxiosInterceptor>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AxiosInterceptor>
+          <Component {...pageProps} />
+        </AxiosInterceptor>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

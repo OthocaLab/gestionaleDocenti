@@ -4,6 +4,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    background-color: transparent;
   }
   
   .spinner {
@@ -29,4 +30,19 @@
     margin-top: 15px;
     color: #0057d8;
     font-size: 16px;
+    font-weight: 500;
   }
+
+/* DARK MODE STYLES - MIGLIORATO */
+:global(body.dark-mode) .loadingContainer {
+  background-color: transparent;
+}
+
+:global(body.dark-mode) .spinner {
+  border-color: #333333;
+  border-top-color: #64b5f6;
+}
+
+:global(body.dark-mode) .loadingContainer p {
+  color: #64b5f6;
+}

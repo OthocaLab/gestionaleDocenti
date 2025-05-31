@@ -7,6 +7,7 @@
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
 }
 
 .titoloPagina {
@@ -77,6 +78,7 @@
   border-radius: 5px;
   font-size: 14px;
   transition: border 0.3s;
+  background-color: #fff;
 }
 
 .input:focus {
@@ -294,6 +296,10 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .table th,
@@ -319,6 +325,7 @@
   padding: 20px;
   border-radius: 5px;
   margin-bottom: 20px;
+  border: 1px solid #f5c6cb;
 }
 
 .eliminazioneAvviso h3 {
@@ -354,6 +361,7 @@
   border-radius: 8px;
   max-width: 500px;
   width: 100%;
+  border: 1px solid #e0e0e0;
 }
 
 .modalContent h2 {
@@ -365,6 +373,7 @@
 .modalContent p {
   margin-bottom: 20px;
   line-height: 1.5;
+  color: #333;
 }
 
 .modalActions {
@@ -372,4 +381,158 @@
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
+}
+
+/* DARK MODE STYLES - MIGLIORATO */
+:global(body.dark-mode) .containerForm {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .titoloPagina {
+  color: #ffffff;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .tabButton {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .tabButton:hover {
+  background-color: #333333;
+  color: #f48fb1;
+}
+
+:global(body.dark-mode) .tabButton.activeTab {
+  background-color: #f48fb1;
+  color: #121212;
+}
+
+:global(body.dark-mode) .label {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .input {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .input:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .submitButton {
+  background-color: #f48fb1;
+  color: #121212;
+}
+
+:global(body.dark-mode) .submitButton:hover {
+  background-color: #f06292;
+}
+
+:global(body.dark-mode) .submitButton:disabled {
+  background-color: #333333;
+  color: #666666;
+}
+
+:global(body.dark-mode) .buttonSecondary {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .buttonSecondary:hover {
+  background-color: #333333;
+  border-color: #444444;
+}
+
+:global(body.dark-mode) .buttonCancel {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .buttonCancel:hover {
+  background-color: #333333;
+}
+
+:global(body.dark-mode) .checkboxLabel {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .toggleLabel {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .toggleStatus {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .slider {
+  background-color: #444444;
+}
+
+:global(body.dark-mode) .toggle input:checked + .slider {
+  background-color: #f48fb1;
+}
+
+:global(body.dark-mode) .table {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table th {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table td {
+  color: #e0e0e0;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table tr:hover {
+  background-color: #2a2a2a;
+}
+
+:global(body.dark-mode) .attivitaRecenti h3 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .eliminazioneAvviso {
+  background-color: #3d2626;
+  border: 1px solid #5a3a3a;
+}
+
+:global(body.dark-mode) .eliminazioneAvviso h3 {
+  color: #ff6b6b;
+}
+
+:global(body.dark-mode) .eliminazioneAvviso p {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .modal {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+:global(body.dark-mode) .modalContent {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .modalContent h2 {
+  color: #ff6b6b;
+}
+
+:global(body.dark-mode) .modalContent p {
+  color: #e0e0e0;
 } 

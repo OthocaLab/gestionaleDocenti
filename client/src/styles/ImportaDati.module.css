@@ -149,3 +149,95 @@
   background-color: #f5f5f5;
   border-radius: 8px;
 }
+
+/* DARK MODE STYLES - MIGLIORATO */
+:global(body.dark-mode) .importaContainer {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .mainTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .tabsContainer {
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .tabButton {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .tabButton:hover {
+  color: #64b5f6;
+}
+
+:global(body.dark-mode) .activeTab {
+  color: #64b5f6;
+}
+
+:global(body.dark-mode) .activeTab::after {
+  background-color: #64b5f6;
+}
+
+:global(body.dark-mode) .formSection {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .formTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .formLabel {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .formControl {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .formControl:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.3);
+}
+
+:global(body.dark-mode) .submitButton {
+  background-color: #64b5f6;
+  color: #121212;
+}
+
+:global(body.dark-mode) .submitButton:hover {
+  background-color: #42a5f5;
+}
+
+:global(body.dark-mode) .submitButton:disabled {
+  background-color: #333333;
+  color: #666666;
+}
+
+:global(body.dark-mode) .errorMessage {
+  background-color: #3d2626;
+  color: #ff6b6b;
+  border-left: 4px solid #ff6b6b;
+}
+
+:global(body.dark-mode) .successMessage {
+  background-color: #2c4a2c;
+  color: #66bb6a;
+  border-left: 4px solid #66bb6a;
+}
+
+:global(body.dark-mode) .loadingMessage {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .emptyState {
+  color: #cccccc;
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+}

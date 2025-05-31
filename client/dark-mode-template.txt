@@ -1,0 +1,106 @@
+/* DARK MODE STYLES */
+:global(body.dark-mode) .container {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .card {
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) h1,
+:global(body.dark-mode) h2,
+:global(body.dark-mode) h3,
+:global(body.dark-mode) h4,
+:global(body.dark-mode) h5,
+:global(body.dark-mode) h6 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) p,
+:global(body.dark-mode) span,
+:global(body.dark-mode) div {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .button {
+  background-color: #f48fb1;
+  color: #1a1a1a;
+}
+
+:global(body.dark-mode) .button:hover {
+  background-color: #f06292;
+}
+
+:global(body.dark-mode) .button.secondary {
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .button.secondary:hover {
+  background-color: #4a4a4a;
+}
+
+:global(body.dark-mode) input,
+:global(body.dark-mode) select,
+:global(body.dark-mode) textarea {
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) input:focus,
+:global(body.dark-mode) select:focus,
+:global(body.dark-mode) textarea:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.2);
+}
+
+:global(body.dark-mode) .table {
+  background-color: #2d2d2d;
+}
+
+:global(body.dark-mode) .table th {
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .table td {
+  color: #e0e0e0;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .table tr:hover {
+  background-color: #3a3a3a;
+}
+
+:global(body.dark-mode) .modal {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+:global(body.dark-mode) .modalContent {
+  background-color: #2d2d2d;
+  border: 1px solid #4a4a4a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .errorMessage {
+  background-color: #442c2c;
+  color: #ef5350;
+  border-left: 4px solid #ef5350;
+}
+
+:global(body.dark-mode) .successMessage {
+  background-color: #2c4a2c;
+  color: #66bb6a;
+  border-left: 4px solid #66bb6a;
+}
+
+:global(body.dark-mode) .warningMessage {
+  background-color: #4a3a2c;
+  color: #ffa726;
+  border-left: 4px solid #ffa726;
+} 

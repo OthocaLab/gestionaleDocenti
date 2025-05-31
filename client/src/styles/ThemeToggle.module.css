@@ -1,0 +1,125 @@
+.themeToggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggleInput {
+  display: none;
+}
+
+.toggleLabel {
+  cursor: pointer;
+  display: block;
+}
+
+.toggleSlider {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: linear-gradient(135deg, #ffa500, #ffdd44);
+  border-radius: 50px;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+.toggleInput:checked + .toggleLabel .toggleSlider {
+  background: linear-gradient(135deg, #2c5282, #1a365d);
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    0 2px 12px rgba(44, 82, 130, 0.4);
+}
+
+.toggleButton {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: translateX(0);
+}
+
+.toggleInput:checked + .toggleLabel .toggleButton {
+  transform: translateX(30px);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.sunIcon,
+.moonIcon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.sunIcon {
+  left: 8px;
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.moonIcon {
+  right: 8px;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+}
+
+.toggleInput:checked + .toggleLabel .sunIcon {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+}
+
+.toggleInput:checked + .toggleLabel .moonIcon {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+/* Hover effects */
+.toggleLabel:hover .toggleSlider {
+  transform: scale(1.05);
+}
+
+.toggleLabel:hover .toggleButton {
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Active state */
+.toggleLabel:active .toggleSlider {
+  transform: scale(0.95);
+}
+
+/* Animazione di rimbalzo quando viene cliccato */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(-50%);
+  }
+  40% {
+    transform: translateY(-60%);
+  }
+  60% {
+    transform: translateY(-55%);
+  }
+}
+
+.toggleInput:checked + .toggleLabel .moonIcon {
+  animation: bounce 0.6s ease-in-out;
+}
+
+.toggleLabel:not(.toggleInput:checked) .sunIcon {
+  animation: bounce 0.6s ease-in-out;
+} 

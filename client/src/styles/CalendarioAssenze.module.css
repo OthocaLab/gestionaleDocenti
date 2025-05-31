@@ -10,6 +10,8 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
 }
 
 .monthSelector {
@@ -23,6 +25,8 @@
   font-size: 18px;
   margin: 0;
   text-transform: capitalize;
+  color: #333;
+  font-weight: 600;
 }
 
 .monthButton {
@@ -37,11 +41,13 @@
   cursor: pointer;
   font-weight: bold;
   font-size: 16px;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  color: #333;
 }
 
 .monthButton:hover {
   background-color: #e0e0e0;
+  transform: scale(1.1);
 }
 
 .calendar {
@@ -60,7 +66,7 @@
   font-weight: 600;
   color: #666;
   text-transform: uppercase;
-  padding: 5px;
+  padding: 8px 5px;
 }
 
 .calendarBody {
@@ -78,10 +84,13 @@
   cursor: pointer;
   border-radius: 50%;
   transition: all 0.2s;
+  color: #333;
+  font-weight: 500;
 }
 
 .calendarDay:hover {
   background-color: #f5f5f5;
+  transform: scale(1.1);
 }
 
 .selected {
@@ -95,7 +104,8 @@
 }
 
 .today {
-  border: 1px solid #1976d2;
+  border: 2px solid #1976d2;
+  font-weight: bold;
 }
 
 .emptyDay {
@@ -106,15 +116,17 @@
   display: flex;
   justify-content: space-between;
   margin-top: 15px;
+  gap: 10px;
 }
 
 .todayButton, .cancelButton {
   padding: 8px 16px;
   font-size: 14px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .todayButton {
@@ -124,14 +136,17 @@
 
 .todayButton:hover {
   background-color: #1565c0;
+  transform: translateY(-1px);
 }
 
 .cancelButton {
   background-color: #f0f0f0;
+  color: #333;
 }
 
 .cancelButton:hover {
   background-color: #e0e0e0;
+  transform: translateY(-1px);
 }
 
 .assentiSection {
@@ -139,6 +154,8 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
 }
 
 .assentiSection h2 {
@@ -146,46 +163,63 @@
   margin-top: 0;
   margin-bottom: 15px;
   color: #333;
+  font-weight: 600;
 }
 
 .loading, .error, .noResults {
   padding: 15px;
   text-align: center;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 14px;
 }
 
 .loading {
   background-color: #f5f5f5;
+  color: #666;
 }
 
 .error {
   background-color: #ffebee;
   color: #d32f2f;
+  border: 1px solid #ffcdd2;
 }
 
 .noResults {
   background-color: #f5f5f5;
   color: #666;
+  font-style: italic;
 }
 
 .tableContainer {
   overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
+  background-color: #fff;
 }
 
 .table th, .table td {
-  padding: 10px;
+  padding: 12px 10px;
   text-align: left;
   border-bottom: 1px solid #eee;
+  font-size: 14px;
 }
 
 .table th {
   background-color: #f5f5f5;
   font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+}
+
+.table td {
+  color: #555;
 }
 
 .table tr:hover {
@@ -205,4 +239,114 @@
   .assentiSection {
     flex: 2;
   }
+}
+
+/* DARK MODE STYLES */
+:global(body.dark-mode) .calendarSection,
+:global(body.dark-mode) .assentiSection {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+:global(body.dark-mode) .monthTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .monthButton {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .monthButton:hover {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .dayName {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .calendarDay {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .calendarDay:hover {
+  background-color: #2a2a2a;
+}
+
+:global(body.dark-mode) .selected {
+  background-color: #64b5f6;
+  color: #121212;
+}
+
+:global(body.dark-mode) .selected:hover {
+  background-color: #42a5f5;
+}
+
+:global(body.dark-mode) .today {
+  border: 2px solid #64b5f6;
+}
+
+:global(body.dark-mode) .todayButton {
+  background-color: #64b5f6;
+  color: #121212;
+}
+
+:global(body.dark-mode) .todayButton:hover {
+  background-color: #42a5f5;
+}
+
+:global(body.dark-mode) .cancelButton {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .cancelButton:hover {
+  background-color: #333333;
+}
+
+:global(body.dark-mode) .assentiSection h2 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .loading {
+  background-color: #2a2a2a;
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .error {
+  background-color: #3d2626;
+  color: #ff6b6b;
+  border: 1px solid #5a3a3a;
+}
+
+:global(body.dark-mode) .noResults {
+  background-color: #2a2a2a;
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .tableContainer {
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table {
+  background-color: #1e1e1e;
+}
+
+:global(body.dark-mode) .table th {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table td {
+  color: #e0e0e0;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table tr:hover {
+  background-color: #2a2a2a;
 } 

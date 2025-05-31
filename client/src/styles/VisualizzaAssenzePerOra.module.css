@@ -72,3 +72,60 @@
   color: #666;
   font-style: italic;
 }
+
+/* DARK MODE STYLES */
+:global(body.dark-mode) .container {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+:global(body.dark-mode) .input,
+:global(body.dark-mode) .select {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .input:focus,
+:global(body.dark-mode) .select:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.3);
+}
+
+:global(body.dark-mode) .table {
+  background-color: #1e1e1e;
+}
+
+:global(body.dark-mode) .table th {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .table td {
+  color: #e0e0e0;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .button {
+  background-color: #64b5f6;
+  color: #121212;
+}
+
+:global(body.dark-mode) .button:hover {
+  background-color: #42a5f5;
+}
+
+:global(body.dark-mode) .button:disabled {
+  background-color: #333333;
+  color: #666666;
+}
+
+:global(body.dark-mode) .loading {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .noData {
+  color: #cccccc;
+}

@@ -4,6 +4,8 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
 }
 
 .header {
@@ -13,6 +15,7 @@
   margin-bottom: 1.5rem;
   border-bottom: 2px solid #f0f0f0;
   padding-bottom: 1rem;
+  transition: border-color 0.3s ease;
 }
 
 .title {
@@ -20,6 +23,7 @@
   font-weight: 600;
   color: #333;
   margin: 0;
+  transition: color 0.3s ease;
 }
 
 .subTitle {
@@ -27,6 +31,7 @@
   font-weight: 500;
   color: #555;
   margin: 1rem 0 0.5rem 0;
+  transition: color 0.3s ease;
 }
 
 .refreshButton {
@@ -37,6 +42,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 1.1rem;
+  color: #333;
 }
 
 .refreshButton:hover {
@@ -81,6 +87,8 @@
   font-size: 2rem;
   margin-right: 1rem;
   opacity: 0.8;
+  color: #333;
+  transition: color 0.3s ease;
 }
 
 .statContent {
@@ -92,6 +100,7 @@
   font-weight: 700;
   color: #333;
   line-height: 1;
+  transition: color 0.3s ease;
 }
 
 .statLabel {
@@ -99,12 +108,14 @@
   color: #666;
   margin-top: 0.25rem;
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .topSection {
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 2px solid #f0f0f0;
+  transition: border-color 0.3s ease;
 }
 
 .topList {
@@ -114,41 +125,94 @@
 }
 
 .topItem {
-  display: flex;
-  align-items: center;
   padding: 0.75rem;
-  background: #f8f9fa;
+  background-color: #f8f9fa;
   border-radius: 6px;
-  transition: background-color 0.2s ease;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
 }
 
 .topItem:hover {
-  background: #e9ecef;
+  background-color: #e9ecef;
+  transform: translateX(5px);
 }
 
-.topRank {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  background: #FD025C;
-  color: white;
-  border-radius: 50%;
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-right: 1rem;
-}
-
-.topName {
-  flex: 1;
-  font-weight: 500;
+.topItemText {
   color: #333;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-.topValue {
-  font-weight: 600;
-  color: #FD025C;
+/* DARK MODE STYLES */
+:global(body.dark-mode) .container {
+  background: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+:global(body.dark-mode) .header {
+  border-bottom: 2px solid #333333;
+}
+
+:global(body.dark-mode) .title {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .subTitle {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .refreshButton {
+  background: #2a2a2a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .refreshButton:hover {
+  background: #333333;
+}
+
+:global(body.dark-mode) .refreshButton.stale {
+  background: #4a3a2c;
+  border-color: #ffa726;
+}
+
+:global(body.dark-mode) .statCard {
+  background: linear-gradient(135deg, #2a2a2a 0%, #333333 100%);
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .statCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+:global(body.dark-mode) .statIcon {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .statValue {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .statLabel {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .topSection {
+  border-top: 2px solid #333333;
+}
+
+:global(body.dark-mode) .topItem {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+}
+
+:global(body.dark-mode) .topItem:hover {
+  background-color: #333333;
+}
+
+:global(body.dark-mode) .topItemText {
+  color: #e0e0e0;
 }
 
 .footer {

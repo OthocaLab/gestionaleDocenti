@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import GestioneOrario from '../components/GestioneOrario';
 import ImportaOrario from '../components/ImportaOrario';
@@ -14,9 +15,11 @@ import GestioneDidattica from '../components/GestioneDidattica';
 import GestioneSostituzioni from '../components/GestioneSostituzioni';
 import ElencoPianificazioneSostituzioni from '../components/ElencoPianificazioneSostituzioni';
 import ImpostazioniUtente from '../components/ImpostazioniUtente';
+import ThemeToggle from '../components/ThemeToggle';
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, user, logout } = useContext(AuthContext);
+  const { isDarkMode } = useTheme();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -156,6 +159,12 @@ const Dashboard = () => {
                   <div className={styles?.userMenuHeader || 'user-menu-header'}>
                     <div className={styles?.userMenuName || 'user-menu-name'}>{user?.nome} {user?.cognome}</div>
                     <div className={styles?.userMenuRole || 'user-menu-role'}>{user?.ruolo}</div>
+                  </div>
+                  <div className={styles?.userMenuDivider || 'user-menu-divider'}></div>
+                  <div className={styles?.userMenuItem || 'user-menu-item'}>
+                    <span className={styles?.userMenuIcon || 'user-menu-icon'}>🎨</span>
+                    <span style={{ marginRight: '10px' }}>Tema</span>
+                    <ThemeToggle />
                   </div>
                   <div className={styles?.userMenuDivider || 'user-menu-divider'}></div>
                   <div 

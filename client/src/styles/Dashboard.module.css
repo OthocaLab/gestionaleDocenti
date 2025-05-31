@@ -1,8 +1,10 @@
+/* Light Mode (default) */
 .dashboardContainer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: #f5f7fa;
+  transition: background-color 0.3s ease;
 }
 
 .header {
@@ -16,6 +18,8 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .logo {
@@ -32,7 +36,7 @@
 .logoIcon {
   width: 40px;
   height: 40px;
-  background-image:url("../../public/img/logo.png");
+  background-image: url("../../public/img/logo.png");
   background-color: #e91e63;
   color: white;
   border-radius: 8px;
@@ -48,12 +52,14 @@
   font-weight: 600;
   color: #333;
   margin: 0;
+  transition: color 0.3s ease;
 }
 
 .pageTitle {
   font-size: 20px;
   font-weight: 600;
   color: #333;
+  transition: color 0.3s ease;
 }
 
 .userInfo {
@@ -69,6 +75,7 @@
 
 .notificationIcon {
   font-size: 20px;
+  transition: filter 0.3s ease;
 }
 
 .userMenuContainer {
@@ -97,6 +104,7 @@
   justify-content: center;
   font-weight: bold;
   font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
 .userDropdownMenu {
@@ -106,11 +114,12 @@
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  min-width: 220px;
+  min-width: 240px;
   z-index: 1000;
   border: 1px solid #e1e5e9;
   overflow: hidden;
   animation: dropdownSlide 0.2s ease-out;
+  transition: all 0.3s ease;
 }
 
 @keyframes dropdownSlide {
@@ -128,6 +137,7 @@
   padding: 16px 20px;
   background-color: #f8f9fa;
   border-bottom: 1px solid #e1e5e9;
+  transition: all 0.3s ease;
 }
 
 .userMenuName {
@@ -135,17 +145,20 @@
   color: #333;
   font-size: 14px;
   margin-bottom: 4px;
+  transition: color 0.3s ease;
 }
 
 .userMenuRole {
   font-size: 12px;
   color: #666;
   text-transform: capitalize;
+  transition: color 0.3s ease;
 }
 
 .userMenuDivider {
   height: 1px;
   background-color: #e1e5e9;
+  transition: background-color 0.3s ease;
 }
 
 .userMenuItem {
@@ -188,6 +201,8 @@
   top: 70px;
   height: calc(100vh - 70px);
   overflow-y: auto;
+  transition: all 0.3s ease;
+  border-right: 1px solid #e0e0e0;
 }
 
 .sidebar ul {
@@ -211,6 +226,7 @@
   text-decoration: none;
   transition: all 0.3s;
   border-left: 3px solid transparent;
+  font-weight: 500;
 }
 
 .sidebar a:hover {
@@ -251,4 +267,102 @@
   flex: 1;
   padding: 20px 30px;
   overflow-y: auto;
+  transition: all 0.3s ease;
+  background-color: transparent;
+}
+
+/* DARK MODE STYLES - MIGLIORATO */
+:global(body.dark-mode) .dashboardContainer {
+  background-color: #121212;
+}
+
+:global(body.dark-mode) .header {
+  background-color: #1e1e1e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .logo h1 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .pageTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .notificationIcon {
+  filter: brightness(0) saturate(100%) invert(90%);
+}
+
+:global(body.dark-mode) .avatarCircle {
+  background-color: #4299e1;
+}
+
+:global(body.dark-mode) .userDropdownMenu {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+:global(body.dark-mode) .userMenuHeader {
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #333333;
+}
+
+:global(body.dark-mode) .userMenuName {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .userMenuRole {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .userMenuDivider {
+  background-color: #333333;
+}
+
+:global(body.dark-mode) .userMenuItem {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .userMenuItem:hover {
+  background-color: #2a2a2a;
+  color: #f48fb1;
+}
+
+:global(body.dark-mode) .userMenuItem:last-child:hover {
+  color: #ef5350;
+}
+
+:global(body.dark-mode) .sidebar {
+  background-color: #1e1e1e;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
+  border-right: 1px solid #333333;
+}
+
+:global(body.dark-mode) .sidebar a {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .sidebar a:hover {
+  background-color: #2a2a2a;
+  color: #f48fb1;
+}
+
+:global(body.dark-mode) .sidebar a.active {
+  background-color: #2a2a2a;
+  color: #f48fb1;
+  border-left-color: #f48fb1;
+}
+
+:global(body.dark-mode) .logoutItem a {
+  color: #ef5350;
+}
+
+:global(body.dark-mode) .logoutItem a:hover {
+  background-color: #3d2626;
+}
+
+:global(body.dark-mode) .mainContent {
+  background-color: transparent;
 }

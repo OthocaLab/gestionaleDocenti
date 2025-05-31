@@ -4,6 +4,7 @@
     align-items: center;
     min-height: 100vh;
     background-color: #f5f5f5;
+    transition: background-color 0.3s ease;
   }
   
   .loginCard {
@@ -13,6 +14,8 @@
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
   }
   
   .loginLogo {
@@ -26,6 +29,7 @@
     margin-top: 1rem;
     font-size: 1.5rem;
     color: #333;
+    transition: color 0.3s ease;
   }
   
   .formGroup {
@@ -37,6 +41,7 @@
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: #333;
+    transition: color 0.3s ease;
   }
   
   .formGroup input {
@@ -45,12 +50,25 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    background-color: #fff;
+    color: #333;
+    transition: all 0.3s ease;
+  }
+
+  .formGroup input:focus {
+    border-color: #FD025C;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(253, 2, 92, 0.2);
   }
   
   .errorMessage {
     color: #e53e3e;
     margin-bottom: 1rem;
     font-size: 0.875rem;
+    padding: 0.75rem;
+    background-color: #fdeaea;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
   }
   
   .forgotPassword {
@@ -62,6 +80,11 @@
     color: #3182ce;
     text-decoration: none;
     font-size: 0.875rem;
+    transition: color 0.3s ease;
+  }
+
+  .forgotPassword a:hover {
+    color: #2c5282;
   }
   
   .loginButton {
@@ -74,6 +97,7 @@
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.2s;
+    font-weight: 500;
   }
   
   .loginButton:hover {
@@ -94,6 +118,11 @@
   .loginFooter a {
     color: #3182ce;
     text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .loginFooter a:hover {
+    color: #2c5282;
   }
   
   .loginTitle {
@@ -101,10 +130,89 @@
     margin-bottom: 1.5rem;
     color: #333;
     font-size: 1.25rem;
+    transition: color 0.3s ease;
   }
   
   .successMessage {
     color: #38a169;
     margin-bottom: 1rem;
     font-size: 0.875rem;
+    padding: 0.75rem;
+    background-color: #e8f8f5;
+    border-radius: 4px;
+    border: 1px solid #c6f6d5;
+  }
+
+  /* DARK MODE STYLES - MIGLIORATO */
+  :global(body.dark-mode) .loginContainer {
+    background: linear-gradient(135deg, #121212, #1e1e1e);
+  }
+
+  :global(body.dark-mode) .loginCard {
+    background-color: #1e1e1e;
+    border: 1px solid #333333;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  }
+
+  :global(body.dark-mode) .loginTitle,
+  :global(body.dark-mode) .loginLogo h1 {
+    color: #ffffff;
+  }
+
+  :global(body.dark-mode) .formGroup label {
+    color: #e0e0e0;
+  }
+
+  :global(body.dark-mode) .formGroup input {
+    background-color: #2a2a2a;
+    border: 1px solid #333333;
+    color: #e0e0e0;
+  }
+
+  :global(body.dark-mode) .formGroup input:focus {
+    border-color: #f48fb1;
+    box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+  }
+
+  :global(body.dark-mode) .loginButton {
+    background: linear-gradient(135deg, #f48fb1, #f06292);
+    color: #121212;
+  }
+
+  :global(body.dark-mode) .loginButton:hover {
+    background: linear-gradient(135deg, #f06292, #ec407a);
+    transform: translateY(-1px);
+  }
+
+  :global(body.dark-mode) .loginButton:disabled {
+    background-color: #333333;
+    color: #666666;
+  }
+
+  :global(body.dark-mode) .forgotPassword a {
+    color: #f48fb1;
+  }
+
+  :global(body.dark-mode) .forgotPassword a:hover {
+    color: #f06292;
+  }
+
+  :global(body.dark-mode) .loginFooter a {
+    color: #f48fb1;
+  }
+
+  :global(body.dark-mode) .loginFooter a:hover {
+    color: #f06292;
+  }
+
+  :global(body.dark-mode) .errorMessage {
+    background-color: #3d2626;
+    color: #ff6b6b;
+    border: 1px solid #5a3a3a;
+  }
+
+  :global(body.dark-mode) .successMessage {
+    background-color: #2c4a2c;
+    color: #66bb6a;
+    border: 1px solid #4a6741;
   }
