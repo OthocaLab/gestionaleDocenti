@@ -25,6 +25,15 @@
 .logo {
   display: flex;
   align-items: center;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  background-color: #f5f7fa;
+  transform: scale(1.05);
 }
 
 .logoImg {

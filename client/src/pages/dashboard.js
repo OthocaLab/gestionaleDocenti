@@ -130,7 +130,12 @@ const Dashboard = () => {
       `}</style>
       <div className={styles?.dashboardContainer || 'dashboard-container'}>
         <header className={styles?.header || 'header'}>
-          <div className={styles?.logo || 'logo'}>
+          <div 
+            className={styles?.logo || 'logo'}
+            onClick={() => handleTabChange('dashboard')}
+            style={{ cursor: 'pointer' }}
+            title="Torna alla Dashboard"
+          >
             <img src="/img/logo.png" alt="Logo" className={styles?.logoImg || 'logo-img'} />
           </div>
           <div className={styles?.pageTitle || 'page-title'}>
