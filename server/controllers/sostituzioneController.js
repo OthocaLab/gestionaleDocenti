@@ -104,6 +104,12 @@ exports.getAssenzeDaCoprire = async (req, res) => {
     
     // Per ogni assenza
     for (const assenza of assenze) {
+      // Controllo null safety per docente
+      if (!assenza.docente || !assenza.docente._id) {
+        console.warn(`Assenza ${assenza._id} ha un docente null o malformato, saltando...`);
+        continue;
+      }
+
       const docenteId = assenza.docente._id;
       const startDate = new Date(assenza.dataInizio);
       const endDate = new Date(assenza.dataFine);
@@ -134,6 +140,12 @@ exports.getAssenzeDaCoprire = async (req, res) => {
         
         // Per ogni lezione in questo giorno
         for (const lezione of lezioniDelGiorno) {
+          // Controllo null safety per lezione e relative proprietà
+          if (!lezione || !lezione._id || !lezione.materia || !lezione.materia._id) {
+            console.warn(`Lezione malformata per docente ${docenteId}, saltando...`);
+            continue;
+          }
+
           const dataLezione = new Date(currentDate);
           
           // Verifica se questa ora è già stata assegnata a una sostituzione
@@ -189,16 +201,16 @@ exports.getAssenzeDaCoprire = async (req, res) => {
             }
             
             if (includiLezione) {
-              // Formatta il nome della classe
+              // Formatta il nome della classe con controllo null safety
               let classeFormatted = 'N/D';
-              if (lezione.classe) {
+              if (lezione.classe && lezione.classe._id) {
                 if (lezione.classe.anno && lezione.classe.sezione) {
                   classeFormatted = `${lezione.classe.anno}${lezione.classe.sezione}`;
                   if (lezione.classe.indirizzo) {
                     classeFormatted += ` - ${lezione.classe.indirizzo}`;
                   }
                 } else {
-                  classeFormatted = lezione.classe._id ? lezione.classe._id.toString() : 'N/D';
+                  classeFormatted = lezione.classe._id.toString();
                 }
               }
 
@@ -207,8 +219,8 @@ exports.getAssenzeDaCoprire = async (req, res) => {
                 assenzaId: assenza._id.toString(),
                 docente: {
                   id: docenteId.toString(),
-                  nome: assenza.docente.nome,
-                  cognome: assenza.docente.cognome
+                  nome: assenza.docente.nome || 'N/D',
+                  cognome: assenza.docente.cognome || 'N/D'
                 },
                 data: new Date(currentDate),
                 giorno: giornoStr,
@@ -300,16 +312,21 @@ exports.getDocentiDisponibili = async (req, res) => {
       ora: parseInt(ora)
     }).distinct('docenteSostituto');
     
-    // 4. Unisci gli array di docenti impegnati
-    const impegnati = [...docentiImpegnati, ...docentiAssenti, ...docentiSostituzioni];
+    // 4. Unisci gli array di docenti impegnati (con controllo null safety)
+    const impegnati = [
+      ...docentiImpegnati.filter(d => d != null).map(d => d.toString()), 
+      ...docentiAssenti.filter(d => d != null).map(d => d.toString()), 
+      ...docentiSostituzioni.filter(d => d != null).map(d => d.toString())
+    ];
     
-    // 5. Crea l'elenco finale dei docenti disponibili
+    // 5. Crea l'elenco finale dei docenti disponibili con controllo null safety
     const risposta = docentiDisponibili
+      .filter(d => d && d.docente && d.docente._id) // Filtra solo elementi validi
       .filter(d => !impegnati.includes(d.docente._id.toString()))
       .map(d => ({
         id: d.docente._id,
-        nome: d.docente.nome,
-        cognome: d.docente.cognome,
+        nome: d.docente.nome || 'N/D',
+        cognome: d.docente.cognome || 'N/D',
         stato: 'Disponibile'
       }));
     
@@ -366,11 +383,11 @@ exports.getOrarioClasse = async (req, res) => {
       for (let ora = 1; ora <= 8; ora++) {
         const lezione = orarioClasse.find(l => l.giornoSettimana === giorno && l.ora === ora);
         
-        if (lezione) {
+        if (lezione && lezione.docente && lezione.materia) {
           // Se è stata specificata una data, controlla se il docente è assente in quel giorno
           let tipo = 'normale';
           
-          if (data) {
+          if (data && lezione.docente._id) {
             const dataQuery = new Date(data);
             // Converte il giorno della settimana al formato numerico Javascript (0=Dom, 1=Lun, ecc.)
             const mapGiorni = { 'Lun': 1, 'Mar': 2, 'Mer': 3, 'Gio': 4, 'Ven': 5, 'Sab': 6 };
@@ -402,7 +419,7 @@ exports.getOrarioClasse = async (req, res) => {
               ora: lezione.ora
             }).populate('docenteSostituto', 'nome cognome');
             
-            if (sostituzione) {
+            if (sostituzione && sostituzione.docenteSostituto) {
               tipo = 'sostituzione';
               lezione.sostituto = sostituzione.docenteSostituto;
             }
@@ -410,11 +427,13 @@ exports.getOrarioClasse = async (req, res) => {
           
           orarioFormattato[giorno].push({
             ora: lezione.ora,
-            materia: lezione.materia.descrizione,
-            docente: `${lezione.docente.nome} ${lezione.docente.cognome}`,
-            aula: lezione.aula,
+            materia: lezione.materia.descrizione || 'N/D',
+            docente: `${lezione.docente.nome || 'N/D'} ${lezione.docente.cognome || 'N/D'}`,
+            aula: lezione.aula || '',
             tipo: tipo,
-            sostituto: lezione.sostituto ? `${lezione.sostituto.nome} ${lezione.sostituto.cognome}` : null
+            sostituto: (lezione.sostituto && lezione.sostituto.nome && lezione.sostituto.cognome) 
+              ? `${lezione.sostituto.nome} ${lezione.sostituto.cognome}` 
+              : null
           });
         } else {
           orarioFormattato[giorno].push({

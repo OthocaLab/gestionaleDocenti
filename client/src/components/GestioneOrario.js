@@ -714,14 +714,16 @@ const GestioneOrario = () => {
                                     const hasDuplicates = cognomi.some((cognome, idx) => 
                                       cognomi.indexOf(cognome) !== idx && cognome !== '');
                                     
-                                    return lezioni.map((lezione, index) => (
-                                      <span key={lezione.docente._id}>
-                                        {index > 0 ? ', ' : ''}
-                                        {lezione.docente?.cognome || 'N/D'}
-                                        {hasDuplicates && lezione.docente?.nome ? 
-                                          `.${lezione.docente.nome.charAt(0)}` : ''}
-                                      </span>
-                                    ));
+                                    return lezioni
+                                      .filter(lezione => lezione.docente && lezione.docente._id) // Filtra solo lezioni con docente valido
+                                      .map((lezione, index) => (
+                                        <span key={lezione.docente._id}>
+                                          {index > 0 ? ', ' : ''}
+                                          {lezione.docente?.cognome || 'N/D'}
+                                          {hasDuplicates && lezione.docente?.nome ? 
+                                            `.${lezione.docente.nome.charAt(0)}` : ''}
+                                        </span>
+                                      ));
                                   })()}
                                 </div>
                               ) : (
