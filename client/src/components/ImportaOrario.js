@@ -16,6 +16,7 @@ const ImportaOrario = () => {
   const [preview, setPreview] = useState(null);
   const [importStatus, setImportStatus] = useState(null);
   const [polling, setPolling] = useState(false);
+  const [importCompleted, setImportCompleted] = useState(false);
 
   // Polling per monitorare lo stato dell'importazione
   useEffect(() => {
@@ -31,13 +32,23 @@ const ImportaOrario = () => {
           if (!status.data.isRunning) {
             setPolling(false);
             setLoading(false);
+            setImportCompleted(true);
             
             if (status.data.currentStep === 'Importazione completata con successo') {
               setMessage(`Importazione completata con successo! 
                 Processati ${status.data.processedTeachers}/${status.data.totalTeachers} docenti.
                 ${status.data.errors.length > 0 ? `Errori: ${status.data.errors.length}` : ''}`);
+              
+              setTimeout(() => {
+                setImportStatus(null);
+                setImportCompleted(false);
+              }, 3000);
             } else {
               setError(`Importazione fallita: ${status.data.currentStep}`);
+              setTimeout(() => {
+                setImportStatus(null);
+                setImportCompleted(false);
+              }, 5000);
             }
           }
         } catch (err) {
@@ -58,6 +69,7 @@ const ImportaOrario = () => {
     setMessage('');
     setError('');
     setImportStatus(null);
+    setImportCompleted(false);
   };
 
   const handleClassiInsegnamentoFileChange = (e) => {
@@ -97,6 +109,7 @@ const ImportaOrario = () => {
       setMessage('');
       setError('');
       setImportStatus(null);
+      setImportCompleted(false);
       
       // Invia il file direttamente al server
       const response = await importOrario(file);
@@ -190,9 +203,14 @@ const ImportaOrario = () => {
               {importStatus.progress > 0 && (
                 <div className={styles.progressBar}>
                   <div 
-                    className={styles.progressFill} 
+                    className={`${styles.progressFill} ${importCompleted ? styles.progressCompleted : ''}`}
                     style={{ width: `${importStatus.progress}%` }}
                   ></div>
+                </div>
+              )}
+              {importCompleted && (
+                <div className={styles.completedMessage}>
+                  ✅ Importazione completata! La barra scomparirà automaticamente...
                 </div>
               )}
               {importStatus.errors.length > 0 && (
