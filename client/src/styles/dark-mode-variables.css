@@ -1,0 +1,132 @@
+/* VARIABILI CSS PER DARK MODE */
+:root {
+  /* Colori di base - Light Mode */
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f8f9fa;
+  
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  
+  --border-primary: #e0e0e0;
+  --border-secondary: #dee2e6;
+  
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  /* Colori di accento */
+  --accent-primary: #f48fb1;
+  --accent-primary-hover: #f06292;
+  --accent-secondary: #3498db;
+  --accent-secondary-hover: #2980b9;
+  
+  /* Colori di stato */
+  --success-bg: #d4efdf;
+  --success-color: #27ae60;
+  --success-border: #27ae60;
+  
+  --error-bg: #fadbd8;
+  --error-color: #e74c3c;
+  --error-border: #e74c3c;
+  
+  --warning-bg: #fff3cd;
+  --warning-color: #856404;
+  --warning-border: #ffc107;
+  
+  --info-bg: #d1ecf1;
+  --info-color: #0c5460;
+  --info-border: #17a2b8;
+}
+
+/* Dark Mode Variables */
+body.dark-mode {
+  /* Colori di base - Dark Mode */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #3a3a3a;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-tertiary: #b0b0b0;
+  
+  --border-primary: #4a4a4a;
+  --border-secondary: #555555;
+  
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.4);
+  
+  /* Colori di accento rimangono simili ma adattati */
+  --accent-primary: #f48fb1;
+  --accent-primary-hover: #f06292;
+  --accent-secondary: #64b5f6;
+  --accent-secondary-hover: #42a5f5;
+  
+  /* Colori di stato - Dark Mode */
+  --success-bg: rgba(102, 187, 106, 0.2);
+  --success-color: #66bb6a;
+  --success-border: #66bb6a;
+  
+  --error-bg: rgba(239, 83, 80, 0.2);
+  --error-color: #ef5350;
+  --error-border: #ef5350;
+  
+  --warning-bg: rgba(255, 167, 38, 0.2);
+  --warning-color: #ffa726;
+  --warning-border: #ffa726;
+  
+  --info-bg: rgba(100, 181, 246, 0.2);
+  --info-color: #64b5f6;
+  --info-border: #64b5f6;
+}
+
+/* Classi di utilità per dark mode */
+.dark-bg-primary { background-color: var(--bg-primary); }
+.dark-bg-secondary { background-color: var(--bg-secondary); }
+.dark-bg-tertiary { background-color: var(--bg-tertiary); }
+
+.dark-text-primary { color: var(--text-primary); }
+.dark-text-secondary { color: var(--text-secondary); }
+.dark-text-tertiary { color: var(--text-tertiary); }
+
+.dark-border-primary { border-color: var(--border-primary); }
+.dark-border-secondary { border-color: var(--border-secondary); }
+
+.dark-shadow-light { box-shadow: var(--shadow-light); }
+.dark-shadow-medium { box-shadow: var(--shadow-medium); }
+
+/* Transizioni smooth per il cambio tema */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Scrollbar personalizzato per dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-secondary);
+}
+
+/* Focus outline migliorato */
+*:focus {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
+/* Selezione del testo */
+::selection {
+  background-color: var(--accent-secondary);
+  color: var(--bg-primary);
+} 

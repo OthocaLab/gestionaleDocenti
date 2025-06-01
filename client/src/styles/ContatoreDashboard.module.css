@@ -297,4 +297,40 @@
   .topRank {
     margin-right: 0;
   }
+}
+
+:global(body.dark-mode) .footer {
+  border-top: 1px solid #333333;
+}
+
+:global(body.dark-mode) .lastUpdate {
+  color: #cccccc;
+}
+
+:global(body.dark-mode) .staleIndicator {
+  color: #ef5350;
+}
+
+:global(body.dark-mode) .loadingCard,
+:global(body.dark-mode) .errorCard {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .spinner {
+  border: 4px solid rgba(244, 143, 177, 0.3);
+  border-top-color: #f48fb1;
+}
+
+:global(body.dark-mode) .errorIcon {
+  color: #ef5350;
+}
+
+:global(body.dark-mode) .retryButton {
+  background: #f48fb1;
+  color: #1a1a1a;
+}
+
+:global(body.dark-mode) .retryButton:hover {
+  background: #f06292;
 } 

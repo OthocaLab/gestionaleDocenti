@@ -87,6 +87,61 @@
   box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.2);
 }
 
+/* Aggiungo stili per textarea che mancavano */
+.textarea {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border 0.3s;
+  background-color: #fff;
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.textarea:focus {
+  border-color: #e91e63;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.2);
+}
+
+/* Stili per note/bio/informazioni aggiuntive */
+.bioContainer {
+  margin-top: 20px;
+}
+
+.bioTextarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border 0.3s;
+  background-color: #fff;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.bioTextarea:focus {
+  border-color: #e91e63;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.2);
+}
+
+.bioTextarea::placeholder {
+  color: #999999;
+}
+
+/* Fix per tutti i placeholder */
+.input::placeholder,
+.textarea::placeholder,
+.bioTextarea::placeholder {
+  color: #999999;
+}
+
 .errorMessage {
   color: #e74c3c;
   font-size: 12px;
@@ -535,4 +590,104 @@
 
 :global(body.dark-mode) .modalContent p {
   color: #e0e0e0;
+}
+
+/* Aggiungo dark mode per textarea */
+:global(body.dark-mode) .textarea {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .textarea:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .textarea::placeholder {
+  color: #888888;
+}
+
+/* Miglioro i messaggi di stato per dark mode */
+:global(body.dark-mode) .messaggioStato {
+  background-color: #2c4a6b;
+  color: #64b5f6;
+  border-left-color: #64b5f6;
+}
+
+:global(body.dark-mode) .messaggioSuccesso {
+  background-color: #2c4a2c;
+  color: #66bb6a;
+  border-left-color: #66bb6a;
+}
+
+:global(body.dark-mode) .messaggioErrore {
+  background-color: #3d2626;
+  color: #ff6b6b;
+  border-left-color: #ff6b6b;
+}
+
+:global(body.dark-mode) .errorMessage {
+  color: #ff6b6b;
+}
+
+/* Miglioro il buttonDanger per dark mode che mancava */
+:global(body.dark-mode) .buttonDanger {
+  background-color: #ef5350;
+  color: #121212;
+}
+
+:global(body.dark-mode) .buttonDanger:hover {
+  background-color: #e53935;
+}
+
+/* Dark mode per bio/note */
+:global(body.dark-mode) .bioContainer {
+  background-color: transparent;
+}
+
+:global(body.dark-mode) .bioTextarea {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .bioTextarea:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .bioTextarea::placeholder {
+  color: #888888;
+}
+
+/* Fix per tutti i placeholder in dark mode */
+:global(body.dark-mode) .input::placeholder,
+:global(body.dark-mode) .textarea::placeholder,
+:global(body.dark-mode) .bioTextarea::placeholder {
+  color: #888888;
+}
+
+/* Miglioro ulteriormente i checkbox per dark mode */
+:global(body.dark-mode) .checkbox {
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  accent-color: #f48fb1;
+}
+
+:global(body.dark-mode) .checkbox:checked {
+  background-color: #f48fb1;
+  border-color: #f48fb1;
+}
+
+/* Fix per gli slider toggle */
+:global(body.dark-mode) .slider:before {
+  background-color: #ffffff;
+}
+
+/* Fix per button disabled in dark mode che mancava */
+:global(body.dark-mode) .buttonSecondary:disabled {
+  background-color: #2a2a2a;
+  color: #666666;
+  border-color: #333333;
 } 

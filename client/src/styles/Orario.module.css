@@ -2074,3 +2074,281 @@
   background-color: #2a2a2a;
   border: 1px dashed #444444;
 }
+
+/* DARK MODE STYLES - AGGIUNTA ELEMENTI MANCANTI */
+:global(body.dark-mode) .selectContainer {
+  background-color: transparent;
+}
+
+:global(body.dark-mode) .select {
+  background: #2a2a2a;
+  border: 1.5px solid #404040;
+  color: #e0e0e0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+:global(body.dark-mode) .select:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+  background: #2a2a2a;
+}
+
+:global(body.dark-mode) .select:hover {
+  border-color: #f48fb1;
+  background: #333333;
+}
+
+:global(body.dark-mode) .orarioTable table {
+  border: 1px solid #404040;
+  background-color: #2a2a2a;
+}
+
+:global(body.dark-mode) .orarioTable th,
+:global(body.dark-mode) .orarioTable td {
+  border: 1px solid #404040;
+  background-color: #2a2a2a;
+}
+
+:global(body.dark-mode) .orarioTable th {
+  background-color: #333333;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .orarioTable td {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .timeInput {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .timeInput:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .importContainer {
+  background-color: transparent;
+}
+
+:global(body.dark-mode) .importForm {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .fileInput {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .instructions {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .instructions pre {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .viewToggle button {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .viewToggle button:hover {
+  background-color: #333333;
+}
+
+:global(body.dark-mode) .activeButton {
+  background-color: #f48fb1 !important;
+  color: #1a1a1a !important;
+}
+
+:global(body.dark-mode) .importButton {
+  background-color: #64b5f6;
+  color: #1a1a1a;
+}
+
+:global(body.dark-mode) .importButton:hover {
+  background-color: #42a5f5;
+}
+
+:global(body.dark-mode) .importButton:disabled {
+  background-color: #404040;
+  color: #888888;
+}
+
+:global(body.dark-mode) .cancelButton {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .cancelButton:hover {
+  background-color: #333333;
+}
+
+:global(body.dark-mode) .modalOverlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+:global(body.dark-mode) .modalContent {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+:global(body.dark-mode) .modalHeader {
+  border-bottom: 1px solid #404040;
+}
+
+:global(body.dark-mode) .modalHeader h3 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .closeButton {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .closeButton:hover {
+  color: #ffffff;
+  background-color: #404040;
+}
+
+:global(body.dark-mode) .modalBody {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .modalSearchInput {
+  background-color: #1a1a1a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .modalSearchInput:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .modalSearchInput::placeholder {
+  color: #888888;
+}
+
+:global(body.dark-mode) .importStatus {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .progressBar {
+  background-color: #404040;
+}
+
+:global(body.dark-mode) .progressFill {
+  background: linear-gradient(90deg, #f48fb1, #f06292);
+}
+
+:global(body.dark-mode) .errorList {
+  background-color: rgba(239, 83, 80, 0.2);
+  border: 1px solid #ef5350;
+  color: #ef5350;
+}
+
+:global(body.dark-mode) .tabsContainer {
+  border-bottom: 1px solid #404040;
+}
+
+:global(body.dark-mode) .tabButton {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .tabButton:hover {
+  background-color: #333333;
+  color: #f48fb1;
+}
+
+:global(body.dark-mode) .tabButton.activeTab {
+  background-color: #f48fb1;
+  color: #1a1a1a;
+}
+
+:global(body.dark-mode) .jsonExample {
+  background-color: #1a1a1a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .jsonTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .gestioneClassiContainer {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .classeForm {
+  background-color: #1a1a1a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .dataTable {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .colorSample {
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .filterContainer {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .filterInput,
+:global(body.dark-mode) .rangeInput {
+  background-color: #1a1a1a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .filterInput:focus,
+:global(body.dark-mode) .rangeInput:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .filterLabel {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .selectWithButton {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .selectWithButton select {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: none;
+}
+
+:global(body.dark-mode) .selectWithButton button {
+  background-color: #f48fb1;
+  color: #1a1a1a;
+  border: none;
+}
+
+:global(body.dark-mode) .selectWithButton button:hover {
+  background-color: #f06292;
+}

@@ -469,3 +469,242 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+/* DARK MODE STYLES */
+:global(body.dark-mode) .pageContainer {
+  background-color: #1a1a1a;
+}
+
+:global(body.dark-mode) .mainTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .statCard {
+  background: #2d2d2d;
+  border: 1px solid #4a4a4a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark-mode) .statIcon {
+  background-color: rgba(100, 181, 246, 0.2);
+}
+
+:global(body.dark-mode) .statValue {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .statLabel {
+  color: #b0b0b0;
+}
+
+:global(body.dark-mode) .successMessage {
+  background-color: rgba(102, 187, 106, 0.2);
+  border-left: 4px solid #66bb6a;
+  color: #66bb6a;
+}
+
+:global(body.dark-mode) .errorMessage {
+  background-color: rgba(239, 83, 80, 0.2);
+  border-left: 4px solid #ef5350;
+  color: #ef5350;
+}
+
+:global(body.dark-mode) .filterContainer,
+:global(body.dark-mode) .tableWrapper {
+  background: #2d2d2d;
+  border: 1px solid #4a4a4a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark-mode) .searchInput,
+:global(body.dark-mode) .smallInput {
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .searchInput:focus,
+:global(body.dark-mode) .smallInput:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.2);
+}
+
+:global(body.dark-mode) .searchInput::placeholder,
+:global(body.dark-mode) .smallInput::placeholder {
+  color: #888;
+}
+
+:global(body.dark-mode) .searchIcon {
+  color: #b0b0b0;
+}
+
+:global(body.dark-mode) .smallButton:first-child {
+  background-color: #ab47bc;
+}
+
+:global(body.dark-mode) .smallButton:first-child:hover {
+  background-color: #9c27b0;
+}
+
+:global(body.dark-mode) .smallButton:last-child {
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .smallButton:last-child:hover {
+  background-color: #4a4a4a;
+}
+
+:global(body.dark-mode) .dataTable {
+  background-color: #2d2d2d;
+}
+
+:global(body.dark-mode) .dataTable th {
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  border-bottom: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .dataTable td {
+  color: #e0e0e0;
+  border-bottom: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .dataTable tr:hover {
+  background-color: #3a3a3a;
+}
+
+:global(body.dark-mode) .classeNome {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .materiaTag {
+  background-color: #4a4a4a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .docenteName {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .avatarCircle {
+  background-color: #64b5f6;
+}
+
+:global(body.dark-mode) .oreBadge {
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .oreBadge.pending {
+  background-color: rgba(255, 167, 38, 0.2);
+  color: #ffa726;
+}
+
+:global(body.dark-mode) .oreBadge.completed {
+  background-color: rgba(102, 187, 106, 0.2);
+  color: #66bb6a;
+}
+
+:global(body.dark-mode) .actionButton {
+  background-color: #f48fb1;
+  color: #1a1a1a;
+}
+
+:global(body.dark-mode) .actionButton:hover {
+  background-color: #f06292;
+}
+
+:global(body.dark-mode) .loadingState,
+:global(body.dark-mode) .errorState,
+:global(body.dark-mode) .emptyState {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .emptyState p {
+  color: #b0b0b0;
+}
+
+:global(body.dark-mode) .modalOverlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+:global(body.dark-mode) .modal {
+  background-color: #2d2d2d;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .modalHeader {
+  border-bottom: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .modalTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .closeButton {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .closeButton:hover {
+  color: #ffffff;
+  background-color: #4a4a4a;
+}
+
+:global(body.dark-mode) .modalBody {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .docenteNomeModal {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .docenteEmailModal {
+  color: #b0b0b0;
+}
+
+:global(body.dark-mode) .formGroup label {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .textInput,
+:global(body.dark-mode) .textArea {
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .textInput:focus,
+:global(body.dark-mode) .textArea:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.2);
+}
+
+:global(body.dark-mode) .modalFooter {
+  border-top: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .cancelButton {
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .cancelButton:hover {
+  background-color: #4a4a4a;
+}
+
+:global(body.dark-mode) .saveButton {
+  background-color: #f48fb1;
+  color: #1a1a1a;
+}
+
+:global(body.dark-mode) .saveButton:hover {
+  background-color: #f06292;
+}
+
+:global(body.dark-mode) .saveButton:disabled {
+  background-color: #4a4a4a;
+  color: #888;
+}

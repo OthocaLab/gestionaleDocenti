@@ -325,4 +325,113 @@
   100% {
     left: 100%;
   }
+}
+
+/* DARK MODE STYLES */
+:global(body.dark-mode) .tabContent {
+  background: #2d2d2d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark-mode) .tabContent h3 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .importForm {
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .fileInput label {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .fileInput input[type="file"] {
+  background-color: #3a3a3a;
+  border: 2px dashed #4a4a4a;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .fileInput input[type="file"]:hover {
+  border-color: #f48fb1;
+}
+
+:global(body.dark-mode) .importButton {
+  background-color: #f48fb1;
+  color: #1a1a1a;
+}
+
+:global(body.dark-mode) .importButton:hover {
+  background-color: #f06292;
+}
+
+:global(body.dark-mode) .importButton:disabled {
+  background-color: #4a4a4a;
+  color: #888;
+}
+
+:global(body.dark-mode) .successMessage {
+  background-color: rgba(102, 187, 106, 0.2);
+  color: #66bb6a;
+  border-left: 4px solid #66bb6a;
+}
+
+:global(body.dark-mode) .errorMessage {
+  background-color: rgba(239, 83, 80, 0.2);
+  color: #ef5350;
+  border-left: 4px solid #ef5350;
+}
+
+:global(body.dark-mode) .importStatus {
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .importStatus h4 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .statusInfo p {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .statusInfo p strong {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .progressBar {
+  background-color: #4a4a4a;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark-mode) .progressFill {
+  background: linear-gradient(90deg, #f48fb1, #f06292);
+}
+
+:global(body.dark-mode) .errorList {
+  background-color: rgba(239, 83, 80, 0.2);
+  border: 1px solid #ef5350;
+}
+
+:global(body.dark-mode) .errorList p {
+  color: #ef5350;
+}
+
+:global(body.dark-mode) .errorList li {
+  color: #ef5350;
+}
+
+:global(body.dark-mode) .instructions {
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+}
+
+:global(body.dark-mode) .instructions h4 {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .instructions pre {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border: 1px solid #4a4a4a;
 } 

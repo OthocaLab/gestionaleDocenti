@@ -1,4 +1,18 @@
-/* DARK MODE STYLES */
+/* DARK MODE TEMPLATE - AGGIORNATO */
+
+/* UTILIZZO DELLE VARIABILI CSS (RACCOMANDATO) */
+/* Importa sempre le variabili nel tuo file CSS */
+@import './dark-mode-variables.css';
+
+/* Esempio di utilizzo delle variabili */
+.component {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-light);
+}
+
+/* PATTERN LEGACY (per compatibilità) */
 :global(body.dark-mode) .container {
   background-color: #2d2d2d;
   color: #e0e0e0;
@@ -54,8 +68,8 @@
 :global(body.dark-mode) input:focus,
 :global(body.dark-mode) select:focus,
 :global(body.dark-mode) textarea:focus {
-  border-color: #f48fb1;
-  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.2);
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.2);
 }
 
 :global(body.dark-mode) .table {
@@ -88,19 +102,51 @@
 }
 
 :global(body.dark-mode) .errorMessage {
-  background-color: #442c2c;
+  background-color: rgba(239, 83, 80, 0.2);
   color: #ef5350;
   border-left: 4px solid #ef5350;
 }
 
 :global(body.dark-mode) .successMessage {
-  background-color: #2c4a2c;
+  background-color: rgba(102, 187, 106, 0.2);
   color: #66bb6a;
   border-left: 4px solid #66bb6a;
 }
 
 :global(body.dark-mode) .warningMessage {
-  background-color: #4a3a2c;
+  background-color: rgba(255, 167, 38, 0.2);
   color: #ffa726;
   border-left: 4px solid #ffa726;
-} 
+}
+
+:global(body.dark-mode) .infoMessage {
+  background-color: rgba(100, 181, 246, 0.2);
+  color: #64b5f6;
+  border-left: 4px solid #64b5f6;
+}
+
+/* VARIABILI CSS DISPONIBILI */
+/*
+--bg-primary: Sfondo principale
+--bg-secondary: Sfondo secondario (card, modali)
+--bg-tertiary: Sfondo terziario (input, hover)
+
+--text-primary: Testo principale (titoli)
+--text-secondary: Testo secondario (paragrafi)
+--text-tertiary: Testo terziario (placeholder)
+
+--border-primary: Bordi principali
+--border-secondary: Bordi secondari
+
+--accent-primary: Colore accento principale (#f48fb1)
+--accent-primary-hover: Hover accento principale
+--accent-secondary: Colore accento secondario (#64b5f6)
+
+--success-bg, --success-color, --success-border
+--error-bg, --error-color, --error-border
+--warning-bg, --warning-color, --warning-border
+--info-bg, --info-color, --info-border
+
+--shadow-light: Ombra leggera
+--shadow-medium: Ombra media
+*/ 

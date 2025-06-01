@@ -64,3 +64,45 @@
       opacity: 1;
     }
   }
+
+  /* DARK MODE STYLES */
+  body.dark-mode .notification {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  body.dark-mode .notification.success {
+    background-color: rgba(102, 187, 106, 0.2);
+    color: #66bb6a;
+    border-left: 4px solid #66bb6a;
+  }
+
+  body.dark-mode .notification.error {
+    background-color: rgba(239, 83, 80, 0.2);
+    color: #ef5350;
+    border-left: 4px solid #ef5350;
+  }
+
+  body.dark-mode .notification.info {
+    background-color: rgba(100, 181, 246, 0.2);
+    color: #64b5f6;
+    border-left: 4px solid #64b5f6;
+  }
+
+  body.dark-mode .notification.warning {
+    background-color: rgba(255, 167, 38, 0.2);
+    color: #ffa726;
+    border-left: 4px solid #ffa726;
+  }
+
+  body.dark-mode .notification p {
+    color: inherit;
+  }
+
+  body.dark-mode .close-btn {
+    color: inherit;
+    opacity: 0.8;
+  }
+
+  body.dark-mode .close-btn:hover {
+    opacity: 1;
+  }
