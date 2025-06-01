@@ -295,6 +295,10 @@
   color: #ffffff;
 }
 
+:global(body.dark-mode) .logo:hover {
+  background-color: #2a2a2a;
+}
+
 :global(body.dark-mode) .pageTitle {
   color: #ffffff;
 }
