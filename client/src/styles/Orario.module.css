@@ -2112,3 +2112,70 @@
   color: #66bb6a;
   border: 1px solid #4a6741;
 }
+
+:global(body.dark-mode) .formSection {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .classiList {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .formTitle,
+:global(body.dark-mode) .tableTitle {
+  color: #ffffff;
+}
+
+:global(body.dark-mode) .formLabel {
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .formControl,
+:global(body.dark-mode) .textInput {
+  background-color: #1a1a1a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .formControl:focus,
+:global(body.dark-mode) .textInput:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .emptyState {
+  color: #b0b0b0;
+}
+
+:global(body.dark-mode) .emptySubtext {
+  color: #888888;
+}
+
+:global(body.dark-mode) .select {
+  background-color: #1a1a1a;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+}
+
+:global(body.dark-mode) .select:focus {
+  border-color: #f48fb1;
+  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
+}
+
+:global(body.dark-mode) .dataTable {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+:global(body.dark-mode) .dataTable th {
+  background-color: #333333;
+  color: #e0e0e0;
+  border-bottom: 1px solid #404040;
+}
+
+:global(body.dark-mode) .dataTable td {
+  color: #e0e0e0;
+  border-bottom: 1px solid #404040;
+}
