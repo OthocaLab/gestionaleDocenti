@@ -581,6 +581,12 @@
   transition: background 0.2s;
   width: 100px;
   justify-content: center;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.actionButton:hover {
+  background: #e5e7eb;
 }
 
 .editButton {
@@ -1797,7 +1803,7 @@
 }
 
 :global(body.dark-mode) .searchBox {
-  background: #2a2a2a;
+  background-color: #2a2a2a;
   border: 1px solid #333333;
 }
 
@@ -2215,4 +2221,133 @@
 
 :global(body.dark-mode) .headerActions {
   background-color: transparent;
+}
+
+/* Fix per actionButton nell'header (i bottoni 📄 ✏️) */
+:global(body.dark-mode) .actionButton {
+  background-color: #3a3a3a !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #4a4a4a !important;
+}
+
+:global(body.dark-mode) .actionButton:hover {
+  background-color: #4a4a4a !important;
+  color: #f48fb1 !important;
+  border-color: #f48fb1 !important;
+}
+
+/* Fix per i bottoni filtro (Docenti, Classe, Aule) */
+:global(body.dark-mode) .filterButton {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404040 !important;
+}
+
+:global(body.dark-mode) .filterButton:hover {
+  background-color: #333333 !important;
+  color: #f48fb1 !important;
+  border-color: #f48fb1 !important;
+}
+
+:global(body.dark-mode) .activeFilter {
+  background-color: #f48fb1 !important;
+  color: #1a1a1a !important;
+  border-color: #f48fb1 !important;
+}
+
+/* Fix per searchBox e searchIcon */
+:global(body.dark-mode) .searchBox {
+  background-color: #2a2a2a !important;
+  border: 1px solid #404040 !important;
+}
+
+:global(body.dark-mode) .searchIcon {
+  color: #cccccc !important;
+}
+
+/* Fix per submitButton e cancelButton */
+:global(body.dark-mode) .submitButton {
+  background-color: #f48fb1 !important;
+  color: #1a1a1a !important;
+  border: none !important;
+}
+
+:global(body.dark-mode) .submitButton:hover {
+  background-color: #f06292 !important;
+}
+
+:global(body.dark-mode) .submitButton:disabled {
+  background-color: #404040 !important;
+  color: #888888 !important;
+}
+
+/* Fix per spinner nella dark mode */
+:global(body.dark-mode) .spinner {
+  border: 3px solid #404040 !important;
+  border-top: 3px solid #f48fb1 !important;
+}
+
+/* Fix per searchingIndicator */
+:global(body.dark-mode) .searchingIndicator {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404040 !important;
+}
+
+/* Fix per searchResults */
+:global(body.dark-mode) .searchResults {
+  background-color: #2a2a2a !important;
+  border: 1px solid #404040 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+}
+
+:global(body.dark-mode) .searchResultItem {
+  color: #e0e0e0 !important;
+  border-bottom: 1px solid #404040 !important;
+}
+
+:global(body.dark-mode) .searchResultItem:hover {
+  background-color: #333333 !important;
+  color: #f48fb1 !important;
+}
+
+/* Fix per docenteInfo */
+:global(body.dark-mode) .docenteName {
+  color: #ffffff !important;
+}
+
+:global(body.dark-mode) .docenteEmail,
+:global(body.dark-mode) .docenteCodice {
+  color: #cccccc !important;
+}
+
+/* Fix per classeText nelle celle dell'orario */
+:global(body.dark-mode) .classeText {
+  color: #ffffff !important;
+}
+
+/* Fix per il container searchContainer */
+:global(body.dark-mode) .searchContainer {
+  background-color: #2a2a2a !important;
+}
+
+:global(body.dark-mode) .searchContainer .searchIcon {
+  color: #cccccc !important;
+}
+
+/* Fix per formActions */
+:global(body.dark-mode) .formActions {
+  background-color: transparent !important;
+}
+
+/* Miglioramento per lezioneCell in dark mode */
+:global(body.dark-mode) .emptyLezione {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333333 !important;
+}
+
+
+/* Fix per emptyLezioneContent */
+:global(body.dark-mode) .emptyLezioneContent {
+  background-color: transparent !important;
 }
