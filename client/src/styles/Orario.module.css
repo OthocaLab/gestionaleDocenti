@@ -181,6 +181,20 @@
   justify-content: center;
 }
 
+.lezione .materiaText {
+  font-weight: bold;
+  font-size: 0.95em;
+  margin-bottom: 3px;
+  letter-spacing: 0.2px;
+  color: white !important;
+}
+
+.lezione .docenteText {
+  font-size: 0.85em;
+  margin-bottom: 3px;
+  color: white !important;
+}
+
 .materia {
   font-weight: bold;
   margin-bottom: 5px;
@@ -765,18 +779,6 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
   background-color: rgba(0, 0, 0, 0.35);
   border-radius: 4px;
-}
-
-.materiaText {
-  font-weight: bold;
-  font-size: 0.95em;
-  margin-bottom: 3px;
-  letter-spacing: 0.2px;
-}
-
-.docenteText {
-  font-size: 0.85em;
-  margin-bottom: 3px;
 }
 
 .aulaText {
@@ -1640,6 +1642,7 @@
 .docenteInfo {
   flex: 1;
   min-width: 0;
+
 }
 
 .docenteName {
@@ -1892,463 +1895,37 @@
   color: #ffffff;
 }
 
-:global(body.dark-mode) .materiaText {
-  color: #ffffff;
-}
-
-:global(body.dark-mode) .docenteText {
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .aulaText {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-:global(body.dark-mode) .importPanel {
-  background-color: #1e1e1e;
-  border: 1px solid #333333;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-:global(body.dark-mode) .importHeader h3 {
-  color: #ffffff;
-}
-
-:global(body.dark-mode) .importForm {
-  background-color: #2a2a2a;
-  border: 1px solid #333333;
-}
-
-:global(body.dark-mode) .fileInputLabel {
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .fileInput {
-  background-color: #1e1e1e;
-  border: 1px dashed #666666;
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .importButton {
-  background-color: #66bb6a;
-  color: #1a1a1a;
-}
-
-:global(body.dark-mode) .importButton:hover {
-  background-color: #4caf50;
-}
-
-:global(body.dark-mode) .importButton:disabled {
-  background-color: #404040;
-  color: #888888;
-}
-
-:global(body.dark-mode) .cancelButton {
-  background-color: #2a2a2a;
-  color: #e0e0e0;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .cancelButton:hover {
-  background-color: #333333;
-}
-
-:global(body.dark-mode) .modalOverlay {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-:global(body.dark-mode) .modalContent {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-  color: #e0e0e0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-}
-
-:global(body.dark-mode) .modalHeader {
-  border-bottom: 1px solid #404040;
-  background-color: #2a2a2a !important;
-}
-
-:global(body.dark-mode) .modalHeader h3 {
-  color: #ffffff;
-}
-
-:global(body.dark-mode) .closeButton {
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .closeButton:hover {
-  color: #ffffff;
-  background-color: #404040;
-}
-
-:global(body.dark-mode) .modalBody {
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .modalSearchInput {
-  background-color: #1a1a1a;
-  border: 1px solid #404040;
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .modalSearchInput:focus {
-  border-color: #f48fb1;
-  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
-}
-
-:global(body.dark-mode) .modalSearchInput::placeholder {
-  color: #888888;
-}
-
-:global(body.dark-mode) .importStatus {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .progressBar {
-  background-color: #404040;
-}
-
-:global(body.dark-mode) .progressFill {
-  background: linear-gradient(90deg, #f48fb1, #f06292);
-}
-
-:global(body.dark-mode) .errorList {
-  background-color: rgba(239, 83, 80, 0.2);
-  border: 1px solid #ef5350;
-  color: #ef5350;
-}
-
-:global(body.dark-mode) .tabsContainer {
-  border-bottom: 1px solid #404040;
-}
-
-:global(body.dark-mode) .tabButton {
-  background-color: #2a2a2a;
-  color: #e0e0e0;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .tabButton:hover {
-  background-color: #333333;
-  color: #f48fb1;
-}
-
-:global(body.dark-mode) .tabButton.activeTab {
-  background-color: #f48fb1;
-  color: #1a1a1a;
-}
-
-:global(body.dark-mode) .jsonExample {
-  background-color: #1a1a1a;
-  border: 1px solid #404040;
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .jsonTitle {
-  color: #ffffff;
-}
-
-:global(body.dark-mode) .gestioneClassiContainer {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .classeForm {
-  background-color: #1a1a1a;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .dataTable {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .colorSample {
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .filterContainer {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .filterInput,
-:global(body.dark-mode) .rangeInput {
-  background-color: #1a1a1a;
-  border: 1px solid #404040;
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .filterInput:focus,
-:global(body.dark-mode) .rangeInput:focus {
-  border-color: #f48fb1;
-  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
-}
-
-:global(body.dark-mode) .filterLabel {
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .selectWithButton {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .selectWithButton select {
-  background-color: #2a2a2a;
-  color: #e0e0e0;
-  border: none;
-}
-
-:global(body.dark-mode) .selectWithButton button {
-  background-color: #f48fb1;
-  color: #1a1a1a;
-  border: none;
-}
-
-:global(body.dark-mode) .selectWithButton button:hover {
-  background-color: #f06292;
-}
-
-/* Dark mode per il messaggio di operazione completata */
-:global(body.dark-mode) .operationCompleted {
-  background-color: #2c4a2c;
-  color: #66bb6a;
-  border: 1px solid #4a6741;
-}
-
-:global(body.dark-mode) .formSection {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .classiList {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .formTitle,
-:global(body.dark-mode) .tableTitle {
-  color: #ffffff;
-}
-
-:global(body.dark-mode) .formLabel {
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .formControl,
-:global(body.dark-mode) .textInput {
-  background-color: #1a1a1a;
-  border: 1px solid #404040;
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .formControl:focus,
-:global(body.dark-mode) .textInput:focus {
-  border-color: #f48fb1;
-  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
-}
-
-:global(body.dark-mode) .emptyState {
-  color: #b0b0b0;
-}
-
-:global(body.dark-mode) .emptySubtext {
-  color: #888888;
-}
-
-:global(body.dark-mode) .select {
-  background-color: #1a1a1a;
-  border: 1px solid #404040;
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .select:focus {
-  border-color: #f48fb1;
-  box-shadow: 0 0 0 2px rgba(244, 143, 177, 0.3);
-}
-
-:global(body.dark-mode) .dataTable {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-}
-
-:global(body.dark-mode) .dataTable th {
-  background-color: #333333;
-  color: #e0e0e0;
-  border-bottom: 1px solid #404040;
-}
-
-:global(body.dark-mode) .dataTable td {
-  color: #e0e0e0;
-  border-bottom: 1px solid #404040;
-}
-
-/* Aggiunta regole dark mode per messaggi "no results" e stati vuoti */
-:global(body.dark-mode) .noResultsMessage {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-  color: #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-:global(body.dark-mode) .noResultsMessage p {
-  color: #cccccc;
-}
-
-:global(body.dark-mode) .noResults {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-  color: #cccccc;
-}
-
-:global(body.dark-mode) .noData {
-  background-color: #2a2a2a;
-  color: #cccccc;
-}
-
-:global(body.dark-mode) .tableContainer {
-  background-color: #1e1e1e;
-  border: 1px solid #333333;
-}
-
-:global(body.dark-mode) .loadingContainer {
-  background-color: #2a2a2a;
-  color: #e0e0e0;
-}
-
-:global(body.dark-mode) .headerActions {
-  background-color: transparent;
-}
-
-/* Fix per actionButton nell'header (i bottoni 📄 ✏️) */
-:global(body.dark-mode) .actionButton {
-  background-color: #3a3a3a !important;
-  color: #e0e0e0 !important;
-  border: 1px solid #4a4a4a !important;
-}
-
-:global(body.dark-mode) .actionButton:hover {
-  background-color: #4a4a4a !important;
-  color: #f48fb1 !important;
-  border-color: #f48fb1 !important;
-}
-
-/* Fix per i bottoni filtro (Docenti, Classe, Aule) */
-:global(body.dark-mode) .filterButton {
-  background-color: #2a2a2a !important;
-  color: #e0e0e0 !important;
-  border: 1px solid #404040 !important;
-}
-
-:global(body.dark-mode) .filterButton:hover {
-  background-color: #333333 !important;
-  color: #f48fb1 !important;
-  border-color: #f48fb1 !important;
-}
-
-:global(body.dark-mode) .activeFilter {
-  background-color: #f48fb1 !important;
-  color: #1a1a1a !important;
-  border-color: #f48fb1 !important;
-}
-
-/* Fix per searchBox e searchIcon */
-:global(body.dark-mode) .searchBox {
-  background-color: #2a2a2a !important;
-  border: 1px solid #404040 !important;
-}
-
-:global(body.dark-mode) .searchIcon {
-  color: #cccccc !important;
-}
-
-/* Fix per submitButton e cancelButton */
-:global(body.dark-mode) .submitButton {
-  background-color: #f48fb1 !important;
-  color: #1a1a1a !important;
-  border: none !important;
-}
-
-:global(body.dark-mode) .submitButton:hover {
-  background-color: #f06292 !important;
-}
-
-:global(body.dark-mode) .submitButton:disabled {
-  background-color: #404040 !important;
-  color: #888888 !important;
-}
-
-/* Fix per spinner nella dark mode */
-:global(body.dark-mode) .spinner {
-  border: 3px solid #404040 !important;
-  border-top: 3px solid #f48fb1 !important;
-}
-
-/* Fix per searchingIndicator */
-:global(body.dark-mode) .searchingIndicator {
-  background-color: #2a2a2a !important;
-  color: #e0e0e0 !important;
-  border: 1px solid #404040 !important;
-}
-
-/* Fix per searchResults */
-:global(body.dark-mode) .searchResults {
-  background-color: #2a2a2a !important;
-  border: 1px solid #404040 !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
-}
-
-:global(body.dark-mode) .searchResultItem {
-  color: #e0e0e0 !important;
-  border-bottom: 1px solid #404040 !important;
-}
-
-:global(body.dark-mode) .searchResultItem:hover {
-  background-color: #333333 !important;
-  color: #f48fb1 !important;
-}
-
-/* Fix per docenteInfo */
-:global(body.dark-mode) .docenteName {
+:global(body.dark-mode) .lezione .materiaText {
   color: #ffffff !important;
 }
 
-:global(body.dark-mode) .docenteEmail,
-:global(body.dark-mode) .docenteCodice {
-  color: #cccccc !important;
-}
-
-/* Fix per classeText nelle celle dell'orario */
-:global(body.dark-mode) .classeText {
+:global(body.dark-mode) .lezione .docenteText {
   color: #ffffff !important;
 }
-
-/* Fix per il container searchContainer */
-:global(body.dark-mode) .searchContainer {
-  background-color: #2a2a2a !important;
-}
-
-:global(body.dark-mode) .searchContainer .searchIcon {
-  color: #cccccc !important;
-}
-
-/* Fix per formActions */
-:global(body.dark-mode) .formActions {
-  background-color: transparent !important;
-}
-
-/* Miglioramento per lezioneCell in dark mode */
-:global(body.dark-mode) .emptyLezione {
-  background-color: #1e1e1e !important;
-  border: 1px solid #333333 !important;
-}
-
 
 /* Fix per emptyLezioneContent */
 :global(body.dark-mode) .emptyLezioneContent {
   background-color: transparent !important;
+}
+
+.orarioTable .lezioneCell .lezione .materiaText {
+  font-weight: bold;
+  font-size: 0.95em;
+  margin-bottom: 3px;
+  letter-spacing: 0.2px;
+  color: white !important;
+}
+
+.orarioTable .lezioneCell .lezione .docenteText {
+  font-size: 0.85em;
+  margin-bottom: 3px;
+  color: white !important;
+}
+
+:global(body.dark-mode) .orarioTable .lezioneCell .lezione .materiaText {
+  color: #ffffff !important;
+}
+
+:global(body.dark-mode) .orarioTable .lezioneCell .lezione .docenteText {
+  color: #ffffff !important;
 }
