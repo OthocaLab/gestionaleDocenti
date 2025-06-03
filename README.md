@@ -225,7 +225,7 @@ Questo progetto è rilasciato sotto licenza [MIT](https://opensource.org/license
 
 ## 📞 Contatti
 
-Per domande o supporto, contattare Andrea Siddi di Uras.
+Per domande o supporto, contattare Fabio Saba di Gonnosfanadiga.
 
 ---
 

@@ -321,7 +321,7 @@ const Dashboard = () => {
 
             {activeTab === 'report' && (
               <div>
-                <h2>Report</h2>
+                <h2>Report (in costruzione)</h2>
                 <p>Qui potrai generare report sulle sostituzioni e le ore da recuperare.</p>
                 {/* Contenuto della sezione report */}
               </div>
