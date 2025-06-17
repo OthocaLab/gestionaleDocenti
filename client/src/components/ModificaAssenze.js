@@ -315,12 +315,16 @@ const ModificaAssenze = () => {
                       <span className={styles.labelIcon}>⏰</span>
                       Orario Entrata
                     </label>
-                    <input
-                      type="time"
+                    <select
                       className={styles.input}
                       value={orarioEntrata}
                       onChange={(e) => setOrarioEntrata(e.target.value)}
-                    />
+                    >
+                      <option value="">Seleziona orario...</option>
+                      <option value="9:15">9:15</option>
+                      <option value="10:15">10:15</option>
+                      <option value="11:15">11:15</option>
+                    </select>
                   </div>
                   
                   <div className={styles.formGroup}>
@@ -328,12 +332,17 @@ const ModificaAssenze = () => {
                       <span className={styles.labelIcon}>⏰</span>
                       Orario Uscita
                     </label>
-                    <input
-                      type="time"
+                    <select
                       className={styles.input}
                       value={orarioUscita}
                       onChange={(e) => setOrarioUscita(e.target.value)}
-                    />
+                    >
+                      <option value="">Seleziona orario...</option>
+                      <option value="9:15">9:15</option>
+                      <option value="10:15">10:15</option>
+                      <option value="11:15">11:15</option>
+                      <option value="13:15">13:15</option>
+                    </select>
                   </div>
                 </div>
               )}
