@@ -161,7 +161,6 @@ const ElencoAssenze = () => {
                 <th>Data Inizio</th>
                 <th>Data Fine</th>
                 <th>Orario</th>
-                <th>Giustificata</th>
                 <th>Azioni</th>
               </tr>
             </thead>
@@ -186,7 +185,6 @@ const ElencoAssenze = () => {
                       <span>Intero giorno</span>
                     )}
                   </td>
-                  <td>{assenza.giustificata ? 'Sì' : 'No'}</td>
                   <td>
                     <div className={styles.actionButtonsRow}>
                       <button 

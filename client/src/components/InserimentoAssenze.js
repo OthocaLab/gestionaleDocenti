@@ -332,25 +332,6 @@ const InserimentoAssenze = () => {
                       <option value="altro">Altro</option>
                     </select>
                   </div>
-                  
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>
-                      <span className={styles.labelIcon}>✓</span>
-                      Giustificata
-                    </label>
-                    <div className={styles.checkboxContainer}>
-                      <input
-                        type="checkbox"
-                        id="giustificata"
-                        className={styles.checkbox}
-                        checked={giustificata}
-                        onChange={(e) => setGiustificata(e.target.checked)}
-                      />
-                      <label htmlFor="giustificata" className={styles.checkboxLabel}>
-                        L'assenza è giustificata
-                      </label>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Nuova sezione per ore da recuperare */}

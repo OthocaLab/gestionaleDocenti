@@ -132,16 +132,6 @@ const DettaglioAssenza = () => {
                 </div>
               </div>
               
-              <div className={styles.detailGroup}>
-                <div className={styles.detailLabel}>
-                  <span className={styles.labelIcon}>✓</span>
-                  Giustificata
-                </div>
-                <div className={styles.detailValue}>
-                  {assenza.giustificata ? 'Sì' : 'No'}
-                </div>
-              </div>
-              
               {/* Sezione Orari Specifici */}
               <div className={styles.detailGroup}>
                 <div className={styles.detailLabel}>
