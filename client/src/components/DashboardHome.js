@@ -178,12 +178,6 @@ const DashboardHome = () => {
             >
               Elenco docenti presenti
             </button>
-            <button 
-              className={`${styles.tabButton} ${activeTab === 'materia' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('materia')}
-            >
-              Materia
-            </button>
           </div>
 
           {activeTab === 'assenti' && (

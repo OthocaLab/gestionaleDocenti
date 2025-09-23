@@ -542,11 +542,18 @@
 
 .tableContainer {
   overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .dataTable {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .dataTable th {
@@ -555,11 +562,33 @@
   text-align: left;
   font-weight: 600;
   color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dataTable th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.dataTable th:last-child {
+  border-top-right-radius: 12px;
 }
 
 .dataTable td {
   padding: 12px 16px;
   border-bottom: 1px solid #e5e7eb;
+  background: white;
+}
+
+.dataTable tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.dataTable tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.dataTable tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .actionButtons {
@@ -573,20 +602,24 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 12px;
+  padding: 8px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.2s;
-  width: 100px;
+  font-weight: 500;
+  transition: all 0.2s;
+  width: 105px;
   justify-content: center;
   background: #f3f4f6;
   color: #374151;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .actionButton:hover {
   background: #e5e7eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .editButton {
@@ -594,14 +627,29 @@
   color: #374151;
 }
 
+.editButton:hover {
+  background: #d1d5db;
+  color: #1f2937;
+}
+
 .deleteButton {
   background: #fee2e2;
   color: #991b1b;
 }
 
+.deleteButton:hover {
+  background: #fecaca;
+  color: #7f1d1d;
+}
+
 .scheduleButton {
   background: #dbeafe;
   color: #1e40af;
+}
+
+.scheduleButton:hover {
+  background: #bfdbfe;
+  color: #1d4ed8;
 }
 
 .loadingContainer {
@@ -2174,6 +2222,8 @@
 :global(body.dark-mode) .dataTable {
   background-color: #2a2a2a;
   border: 1px solid #404040;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 :global(body.dark-mode) .dataTable th {
@@ -2182,9 +2232,30 @@
   border-bottom: 1px solid #404040;
 }
 
+:global(body.dark-mode) .dataTable th:first-child {
+  border-top-left-radius: 12px;
+}
+
+:global(body.dark-mode) .dataTable th:last-child {
+  border-top-right-radius: 12px;
+}
+
 :global(body.dark-mode) .dataTable td {
   color: #e0e0e0;
   border-bottom: 1px solid #404040;
+  background-color: #2a2a2a;
+}
+
+:global(body.dark-mode) .dataTable tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+:global(body.dark-mode) .dataTable tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+:global(body.dark-mode) .dataTable tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* Aggiunta regole dark mode per messaggi "no results" e stati vuoti */
@@ -2213,6 +2284,8 @@
 :global(body.dark-mode) .tableContainer {
   background-color: #1e1e1e;
   border: 1px solid #333333;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 :global(body.dark-mode) .loadingContainer {
@@ -2229,12 +2302,45 @@
   background-color: #3a3a3a !important;
   color: #e0e0e0 !important;
   border: 1px solid #4a4a4a !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 
 :global(body.dark-mode) .actionButton:hover {
   background-color: #4a4a4a !important;
   color: #f48fb1 !important;
   border-color: #f48fb1 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+:global(body.dark-mode) .editButton {
+  background-color: #3a3a3a !important;
+  color: #e0e0e0 !important;
+}
+
+:global(body.dark-mode) .editButton:hover {
+  background-color: #4a4a4a !important;
+  color: #ffffff !important;
+}
+
+:global(body.dark-mode) .deleteButton {
+  background-color: #5a2a2a !important;
+  color: #ff6b6b !important;
+}
+
+:global(body.dark-mode) .deleteButton:hover {
+  background-color: #703030 !important;
+  color: #ff8080 !important;
+}
+
+:global(body.dark-mode) .scheduleButton {
+  background-color: #2a3a5a !important;
+  color: #64b5f6 !important;
+}
+
+:global(body.dark-mode) .scheduleButton:hover {
+  background-color: #304070 !important;
+  color: #81c784 !important;
 }
 
 /* Fix per i bottoni filtro (Docenti, Classe, Aule) */
