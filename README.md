@@ -114,6 +114,7 @@ MONGODB_URI=mongodb://127.0.0.1:27017/gestionale-docenti
 JWT_SECRET=othoca_labs_super_secret_key_2024_change_in_production
 
 # Configurazione Email SMTP
+SMTP_ENABLED=true
 SMTP_USER=your_email@gmail.com
 SMTP_PASSWORD=your_app_password_here
 EMAIL_FROM=Othoca Labs <noreply@othocalabs.it>
