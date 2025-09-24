@@ -17,7 +17,6 @@ const InserimentoAssenze = () => {
   const [dataFine, setDataFine] = useState('');
   const [tipoAssenza, setTipoAssenza] = useState('');
   const [note, setNote] = useState('');
-  const [giustificata, setGiustificata] = useState(false);
   const [documentazione, setDocumentazione] = useState('');
   // Nuovi stati per gli orari
   const [orarioSpecifico, setOrarioSpecifico] = useState(false);
@@ -130,7 +129,6 @@ const InserimentoAssenze = () => {
         dataFine,
         tipoAssenza,
         note,
-        giustificata,
         documentazione,
         registrataDa: user._id, // Aggiungiamo l'utente che registra l'assenza
         // Aggiungiamo i nuovi campi
@@ -160,7 +158,6 @@ const InserimentoAssenze = () => {
       setDataFine('');
       setTipoAssenza('');
       setNote('');
-      setGiustificata(false);
       setDocumentazione('');
       setOrarioSpecifico(false);
       setOrarioEntrata('');
@@ -333,24 +330,6 @@ const InserimentoAssenze = () => {
                     </select>
                   </div>
                   
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>
-                      <span className={styles.labelIcon}>✓</span>
-                      Giustificata
-                    </label>
-                    <div className={styles.checkboxContainer}>
-                      <input
-                        type="checkbox"
-                        id="giustificata"
-                        className={styles.checkbox}
-                        checked={giustificata}
-                        onChange={(e) => setGiustificata(e.target.checked)}
-                      />
-                      <label htmlFor="giustificata" className={styles.checkboxLabel}>
-                        L'assenza è giustificata
-                      </label>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Nuova sezione per ore da recuperare */}

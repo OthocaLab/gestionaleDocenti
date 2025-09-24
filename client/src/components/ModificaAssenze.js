@@ -15,7 +15,6 @@ const ModificaAssenze = () => {
   const [dataFine, setDataFine] = useState('');
   const [tipoAssenza, setTipoAssenza] = useState('');
   const [note, setNote] = useState('');
-  const [giustificata, setGiustificata] = useState(false);
   const [documentazione, setDocumentazione] = useState('');
   // Stati per gli orari
   const [orarioSpecifico, setOrarioSpecifico] = useState(false);
@@ -46,10 +45,13 @@ const ModificaAssenze = () => {
       
       const assenza = response.data.data;
       
-      // Formatta le date per l'input date
+      // Formatta le date per l'input date senza problemi di fuso orario
       const formatDateForInput = (dateString) => {
         const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
       };
       
       setSelectedDocente(assenza.docente);
@@ -57,7 +59,6 @@ const ModificaAssenze = () => {
       setDataFine(formatDateForInput(assenza.dataFine));
       setTipoAssenza(assenza.tipoAssenza);
       setNote(assenza.note || '');
-      setGiustificata(assenza.giustificata);
       setDocumentazione(assenza.documentazione || '');
       
       // Imposta i campi per gli orari specifici
@@ -123,7 +124,6 @@ const ModificaAssenze = () => {
         dataFine,
         tipoAssenza,
         note,
-        giustificata,
         documentazione,
         // Aggiungiamo i campi per gli orari specifici
         orarioSpecifico,
@@ -268,24 +268,6 @@ const ModificaAssenze = () => {
                   </select>
                 </div>
                 
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>
-                    <span className={styles.labelIcon}>✓</span>
-                    Giustificata
-                  </label>
-                  <div className={styles.checkboxContainer}>
-                    <input
-                      type="checkbox"
-                      id="giustificata"
-                      className={styles.checkbox}
-                      checked={giustificata}
-                      onChange={(e) => setGiustificata(e.target.checked)}
-                    />
-                    <label htmlFor="giustificata" className={styles.checkboxLabel}>
-                      L'assenza è giustificata
-                    </label>
-                  </div>
-                </div>
               </div>
               
               {/* Sezione per orari specifici */}

@@ -4,7 +4,16 @@ import styles from '../styles/GestionePresenze.module.css';
 
 const GestionePresenze = () => {
   const [docenti, setDocenti] = useState([]);
-  const [dataSelezionata, setDataSelezionata] = useState(new Date().toISOString().split('T')[0]);
+  // Inizializza la data corrente senza problemi di fuso orario
+  const getCurrentDateString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const [dataSelezionata, setDataSelezionata] = useState(getCurrentDateString());
   const [docenteSelezionato, setDocenteSelezionato] = useState('');
   const [assenteGiornataIntera, setAssenteGiornataIntera] = useState(false);
   const [motivoGiornataIntera, setMotivoGiornataIntera] = useState('');

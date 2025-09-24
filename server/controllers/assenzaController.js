@@ -223,23 +223,21 @@ exports.getDocentiPerData = async (req, res) => {
       });
     }
 
-    // Converti la data in oggetto Date
-    const dataRichiesta = new Date(data);
-    
-    // Se la data non è valida
-    if (isNaN(dataRichiesta.getTime())) {
+    // Valida il formato della data (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(data)) {
       return res.status(400).json({
         success: false,
         message: 'Formato data non valido. Usa il formato YYYY-MM-DD'
       });
     }
+
+    // Parse manuale della data per evitare problemi di fuso orario
+    const [year, month, day] = data.split('-').map(Number);
     
-    // Imposta l'ora a 00:00:00 per la data richiesta
-    dataRichiesta.setHours(0, 0, 0, 0);
-    
-    // Crea una copia della data per il giorno successivo
-    const dataSuccessiva = new Date(dataRichiesta);
-    dataSuccessiva.setDate(dataSuccessiva.getDate() + 1);
+    // Crea date utilizzando il costruttore locale (non UTC)
+    const dataRichiesta = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const dataSuccessiva = new Date(year, month - 1, day + 1, 0, 0, 0, 0);
     
     // Trova le assenze che includono la data richiesta
     const assenze = await Assenza.find({
