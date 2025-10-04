@@ -13,10 +13,8 @@ const nextConfig = {
       : [
           'localhost:3000',
           '127.0.0.1:3000',
-          'gestionaledocenti.ddns.net',
-          '3.121.230.179',
-          '3.121.230.179:3000',
-          '172.26.10.221:3000'
+ 	  'http://91.98.193.49:3000',
+          'http://static.49.193.98.91.clients.your-server.de'
         ],
     
     async rewrites() {
