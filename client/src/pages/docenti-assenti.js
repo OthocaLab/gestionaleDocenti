@@ -39,7 +39,11 @@ const DocentiAssenti = () => {
     setLoading(true);
     try {
       // Formatta la data nel formato ISO senza orario
-      const formattedDate = date.toISOString().split('T')[0];
+      // Formatta la data senza problemi di fuso orario
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
       
       const response = await axios.get(`/api/assenze/docenti-per-data`, {
         params: { data: formattedDate },

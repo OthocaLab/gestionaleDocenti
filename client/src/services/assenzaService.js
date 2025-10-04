@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { formatDateForAPI } from '../utils/dateUtils';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -70,7 +71,7 @@ export const deleteAssenza = async (id) => {
 // Ottieni le assenze per una data specifica
 export const getAssenzeByDate = async (date) => {
   try {
-    const formattedDate = date instanceof Date ? date.toISOString().split('T')[0] : date;
+    const formattedDate = formatDateForAPI(date);
     const response = await axios.get(`${API_URL}/assenze/per-data`, {
       params: { data: formattedDate },
       ...getAuthConfig()
@@ -85,7 +86,7 @@ export const getAssenzeByDate = async (date) => {
 // Ottieni docenti assenti per una data specifica
 export const getDocentiAssentiByDate = async (date) => {
   try {
-    const formattedDate = date instanceof Date ? date.toISOString().split('T')[0] : date;
+    const formattedDate = formatDateForAPI(date);
     const response = await axios.get(`${API_URL}/assenze/docenti-per-data`, {
       params: { data: formattedDate },
       ...getAuthConfig()

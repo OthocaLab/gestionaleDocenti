@@ -154,11 +154,20 @@ exports.forgotPassword = async (req, res) => {
 
     try {
       console.log('[DEBUG] Invio email di recupero a:', email);
-      await sendEmail({
+      const emailResult = await sendEmail({
         email: email,
         subject: 'Reset Password - Othoca Labs',
         message
       });
+
+      // Gestione del caso in cui SMTP sia disabilitato
+      if (!emailResult.success && emailResult.reason === 'SMTP_DISABLED') {
+        return res.status(200).json({
+          success: true,
+          message: 'Reset password elaborato (Email disabilitata nella configurazione)',
+          smtp_disabled: true
+        });
+      }
 
       return res.status(200).json({
         success: true,
@@ -258,11 +267,21 @@ exports.sendVerificationCode = async (req, res) => {
 
     try {
       console.log('[DEBUG] Invio codice di verifica a:', email);
-      await sendEmail({
+      const emailResult = await sendEmail({
         email: email,
         subject: 'Codice di Verifica - Othoca Labs',
         message
       });
+
+      // Gestione del caso in cui SMTP sia disabilitato
+      if (!emailResult.success && emailResult.reason === 'SMTP_DISABLED') {
+        return res.status(200).json({
+          success: true,
+          message: 'Codice di verifica elaborato (Email disabilitata nella configurazione)',
+          smtp_disabled: true,
+          verification_code: verificationCode // In caso di SMTP disabilitato, restituisci il codice direttamente
+        });
+      }
 
       return res.status(200).json({
         success: true,

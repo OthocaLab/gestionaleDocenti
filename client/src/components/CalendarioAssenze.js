@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from '../styles/CalendarioAssenze.module.css';
+import { formatDateForAPI } from '../utils/dateUtils';
 
 const CalendarioAssenze = ({ onDateSelect }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -21,8 +22,8 @@ const CalendarioAssenze = ({ onDateSelect }) => {
   const fetchDocentiAssenti = async (date) => {
     setLoading(true);
     try {
-      // Formatta la data nel formato ISO senza orario
-      const formattedDate = date.toISOString().split('T')[0];
+      // Formatta la data usando la utility per evitare problemi di fuso orario
+      const formattedDate = formatDateForAPI(date);
       
       const response = await axios.get(`/api/assenze/docenti-per-data`, {
         params: { data: formattedDate },

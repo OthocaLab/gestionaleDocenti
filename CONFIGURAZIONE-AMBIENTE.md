@@ -44,6 +44,7 @@ cp environment-production.txt .env
 ### 📧 Configurazione Email (SMTP)
 | Variabile | Descrizione | Esempio |
 |-----------|-------------|---------|
+| `SMTP_ENABLED` | **Abilita/disabilita invio email** | `true` / `false` |
 | `SMTP_HOST` | Host SMTP | `smtp.gmail.com` |
 | `SMTP_PORT` | Porta SMTP | `465` |
 | `SMTP_SECURE` | Connessione sicura | `true` |
@@ -51,6 +52,8 @@ cp environment-production.txt .env
 | `SMTP_PASSWORD` | Password app Gmail | `your_app_password` |
 | `EMAIL_FROM` | Email mittente | `Othoca Labs <noreply@othocalabs.it>` |
 | `USE_GMAIL_APP_PASSWORD` | Usa password app Gmail | `true` |
+
+> **⚠️ Importante**: Impostare `SMTP_ENABLED=false` per disabilitare completamente l'invio di email. Utile in ambiente di sviluppo o quando non si ha configurazione SMTP.
 
 ### 🌐 Configurazione Frontend (Next.js)
 | Variabile | Descrizione | Esempio |
@@ -106,14 +109,16 @@ cp environment-production.txt .env
 - ✅ `JWT_SECRET`: Cambia con una chiave sicura (min 32 caratteri)
 - ✅ `MONGODB_URI`: Aggiorna con il database di produzione
 - ✅ `ALLOWED_ORIGINS`: Configura con i domini reali
-- ✅ `SMTP_USER` e `SMTP_PASSWORD`: Configura per produzione
+- ✅ `SMTP_ENABLED`: Imposta su `true` se vuoi abilitare email, `false` altrimenti
+- ✅ `SMTP_USER` e `SMTP_PASSWORD`: Configura per produzione (se SMTP abilitato)
 - ✅ `NEXT_PUBLIC_API_URL`: Aggiorna con l'URL di produzione
 
 ### 3. Checklist Sicurezza
 - [ ] JWT_SECRET cambiato
 - [ ] Database di produzione configurato
 - [ ] CORS configurato correttamente
-- [ ] Email SMTP configurata
+- [ ] SMTP_ENABLED impostato correttamente
+- [ ] Email SMTP configurata (se abilitata)
 - [ ] URL frontend/backend aggiornati
 - [ ] File .env non committato
 

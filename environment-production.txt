@@ -32,6 +32,7 @@ JWT_EXPIRE=30d
 ALLOWED_ORIGINS=https://gestionaledocenti.ddns.net,http://gestionaledocenti.ddns.net,https://gestionaledocenti.ddns.net:3000,http://gestionaledocenti.ddns.net:3000
 
 # Email Configuration (SMTP)
+SMTP_ENABLED=true
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
 SMTP_SECURE=true

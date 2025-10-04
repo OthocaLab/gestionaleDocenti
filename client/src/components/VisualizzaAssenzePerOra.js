@@ -4,7 +4,16 @@ import styles from '../styles/VisualizzaAssenzePerOra.module.css';
 
 const VisualizzaAssenzePerOra = () => {
   const [assenze, setAssenze] = useState([]);
-  const [data, setData] = useState(new Date().toISOString().split('T')[0]);
+  // Inizializza la data corrente senza problemi di fuso orario
+  const getCurrentDateString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const [data, setData] = useState(getCurrentDateString());
   const [ora, setOra] = useState('');
   const [loading, setLoading] = useState(false);
   const [docentiDisponibili, setDocentiDisponibili] = useState([]);
