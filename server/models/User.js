@@ -72,52 +72,37 @@ const UserSchema = new mongoose.Schema({
 
 // Cripta la password prima di salvarla
 UserSchema.pre('save', async function(next) {
-  console.log('[DEBUG] Pre-save hook:', {
-    isPasswordModified: this.isModified('password'),
-    useGmailApp: process.env.USE_GMAIL_APP_PASSWORD === 'true'
-  });
-
+  // Se la password non è stata modificata, salta l'hashing
   if (!this.isModified('password')) {
     return next();
   }
 
   try {
-    // Se USE_GMAIL_APP_PASSWORD è true, salva la password come testo semplice
-    if (process.env.USE_GMAIL_APP_PASSWORD === 'true') {
-      console.log('[DEBUG] Saving plain Gmail app password');
-      return next();
-    }
-
-    // Altrimenti cripta la password con bcrypt
-    console.log('[DEBUG] Hashing password with bcrypt');
+    // Cripta sempre la password con bcrypt per sicurezza
+    console.log('[AUTH] Hashing password per utente:', this.email);
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    console.log('[DEBUG] Password hashed successfully');
+    console.log('[AUTH] ✅ Password hashata con successo');
     return next();
   } catch (error) {
-    console.error('[ERROR] Password hashing failed:', error);
+    console.error('[AUTH] ❌ Errore hashing password:', error);
     return next(error);
   }
 });
 
 // Verifica se la password inserita corrisponde a quella criptata
 UserSchema.methods.matchPassword = async function(enteredPassword) {
-  console.log('[DEBUG] matchPassword:', {
-    useGmailApp: process.env.USE_GMAIL_APP_PASSWORD === 'true',
-    storedPasswordLength: this.password?.length,
-    isStoredPasswordHashed: this.password?.startsWith('$2a$'),
-    enteredPasswordLength: enteredPassword?.length
-  });
-
-  if (process.env.USE_GMAIL_APP_PASSWORD === 'true') {
-    const isMatch = enteredPassword === this.password;
-    console.log('[DEBUG] Gmail password match:', isMatch);
-    return isMatch;
-  }
+  console.log('[AUTH] Verifica password per utente:', this.email);
   
-  const isMatch = await bcrypt.compare(enteredPassword, this.password);
-  console.log('[DEBUG] Bcrypt password match:', isMatch);
-  return isMatch;
+  try {
+    // Confronta sempre con bcrypt
+    const isMatch = await bcrypt.compare(enteredPassword, this.password);
+    console.log('[AUTH] Password match:', isMatch ? '✅ Corretta' : '❌ Errata');
+    return isMatch;
+  } catch (error) {
+    console.error('[AUTH] ❌ Errore verifica password:', error);
+    return false;
+  }
 };
 
 module.exports = mongoose.model('User', UserSchema);

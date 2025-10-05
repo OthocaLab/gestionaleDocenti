@@ -57,6 +57,9 @@ SMTP_ENABLED=false
 # CONFIGURAZIONE FRONTEND (NEXT.JS)
 # ===========================================
 
+# Frontend URL (per generare link nelle email)
+FRONTEND_URL=https://gestionaledocenti.ddns.net
+
 # API Configuration
 NEXT_PUBLIC_API_URL=https://gestionaledocenti.ddns.net:5000/api
 NEXT_PUBLIC_BACKEND_URL=https://gestionaledocenti.ddns.net:5000/api

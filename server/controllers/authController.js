@@ -194,7 +194,8 @@ exports.forgotPassword = async (req, res) => {
     }
 
     // Crea URL di reset (il frontend gestirà il redirect)
-    const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || `${req.protocol}://${req.get('host')}`;
+    const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
     // Contenuto email
     const expiryMinutes = Math.floor(expireSeconds / 60);
