@@ -20,8 +20,9 @@ const DashboardHome = () => {
   ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('assenti');
+  const [activeTab, setActiveTab] = useState('presenti');
   const [showCalendario, setShowCalendario] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -33,13 +34,17 @@ const DashboardHome = () => {
     }
   }, [selectedDate]);
 
-  // Aggiorna il conteggio delle assenze in base ai docenti assenti per la data selezionata
+  // Aggiorna le statistiche in base ai docenti totali e quelli assenti per la data selezionata
   useEffect(() => {
-    setStatistiche(prev => ({
-      ...prev,
-      totaleAssenze: docentiAssenti.length
-    }));
-  }, [docentiAssenti]);
+    const totaleAssenze = docentiAssenti.length;
+    const totalePresenze = docenti.length - totaleAssenze;
+    
+    setStatistiche({
+      totaleAssenze,
+      totalePresenze,
+      personaleAttivo: docenti.length
+    });
+  }, [docenti, docentiAssenti]);
 
   const fetchData = async () => {
     try {
@@ -48,16 +53,6 @@ const DashboardHome = () => {
       const response = await getAllDocenti();
       const docentiData = response.data || [];
       setDocenti(docentiData);
-      
-      // Calcola le statistiche
-      const presenti = docentiData.filter(d => !d.assente).length;
-      const assenti = docentiData.filter(d => d.assente).length;
-      
-      setStatistiche({
-        totalePresenze: presenti,
-        totaleAssenze: assenti,
-        personaleAttivo: docentiData.length
-      });
       
       // Recupera i docenti assenti per la data corrente
       await fetchDocentiAssentiByDate(selectedDate);
@@ -89,6 +84,14 @@ const DashboardHome = () => {
     setShowCalendario(!showCalendario);
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    // Resetta la ricerca quando si cambia tab
+    if (searchQuery) {
+      setSearchQuery('');
+    }
+  };
+
   const formatDate = (date) => {
     if (!date || !(date instanceof Date) || isNaN(date)) return 'Data non valida';
     return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
@@ -96,14 +99,34 @@ const DashboardHome = () => {
 
   const renderDocentiList = () => {
     // Lista di docenti da visualizzare in base al tab attivo
-    const docentiToShow = activeTab === 'presenti' 
-      ? docenti.filter(d => !d.assente) 
-      : (activeTab === 'assenti' ? docentiAssenti : docenti);
+    let docentiToShow;
+    
+    if (activeTab === 'presenti') {
+      // Per i docenti presenti, escludiamo quelli che sono nell'elenco degli assenti
+      const docentiAssentiIds = docentiAssenti.map(d => d._id || d.docente?._id);
+      docentiToShow = docenti.filter(d => !docentiAssentiIds.includes(d._id));
+      
+      // Applica il filtro di ricerca solo per i docenti presenti
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        docentiToShow = docentiToShow.filter(d => 
+          (d.nome || '').toLowerCase().includes(query) ||
+          (d.cognome || '').toLowerCase().includes(query) ||
+          (d.email || '').toLowerCase().includes(query) ||
+          (d.classeInsegnamento || d.classe || '').toLowerCase().includes(query) ||
+          (d.materia || '').toLowerCase().includes(query)
+        );
+      }
+    } else if (activeTab === 'assenti') {
+      docentiToShow = docentiAssenti;
+    } else {
+      docentiToShow = docenti;
+    }
 
     if (loading) {
       return (
         <tr>
-          <td colSpan="6">Caricamento...</td>
+          <td colSpan="5">Caricamento...</td>
         </tr>
       );
     }
@@ -111,7 +134,7 @@ const DashboardHome = () => {
     if (error) {
       return (
         <tr>
-          <td colSpan="6" className={styles.errorMessage}>
+          <td colSpan="5" className={styles.errorMessage}>
             {error}
           </td>
         </tr>
@@ -121,7 +144,7 @@ const DashboardHome = () => {
     if (docentiToShow.length === 0) {
       return (
         <tr>
-          <td colSpan="6">
+          <td colSpan="5">
             {activeTab === 'assenti' 
               ? `Nessun docente assente${selectedDate ? ' per il ' + formatDate(selectedDate) : ''}` 
               : 'Nessun docente presente trovato'}
@@ -137,11 +160,6 @@ const DashboardHome = () => {
         <td>{docente.classeInsegnamento || docente.classe || '4h'}</td>
         <td>{docente.materia || 'informatica'}</td>
         <td>{docente.email || 'mariorossi@gmail.com'}</td>
-        <td>
-          <button className={styles.actionButton}>
-            {index % 2 === 0 ? '↑' : '↓'}
-          </button>
-        </td>
       </tr>
     ));
   };
@@ -167,18 +185,39 @@ const DashboardHome = () => {
         <div className={styles.docentiSection}>
           <div className={styles.tabsContainer}>
             <button 
-              className={`${styles.tabButton} ${activeTab === 'assenti' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('assenti')}
-            >
-              Elenco docenti assenti
-            </button>
-            <button 
               className={`${styles.tabButton} ${activeTab === 'presenti' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('presenti')}
+              onClick={() => handleTabChange('presenti')}
             >
               Elenco docenti presenti
             </button>
+            <button 
+              className={`${styles.tabButton} ${activeTab === 'assenti' ? styles.activeTab : ''}`}
+              onClick={() => handleTabChange('assenti')}
+            >
+              Elenco docenti assenti
+            </button>
           </div>
+
+          {activeTab === 'presenti' && (
+            <div className={styles.searchContainer}>
+              <input
+                type="text"
+                placeholder="Cerca per nome, cognome, email, classe o materia..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={styles.searchInput}
+              />
+              {searchQuery && (
+                <button 
+                  className={styles.clearSearchButton}
+                  onClick={() => setSearchQuery('')}
+                  title="Cancella ricerca"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          )}
 
           {activeTab === 'assenti' && (
             <div className={styles.dateContainer}>
@@ -207,7 +246,6 @@ const DashboardHome = () => {
                   <th>classe</th>
                   <th>materia</th>
                   <th>e-mail</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
