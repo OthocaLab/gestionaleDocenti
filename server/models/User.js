@@ -1,6 +1,18 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+/**
+ * User Model - Schema per gli utenti del sistema
+ * 
+ * @description Schema Mongoose per la gestione degli utenti
+ * 
+ * @changelog
+ * - 2025-10-05: Rimossi campi resetPasswordToken e resetPasswordExpire
+ *               Il reset password ora usa JWT + Redis (più sicuro e performante)
+ * 
+ * @see server/config/redisClient.js - Gestione Redis per token
+ * @see server/controllers/authController.js - Logica autenticazione e reset password
+ */
 const UserSchema = new mongoose.Schema({
   nome: {
     type: String,
@@ -48,8 +60,10 @@ const UserSchema = new mongoose.Schema({
   classi: [{
     type: String
   }],
-  resetPasswordToken: String,
-  resetPasswordExpire: Date,
+  // NOTA: I campi resetPasswordToken e resetPasswordExpire sono stati rimossi.
+  // Il sistema di reset password ora utilizza JWT + Redis per maggiore sicurezza e performance.
+  // I token di reset sono memorizzati in Redis con TTL automatico.
+  // Vedi: server/config/redisClient.js e server/controllers/authController.js
   createdAt: {
     type: Date,
     default: Date.now

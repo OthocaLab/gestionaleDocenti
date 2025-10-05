@@ -47,8 +47,42 @@ services:
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - EMAIL_FROM=${EMAIL_FROM}
       - USE_GMAIL_APP_PASSWORD=${USE_GMAIL_APP_PASSWORD}
+      - SMTP_ENABLED=${SMTP_ENABLED}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_ENABLED=${REDIS_ENABLED}
+      - RESET_PASSWORD_JWT_SECRET=${RESET_PASSWORD_JWT_SECRET}
+      - RESET_PASSWORD_TOKEN_EXPIRE=${RESET_PASSWORD_TOKEN_EXPIRE}
     network_mode: "host"
     restart: always
     volumes:
       - ./server:/app
       - /app/node_modules
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: gestionale-redis
+    command: >
+      sh -c "
+      if [ -n \"$$REDIS_PASSWORD\" ]; then
+        redis-server --requirepass \"$$REDIS_PASSWORD\"
+      else
+        redis-server
+      fi
+      "
+    env_file:
+      - .env
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    network_mode: "host"
+    restart: always
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+    driver: local

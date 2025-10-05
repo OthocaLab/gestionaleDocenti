@@ -31,6 +31,17 @@ JWT_EXPIRE=30d
 # CORS Configuration
 ALLOWED_ORIGINS=https://gestionaledocenti.ddns.net,http://gestionaledocenti.ddns.net,https://gestionaledocenti.ddns.net:3000,http://gestionaledocenti.ddns.net:3000
 
+# Redis Configuration (per gestione token e cache)
+REDIS_ENABLED=true
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_secure_redis_password_here
+REDIS_DB=0
+
+# Reset Password Token Configuration (IMPORTANTE: Usa secret sicuri!)
+RESET_PASSWORD_JWT_SECRET=othoca_labs_reset_password_production_secret_2024_change_this
+RESET_PASSWORD_TOKEN_EXPIRE=1800
+
 # Email Configuration (SMTP)
 SMTP_ENABLED=true
 SMTP_HOST=smtp.gmail.com
@@ -40,6 +51,7 @@ SMTP_USER=your_production_email@gmail.com
 SMTP_PASSWORD=your_production_app_password
 EMAIL_FROM=Othoca Labs <noreply@othocalabs.it>
 USE_GMAIL_APP_PASSWORD=true
+SMTP_ENABLED=false
 
 # ===========================================
 # CONFIGURAZIONE FRONTEND (NEXT.JS)
@@ -73,6 +85,7 @@ DOCKER_NETWORK=host
 # ===========================================
 # 
 # ✅ JWT_SECRET cambiato con valore sicuro
+# ✅ RESET_PASSWORD_JWT_SECRET cambiato con valore sicuro (diverso da JWT_SECRET)
 # ✅ MONGODB_URI configurato
 # ✅ ALLOWED_ORIGINS configurato con gestionaledocenti.ddns.net
 # ✅ SMTP_USER e SMTP_PASSWORD da configurare
@@ -80,5 +93,14 @@ DOCKER_NETWORK=host
 # ✅ HOST impostato su 0.0.0.0 per Docker
 # ✅ NODE_ENV impostato su production
 # ✅ MONGO_EXPRESS_PASSWORD cambiato con password sicura
+# ✅ REDIS_PASSWORD configurato con password sicura
+# ✅ Redis installato e avviato (se non usi Docker)
+# ✅ Redis configurato per accettare solo connessioni locali/sicure
+#
+# NOTE REDIS IN PRODUZIONE:
+# - Se usi Docker: Redis verrà avviato automaticamente con docker-compose
+# - Se installazione manuale: sudo systemctl enable redis-server && sudo systemctl start redis-server
+# - Modifica /etc/redis/redis.conf per impostare requirepass (password)
+# - Limita bind address a 127.0.0.1 se Redis è sulla stessa macchina del backend
 #
 # =========================================== 

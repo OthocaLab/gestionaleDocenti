@@ -32,6 +32,17 @@ JWT_EXPIRE=30d
 # CORS Configuration
 ALLOWED_ORIGINS=http://localhost:3000,https://gestionaledocenti.ddns.net,http://gestionaledocenti.ddns.net
 
+# Redis Configuration (per gestione token e cache)
+REDIS_ENABLED=true
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_DB=0
+
+# Reset Password Token Configuration
+RESET_PASSWORD_JWT_SECRET=othoca_labs_reset_password_secret_key_change_in_production
+RESET_PASSWORD_TOKEN_EXPIRE=1800
+
 # Email Configuration (SMTP)
 SMTP_ENABLED=true
 SMTP_HOST=smtp.gmail.com
@@ -41,6 +52,7 @@ SMTP_USER=your_email@gmail.com
 SMTP_PASSWORD=your_app_password_here
 EMAIL_FROM=Othoca Labs <noreply@othocalabs.it>
 USE_GMAIL_APP_PASSWORD=true
+SMTP_ENABLED=false
 
 # ===========================================
 # CONFIGURAZIONE FRONTEND (NEXT.JS)
@@ -81,6 +93,17 @@ DOCKER_NETWORK=host
 #
 # 3. MONGODB_URI: Modifica l'URI se usi un database remoto
 #
-# 4. Per produzione, cambia NODE_ENV=production e aggiorna gli URL
+# 4. Redis: Per sviluppo locale senza Docker:
+#    - Installa Redis: sudo apt install redis-server
+#    - Avvia servizio: sudo systemctl start redis-server
+#    - Verifica: redis-cli ping (deve rispondere PONG)
+#    - Lascia REDIS_PASSWORD vuoto per sviluppo locale
+#
+# 5. RESET_PASSWORD_JWT_SECRET: Usa un secret diverso dal JWT_SECRET normale
+#    per maggiore sicurezza
+#
+# 6. RESET_PASSWORD_TOKEN_EXPIRE: Tempo in secondi (1800 = 30 minuti)
+#
+# 7. Per produzione, cambia NODE_ENV=production e aggiorna gli URL
 #
 # =========================================== 

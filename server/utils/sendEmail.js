@@ -17,7 +17,7 @@ console.log('[DEBUG] Configurazione SMTP:', {
 let transporter = null;
 
 if (isSmtpEnabled) {
-  transporter = nodemailer.createTransporter({
+  transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 465,
     secure: process.env.SMTP_SECURE === 'true', // true per 465, false per 587
